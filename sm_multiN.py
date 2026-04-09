@@ -106,11 +106,12 @@ for idx, N in enumerate(Ns):
     lim = max(np.max(np.abs(pc))*1.3, 1.5)
 
     fmax = max(v['mag'] for v in forces.values())
-    threshold = 0.02*fmax if N>10 else 0
+    fmin = min(v['mag'] for v in forces.values())
+    if fmin<=0 or fmin==fmax: fmin=fmax*1e-6
+    log_range = np.log(fmax/fmin)
     for (a,b),v in forces.items():
-        if v['mag']<threshold: continue
         col = '#CC0000' if v['attractive'] else '#2255CC'
-        rel = v['mag']/fmax
+        rel = np.log(max(v['mag'],fmin)/fmin)/log_range
         lw = 0.3+1.2*rel if N>10 else 0.5+1.5*rel
         alpha = 0.4+0.5*rel
         ax.plot([pc[a,0],pc[b,0]],[pc[a,1],pc[b,1]],
