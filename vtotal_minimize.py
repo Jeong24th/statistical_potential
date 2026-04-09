@@ -192,20 +192,16 @@ cf = ax.contourf(Xg, Yg, Vg, levels=lvl, cmap='RdYlBu_r',
 ax.contour(Xg, Yg, Vg, levels=lvl[::2], colors='k',
            linewidths=0.2, alpha=0.2)
 
-# Force lines (log-scale width mapping)
+# Force lines (sqrt-scale width mapping)
 fmax = max(v['mag'] for v in forces.values())
-fmin = min(v['mag'] for v in forces.values())
-if fmin <= 0 or fmin == fmax:
-    fmin = fmax * 1e-6
-log_range = np.log(fmax / fmin)
 for (a, b), v in forces.items():
     col = '#CC0000' if v['attractive'] else '#2255CC'
-    rel = np.log(max(v['mag'], fmin) / fmin) / log_range  # 0 to 1
+    rel = np.sqrt(v['mag'] / fmax)  # 0 to 1
     if N <= 10:
-        lw = 0.6 + 2.0 * rel
+        lw = 0.4 + 2.0 * rel
     else:
-        lw = 0.4 + 1.6 * rel
-    alpha = 0.45 + 0.5 * rel
+        lw = 0.2 + 1.6 * rel
+    alpha = 0.3 + 0.6 * rel
     ax.plot([pc[a,0], pc[b,0]], [pc[a,1], pc[b,1]],
             color=col, lw=lw, alpha=alpha, zorder=3, solid_capstyle='round')
 

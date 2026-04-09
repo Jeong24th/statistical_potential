@@ -96,14 +96,11 @@ for j, beta in enumerate(betas_N6):
     ax.contour(Xg,Yg,Vg,levels=lvl[::3],colors='k',linewidths=0.15,alpha=0.2)
 
     fmax=max(v['mag'] for v in forces.values())
-    fmin=min(v['mag'] for v in forces.values())
-    if fmin<=0 or fmin==fmax: fmin=fmax*1e-6
-    log_range=np.log(fmax/fmin)
     for (a,b),v in forces.items():
         col='#CC0000' if v['attractive'] else '#2255CC'
-        rel=np.log(max(v['mag'],fmin)/fmin)/log_range
-        lw=0.4+1.6*rel
-        ax.plot([pc[a,0],pc[b,0]],[pc[a,1],pc[b,1]],color=col,lw=lw,alpha=0.45+0.45*rel,zorder=3)
+        rel=np.sqrt(v['mag']/fmax)
+        lw=0.2+1.6*rel
+        ax.plot([pc[a,0],pc[b,0]],[pc[a,1],pc[b,1]],color=col,lw=lw,alpha=0.3+0.6*rel,zorder=3)
     for a in range(N):
         ax.plot(pc[a,0],pc[a,1],'o',color='black',ms=3.5,markeredgecolor='black',markeredgewidth=0.3,zorder=6)
 
