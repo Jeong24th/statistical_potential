@@ -123,7 +123,7 @@ for idx, N in enumerate(Ns):
     ax.set_xticks([]); ax.set_yticks([])
     ax.text(0.05,0.95,rf'$N={N}$',transform=ax.transAxes,fontsize=9,va='top',fontweight='bold')
 
-out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
+out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
 fig1.savefig(f'{out}\\fig_SM_multiN_forces.pdf', dpi=600, bbox_inches='tight')
 fig1.savefig(f'{out}\\fig_SM_multiN_forces.png', dpi=300, bbox_inches='tight')
 print("Saved fig_SM_multiN_forces")

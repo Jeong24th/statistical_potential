@@ -139,7 +139,7 @@ ax5.set_xlabel(r'$N$')
 ax5.set_ylabel(r'Shell radius $/\, a_0$')
 ax5.set_xticks(Ns)
 
-out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
+out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
 fig5.savefig(f'{out}\\fig_SM_shell_radii.pdf', dpi=600, bbox_inches='tight')
 fig5.savefig(f'{out}\\fig_SM_shell_radii.png', dpi=300, bbox_inches='tight')
 print("Saved fig_SM_shell_radii")

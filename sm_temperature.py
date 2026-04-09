@@ -114,7 +114,7 @@ for j, beta in enumerate(betas_N6):
     ax.set_xlabel(r'$x/a_0$')
 
 fig3.text(0.02,0.95,r'$N=6$',fontsize=11,fontweight='bold',va='top')
-out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
+out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
 fig3.savefig(f'{out}\\fig_SM_temp_N6.pdf',dpi=600,bbox_inches='tight')
 fig3.savefig(f'{out}\\fig_SM_temp_N6.png',dpi=300,bbox_inches='tight')
 print("Saved fig_SM_temp_N6")
