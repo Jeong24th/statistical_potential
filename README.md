@@ -1,4 +1,4 @@
-# Emergent Statistical Attraction and Pauli Crystal Formation
+# Statistical Potential for Identical Fermions: Emergent Attraction and Pauli Crystal Formation
 
 Code for reproducing the numerical results in the paper.
 
