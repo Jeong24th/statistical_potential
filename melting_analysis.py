@@ -128,7 +128,7 @@ def compute_forces(pc, sigma2, beta_phi):
     }
 
 # ── Scan beta ─────────────────────────────────────────────────
-betas = [0.3, 0.5, 0.7, 1.0, 1.5, 2.0, 2.5, 3.0]
+betas = [0.3, 0.4, 0.5, 0.6, 0.65, 0.7, 0.75, 0.8, 0.9, 1.0, 1.2, 1.5, 1.6, 1.65, 1.7, 1.8, 2.0, 2.5, 3.0]
 results = []
 
 print(f"N={N}, scanning beta ...", flush=True)
@@ -142,6 +142,7 @@ for beta in betas:
         finfo['Vmin'] = Vmin
         finfo['omega_phi'] = omega_phi
         finfo['shell_r'] = np.mean(np.linalg.norm(pc, axis=1))
+        finfo['r_min'] = np.min(np.linalg.norm(pc, axis=1))
         results.append(finfo)
         print(f"    V={Vmin:.4f}, F_max={finfo['F_max']:.4f}, "
               f"att={finfo['n_att']}, rep={finfo['n_rep']}")
@@ -177,14 +178,13 @@ ax.legend(fontsize=9, framealpha=0.9)
 ax.set_title(rf'$N={N}$', fontsize=12)
 ax.set_yscale('log')
 
-# (b) F_att / F_rep ratio
+# (b) r_min order parameter
 ax = axes[0, 1]
-ratios = [r['F_att']/r['F_rep'] if r['F_rep']>0 else 0 for r in results]
-ax.plot(T_arr, ratios, 'go-', ms=6, lw=1.8)
-ax.axhline(1.0, color='grey', ls='--', lw=0.8)
+rmin_vals = [r['r_min'] for r in results]
+ax.plot(T_arr, rmin_vals, 'go-', ms=6, lw=1.8)
 ax.set_xlabel(r'$k_{\rm B}T\,/\,\hbar\omega$')
-ax.set_ylabel(r'$\sum|F_{\rm att}|\,/\,\sum|F_{\rm rep}|$')
-ax.set_title(r'Attraction / Repulsion', fontsize=11)
+ax.set_ylabel(r'$r_{\min}\,/\,a_0$')
+ax.set_title(r'$r_{\min} = \min_a |\vec{x}_a^*|$', fontsize=11)
 ax.set_ylim(bottom=0)
 
 # (c) Max force — colored by ATT/REP
@@ -233,8 +233,21 @@ ax.set_ylabel('Number of pairs')
 ax.legend(fontsize=9, framealpha=0.9)
 ax.set_title(r'Pair count', fontsize=11)
 
-out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1\melting'
+out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
 fig.savefig(f'{out}\\melting_force_N{N}.pdf', dpi=600, bbox_inches='tight')
 fig.savefig(f'{out}\\melting_force_N{N}.png', dpi=300, bbox_inches='tight')
 print(f"\nSaved melting_force_N{N}.pdf / .png")
+
+# ── SM figure: Attraction/Repulsion ratio (moved from main Fig 3) ──
+fig_sm, ax_sm = plt.subplots(1, 1, figsize=(4, 3))
+ratios = [r['F_att']/r['F_rep'] if r['F_rep']>0 else 0 for r in results]
+ax_sm.plot(T_arr, ratios, 'go-', ms=6, lw=1.8)
+ax_sm.axhline(1.0, color='grey', ls='--', lw=0.8)
+ax_sm.set_xlabel(r'$k_{\rm B}T\,/\,\hbar\omega$')
+ax_sm.set_ylabel(r'$\sum|F_{\rm att}|\,/\,\sum|F_{\rm rep}|$')
+ax_sm.set_title(rf'$N={N}$', fontsize=11)
+ax_sm.set_ylim(bottom=0)
+fig_sm.savefig(f'{out}\\fig_SM_ratio_N{N}.pdf', dpi=600, bbox_inches='tight')
+print(f"Saved fig_SM_ratio_N{N}.pdf")
+
 print("Done")
