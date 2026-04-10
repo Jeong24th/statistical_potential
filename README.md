@@ -7,8 +7,8 @@ Code for reproducing the numerical results in the paper.
 ### Main text figures
 - `vtotal_minimize.py` — Minimize V_total(X) for N fermions in a 2D harmonic trap. Computes pairwise statistical forces (attractive/repulsive) and shell structure. Generates main text Figs. 1 (left) and 2 (top).
 - `strongest_bond.py` — Identify the dominant pairwise force on each particle. Generates main text Figs. 1 (right) and 2 (bottom).
-- `melting_analysis.py` — Temperature dependence of force magnitudes and attractive/repulsive ratio. Generates main text Fig. 3.
-- `phase_diagram.py` — Map the globally strongest force type (ATT/REP) in the (N, T) plane. Generates main text Fig. 5.
+- `melting_analysis.py` — Temperature dependence of force magnitudes, r_min order parameter, maximum pairwise force, and pair counts. Also generates SM ratio figure. Generates main text Fig. 3 and SM ratio panels.
+- `phase_diagram.py` — Map the globally strongest force type (ATT/REP) in the (N, T) plane. Generates main text Fig. 4.
 
 ### Supplemental Material figures
 - `sm_1body.py` — One-body density for N=6 and N=55. Generates SM Fig. 1.
@@ -16,6 +16,7 @@ Code for reproducing the numerical results in the paper.
 - `sm_multiN.py` — Force lines and strongest bonds for closed-shell N=3 to 55. Generates SM Figs. 3-4.
 - `sm_shell_radii_and_histogram.py` — Shell radii comparison (V_total vs |Psi_0|) and distance-dependent attractive fraction. Generates SM Figs. 5-6.
 - `sm_temperature.py` — Temperature evolution of forces and strongest bonds. Generates SM Figs. 7-8.
+- `sm_structural_transition.py` — Structural phase transition order parameter r_min and representative configurations for N=55. Generates SM Figs. 9-10.
 
 ## Requirements
 
@@ -30,8 +31,9 @@ python vtotal_minimize.py 2 6      # Fig. 1 left: N=6, beta=2
 python vtotal_minimize.py 2 55     # Fig. 2 top: N=55, beta=2
 python strongest_bond.py 6 2       # Fig. 1 right
 python strongest_bond.py 55 2      # Fig. 2 bottom
-python melting_analysis.py         # Fig. 3
-python phase_diagram.py            # Fig. 5
+python melting_analysis.py 6       # Fig. 3 top + SM ratio (N=6)
+python melting_analysis.py 55      # Fig. 3 bottom + SM ratio (N=55)
+python phase_diagram.py            # Fig. 4
 
 # SM figures
 python sm_1body.py                 # SM Fig. 1
@@ -39,6 +41,7 @@ python sm_density.py               # SM Fig. 2
 python sm_multiN.py                # SM Figs. 3-4
 python sm_shell_radii_and_histogram.py  # SM Figs. 5-6
 python sm_temperature.py           # SM Figs. 7-8
+python sm_structural_transition.py # SM Figs. 9-10
 ```
 
 ## Units
