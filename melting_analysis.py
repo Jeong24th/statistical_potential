@@ -167,6 +167,13 @@ T_arr = 1.0 / betas_arr
 fig, axes = plt.subplots(2, 2, figsize=(8, 6))
 plt.subplots_adjust(hspace=0.35, wspace=0.35)
 
+# Table II temperatures (N=55 only)
+table_II_T = [1.0, 1.0/1.5, 0.5, 1.0/3.0] if N > 10 else []
+
+def add_table_lines(ax):
+    for T in table_II_T:
+        ax.axvline(T, color='grey', ls=':', lw=0.7, alpha=0.5, zorder=0)
+
 # Panel label helper
 def panel_label(ax, label):
     ax.text(0.04, 0.94, label, transform=ax.transAxes,
@@ -183,6 +190,7 @@ ax.legend(fontsize=9, framealpha=0.9)
 ax.set_title(rf'$N={N}$', fontsize=12)
 ax.set_yscale('log')
 panel_label(ax, '(a)')
+add_table_lines(ax)
 
 # (b) r_min order parameter
 ax = axes[0, 1]
@@ -192,6 +200,7 @@ ax.set_xlabel(r'$k_{\rm B}T\,/\,\hbar\omega$')
 ax.set_ylabel(r'$r_{\min}\,/\,a_0$')
 ax.set_ylim(bottom=0)
 panel_label(ax, '(b)')
+add_table_lines(ax)
 
 # (c) Max force — colored by ATT/REP
 ax = axes[1, 0]
@@ -219,6 +228,7 @@ ax.set_yscale('log')
 if N <= 10:
     ax.set_ylim(1e-1, 1e1)
 panel_label(ax, '(c)')
+add_table_lines(ax)
 
 # (d) Number of attractive pairs
 ax = axes[1, 1]
@@ -230,6 +240,7 @@ ax.set_xlabel(r'$k_{\rm B}T\,/\,\hbar\omega$')
 ax.set_ylabel('Number of pairs')
 ax.legend(fontsize=9, framealpha=0.9)
 panel_label(ax, '(d)')
+add_table_lines(ax)
 
 out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
 fig.savefig(f'{out}\\melting_force_N{N}.pdf', dpi=600, bbox_inches='tight')

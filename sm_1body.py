@@ -129,9 +129,9 @@ ax.contour(Xg, Yg, rho, levels=lvl[::3], colors='k', linewidths=0.2, alpha=0.3)
 
 # Crystal positions
 for a in range(N):
-    ax.plot(pc[a,0], pc[a,1], 'o', color='black',
-            ms=3.5 if N > 10 else 5,
-            markeredgecolor='white', markeredgewidth=0.6, zorder=6)
+    ax.plot(pc[a,0], pc[a,1], '*', color='black',
+            ms=5 if N > 10 else 7,
+            markeredgecolor='white', markeredgewidth=0.4, zorder=6)
 
 ax.set_xlim(-lim, lim); ax.set_ylim(-lim, lim); ax.set_aspect('equal')
 ax.set_xlabel(r'$x/a_0$')

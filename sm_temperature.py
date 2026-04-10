@@ -102,7 +102,7 @@ for j, beta in enumerate(betas_N6):
         lw=0.2+1.6*rel
         ax.plot([pc[a,0],pc[b,0]],[pc[a,1],pc[b,1]],color=col,lw=lw,alpha=0.3+0.6*rel,zorder=3)
     for a in range(N):
-        ax.plot(pc[a,0],pc[a,1],'o',color='black',ms=3.5,markeredgecolor='black',markeredgewidth=0.3,zorder=6)
+        ax.plot(pc[a,0],pc[a,1],'*',color='black',ms=5,markeredgecolor='black',markeredgewidth=0.2,zorder=6)
 
     ax.set_xlim(-gr,gr);ax.set_ylim(-gr,gr);ax.set_aspect('equal')
     ax.set_title(rf'$\varphi={beta}$',fontsize=10)
@@ -143,7 +143,7 @@ for j, beta in enumerate(betas_N55):
         rel=v['mag']/fmax_b; lw=0.5+2.0*rel; alpha=0.5+0.4*rel
         ax.plot([pc[a,0],pc[b,0]],[pc[a,1],pc[b,1]],color=col,lw=lw,alpha=alpha,zorder=3)
     for a in range(N):
-        ax.plot(pc[a,0],pc[a,1],'o',color='black',ms=2,markeredgecolor='black',markeredgewidth=0.2,zorder=6)
+        ax.plot(pc[a,0],pc[a,1],'*',color='black',ms=3,markeredgecolor='black',markeredgewidth=0.15,zorder=6)
 
     n_att=sum(1 for a2,b2 in bonds if forces[(a2,b2)]['attractive'])
     ax.set_xlim(-lim,lim);ax.set_ylim(-lim,lim);ax.set_aspect('equal')

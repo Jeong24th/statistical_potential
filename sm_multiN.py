@@ -114,8 +114,8 @@ for idx, N in enumerate(Ns):
         ax.plot([pc[a,0],pc[b,0]],[pc[a,1],pc[b,1]],
                 color=col,lw=lw,alpha=alpha,zorder=3,solid_capstyle='round')
     for a in range(N):
-        ax.plot(pc[a,0],pc[a,1],'o',color='black',ms=2.5 if N>15 else 3.5,
-                markeredgecolor='black',markeredgewidth=0.3,zorder=6)
+        ax.plot(pc[a,0],pc[a,1],'*',color='black',ms=3.5 if N>15 else 5,
+                markeredgecolor='black',markeredgewidth=0.2,zorder=6)
     ax.set_xlim(-lim,lim); ax.set_ylim(-lim,lim); ax.set_aspect('equal')
     ax.set_xticks([]); ax.set_yticks([])
     ax.text(0.05,0.95,rf'$N={N}$',transform=ax.transAxes,fontsize=9,va='top',fontweight='bold')
@@ -152,8 +152,8 @@ for idx, N in enumerate(Ns):
         ax.plot([pc[a,0],pc[b,0]],[pc[a,1],pc[b,1]],
                 color=col,lw=lw,alpha=alpha,zorder=3,solid_capstyle='round')
     for a in range(N):
-        ax.plot(pc[a,0],pc[a,1],'o',color='black',ms=2.5 if N>15 else 3.5,
-                markeredgecolor='black',markeredgewidth=0.3,zorder=6)
+        ax.plot(pc[a,0],pc[a,1],'*',color='black',ms=3.5 if N>15 else 5,
+                markeredgecolor='black',markeredgewidth=0.2,zorder=6)
     ax.set_xlim(-lim,lim); ax.set_ylim(-lim,lim); ax.set_aspect('equal')
     ax.set_xticks([]); ax.set_yticks([])
 

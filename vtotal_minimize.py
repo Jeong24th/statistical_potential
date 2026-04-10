@@ -207,8 +207,8 @@ for (a, b), v in forces.items():
 
 # Particles
 for a in range(N):
-    ax.plot(pc[a,0], pc[a,1], 'o', color='black', ms=ms_dot,
-            markeredgecolor='black', markeredgewidth=0.4, zorder=6)
+    ax.plot(pc[a,0], pc[a,1], '*', color='black', ms=ms_dot*1.4,
+            markeredgecolor='black', markeredgewidth=0.3, zorder=6)
 
 ax.set_xlim(-lim, lim); ax.set_ylim(-lim, lim); ax.set_aspect('equal')
 ax.set_xlabel(r'$x/a_0$')
