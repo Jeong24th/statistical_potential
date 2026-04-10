@@ -167,6 +167,11 @@ T_arr = 1.0 / betas_arr
 fig, axes = plt.subplots(2, 2, figsize=(8, 6))
 plt.subplots_adjust(hspace=0.35, wspace=0.35)
 
+# Panel label helper
+def panel_label(ax, label):
+    ax.text(0.04, 0.94, label, transform=ax.transAxes,
+            fontsize=12, fontweight='bold', va='top', ha='left')
+
 # (a) Total, attractive, repulsive force vs T
 ax = axes[0, 0]
 ax.plot(T_arr, [r['F_total'] for r in results], 'ko-', ms=5, lw=1.8, label='Total')
@@ -177,6 +182,7 @@ ax.set_ylabel(r'$\sum |F_{b\to a}|$')
 ax.legend(fontsize=9, framealpha=0.9)
 ax.set_title(rf'$N={N}$', fontsize=12)
 ax.set_yscale('log')
+panel_label(ax, '(a)')
 
 # (b) r_min order parameter
 ax = axes[0, 1]
@@ -184,20 +190,12 @@ rmin_vals = [r['r_min'] for r in results]
 ax.plot(T_arr, rmin_vals, 'go-', ms=6, lw=1.8)
 ax.set_xlabel(r'$k_{\rm B}T\,/\,\hbar\omega$')
 ax.set_ylabel(r'$r_{\min}\,/\,a_0$')
-ax.set_title(r'$r_{\min} = \min_a |\vec{x}_a^*|$', fontsize=11)
 ax.set_ylim(bottom=0)
+panel_label(ax, '(b)')
 
 # (c) Max force — colored by ATT/REP
 ax = axes[1, 0]
 fmax_vals = [r['F_max'] for r in results]
-# Need to track whether max force is attractive or repulsive
-# Recompute from stored data
-for i, r in enumerate(results):
-    # F_max is the larger of the two
-    # Check which is larger: max attractive or max repulsive magnitude
-    # We need extra info — store it during computation
-    pass
-# Plot line in grey, then overlay colored markers
 ax.plot(T_arr, fmax_vals, '-', color='grey', lw=1.0, zorder=1)
 for i, r in enumerate(results):
     is_att = r.get('F_max_is_att', False)
@@ -207,7 +205,6 @@ for i, r in enumerate(results):
             markeredgecolor='k', markeredgewidth=0.4, zorder=5)
 ax.set_xlabel(r'$k_{\rm B}T\,/\,\hbar\omega$')
 ax.set_ylabel(r'$\max\,|F_{b\to a}|$')
-ax.set_title(r'Maximum pairwise force', fontsize=11)
 from matplotlib.lines import Line2D
 leg_max = [Line2D([0],[0], marker='s', color='w', markerfacecolor='#CC0000',
                   markeredgecolor='k', ms=6, label='Attractive'),
@@ -221,6 +218,7 @@ else:
 ax.set_yscale('log')
 if N <= 10:
     ax.set_ylim(1e-1, 1e1)
+panel_label(ax, '(c)')
 
 # (d) Number of attractive pairs
 ax = axes[1, 1]
@@ -231,7 +229,7 @@ ax.axhline(total_pairs/2, color='grey', ls='--', lw=0.8, alpha=0.5)
 ax.set_xlabel(r'$k_{\rm B}T\,/\,\hbar\omega$')
 ax.set_ylabel('Number of pairs')
 ax.legend(fontsize=9, framealpha=0.9)
-ax.set_title(r'Pair count', fontsize=11)
+panel_label(ax, '(d)')
 
 out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
 fig.savefig(f'{out}\\melting_force_N{N}.pdf', dpi=600, bbox_inches='tight')
