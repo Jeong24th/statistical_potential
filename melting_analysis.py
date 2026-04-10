@@ -168,7 +168,7 @@ fig, axes = plt.subplots(2, 2, figsize=(8, 6))
 plt.subplots_adjust(hspace=0.35, wspace=0.35)
 
 # Table II temperatures (N=55 only)
-table_II_T = [1.0, 1.0/1.5, 0.5, 1.0/3.0] if N > 10 else []
+table_II_T = [2.0, 1.0, 1.0/1.5, 0.5, 1.0/3.0] if N > 10 else []
 
 def add_table_lines(ax):
     for T in table_II_T:
