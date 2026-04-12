@@ -1,6 +1,6 @@
 """
-SM: Structural phase transition of the V_total global minimum (C -> D -> T)
-Generates fig_SM_rmin_order.pdf and fig_SM_struct_configs.pdf
+SM: Inner and outer shell radii vs temperature for N=55
+Plots average radius of innermost shell and outermost shell as a function of phi.
 """
 import numpy as np
 from scipy.optimize import minimize
@@ -43,7 +43,6 @@ def make_Vt(bp, wp, s2):
 def find_min(bp, wp, s2, n_seeds=25):
     Vt, Vg = make_Vt(bp, wp, s2)
     bf, bx = np.inf, None
-    # Random seeds
     for seed in range(n_seeds):
         rng = np.random.RandomState(seed)
         x0 = np.zeros((N, 2)); idx = 0
@@ -62,7 +61,7 @@ def find_min(bp, wp, s2, n_seeds=25):
         res = minimize(Vt, x0.ravel(), jac=Vg, method='L-BFGS-B',
                        options={'maxiter': 30000, 'ftol': 1e-15})
         if res.fun < bf: bf, bx = res.fun, res.x.reshape(N, 2)
-    # C-type seeds (one at origin)
+    # Structured seeds
     for seed in range(5):
         rng = np.random.RandomState(seed + 100)
         x0 = np.zeros((N, 2)); x0[0] = [0, 0]
@@ -73,7 +72,6 @@ def find_min(bp, wp, s2, n_seeds=25):
         res = minimize(Vt, x0.ravel(), jac=Vg, method='L-BFGS-B',
                        options={'maxiter': 30000, 'ftol': 1e-15})
         if res.fun < bf: bf, bx = res.fun, res.x.reshape(N, 2)
-    # D-type seeds (two near center)
     for seed in range(5):
         rng = np.random.RandomState(seed + 200)
         x0 = np.zeros((N, 2))
@@ -87,7 +85,6 @@ def find_min(bp, wp, s2, n_seeds=25):
         res = minimize(Vt, x0.ravel(), jac=Vg, method='L-BFGS-B',
                        options={'maxiter': 30000, 'ftol': 1e-15})
         if res.fun < bf: bf, bx = res.fun, res.x.reshape(N, 2)
-    # T-type seeds (triangle at center)
     for seed in range(5):
         rng = np.random.RandomState(seed + 300)
         x0 = np.zeros((N, 2))
@@ -101,18 +98,18 @@ def find_min(bp, wp, s2, n_seeds=25):
         res = minimize(Vt, x0.ravel(), jac=Vg, method='L-BFGS-B',
                        options={'maxiter': 30000, 'ftol': 1e-15})
         if res.fun < bf: bf, bx = res.fun, res.x.reshape(N, 2)
-    return bf, bx
+    return bx[np.argsort(np.linalg.norm(bx, axis=1))]
 
-def classify(pc):
-    radii = np.linalg.norm(pc, axis=1)
-    sorted_r = np.sort(radii)
-    r_min = sorted_r[0]
-    if r_min < 0.05:
-        return 'G', r_min
-    elif sorted_r[2] - sorted_r[0] > 0.15:
-        return 'I', r_min
-    else:
-        return 'P', r_min
+def get_shells(pc):
+    r = np.linalg.norm(pc, axis=1)
+    shells = []
+    start = 0
+    for i in range(1, N):
+        if r[i] - r[i-1] > 0.15:
+            shells.append((start, i))
+            start = i
+    shells.append((start, N))
+    return shells
 
 # ===== Scan =====
 snapshot_betas = [0.40, 0.70, 0.80, 1.00, 1.50, 2.00]
@@ -122,103 +119,56 @@ betas_scan = sorted(set(
     list(np.round(np.arange(0.80, 1.55, 0.05), 3)) +
     list(np.round(np.arange(1.55, 1.75, 0.02), 3)) +
     list(np.round(np.arange(1.75, 2.60, 0.10), 3)) +
-    snapshot_betas  # ensure all snapshot betas are included
+    snapshot_betas
 ))
 
 results = []
-configs = {}
-
 print(f"Scanning {len(betas_scan)} beta values for N={N}...")
 for i, beta in enumerate(betas_scan):
     bp, wp, s2 = get_params(beta)
-    vf, pc = find_min(bp, wp, s2, n_seeds=25)
-    phase, r_min = classify(pc)
-    # Outer shell radius
+    pc = find_min(bp, wp, s2, n_seeds=25)
     radii = np.linalg.norm(pc, axis=1)
-    sorted_r = np.sort(radii)
-    shell_start = 0
-    shells = []
-    for ii in range(1, N):
-        if sorted_r[ii] - sorted_r[ii-1] > 0.15:
-            shells.append((shell_start, ii)); shell_start = ii
-    shells.append((shell_start, N))
-    r_outer = np.mean(sorted_r[shells[-1][0]:shells[-1][1]])
-    results.append((beta, vf, r_min, phase, r_outer))
 
-    for sb in snapshot_betas:
-        if abs(beta - sb) < 0.005:
-            configs[sb] = pc.copy()
+    shells = get_shells(pc)
+    # Innermost shell
+    s0, e0 = shells[0]
+    r_inner = np.mean(radii[s0:e0])
+    # Outermost shell
+    sL, eL = shells[-1]
+    r_outer = np.mean(radii[sL:eL])
+
+    results.append((beta, r_inner, r_outer, len(shells)))
 
     if i % 5 == 0:
-        print(f"  [{i+1}/{len(betas_scan)}] beta={beta:.2f}  r_min={r_min:.3f}  ({phase})", flush=True)
+        print(f"  [{i+1}/{len(betas_scan)}] beta={beta:.2f}  r_inner={r_inner:.3f}  r_outer={r_outer:.3f}  n_shells={len(shells)}", flush=True)
 
 print("Scan complete.", flush=True)
 
-# ===== Figure 1: r_min order parameter =====
-out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
+# ===== Plot =====
+betas_arr = np.array([r[0] for r in results])
+r_inner_arr = np.array([r[1] for r in results])
+r_outer_arr = np.array([r[2] for r in results])
 
-fig, ax = plt.subplots(1, 1, figsize=(5.5, 4.5))
-plt.subplots_adjust(left=0.14, right=0.95, bottom=0.12, top=0.93)
+fig, ax = plt.subplots(1, 1, figsize=(5.5, 3.5))
+plt.subplots_adjust(left=0.14, right=0.95, bottom=0.15, top=0.93)
 
-color_map = {'G': '#2255CC', 'I': '#228B22', 'P': '#CC0000'}
-marker_map = {'G': 'o', 'I': 's', 'P': '^'}
-labels_done = set()
-
-for beta, vf, r_min, phase, r_outer in results:
-    lbl = None
-    if phase not in labels_done:
-        lbl = {'G': 'Gas-like (G)', 'I': 'Intermediate (I)', 'P': 'Pauli crystal (P)'}[phase]
-        labels_done.add(phase)
-    ax.plot(beta, r_min, marker_map[phase], color=color_map[phase], ms=5,
-            label=lbl, zorder=5, markeredgecolor='k', markeredgewidth=0.3)
-
-# Outer shell radius
-betas_arr = [r[0] for r in results]
-r_outer_arr = [r[4] for r in results]
-ax.plot(betas_arr, r_outer_arr, 'k-o', ms=3, lw=1.0, markeredgewidth=0.3,
-        label='Outermost shell', zorder=4, alpha=0.8)
+ax.plot(betas_arr, r_inner_arr, 's-', color='#CC0000', ms=4, lw=1.0,
+        markeredgecolor='k', markeredgewidth=0.3, label=r'Innermost shell')
+ax.plot(betas_arr, r_outer_arr, 'o-', color='#2255CC', ms=4, lw=1.0,
+        markeredgecolor='k', markeredgewidth=0.3, label=r'Outermost shell')
 
 ax.set_xlabel(r'$\beta\hbar\omega$')
 ax.set_ylabel(r'Shell radius $/\, a_0$')
-ax.legend(fontsize=9, loc='center right')
+ax.legend(fontsize=9)
 ax.set_xlim(0, 2.65)
-ax.set_ylim(-0.1, 3.6)
 
+# Transition lines
 ax.axvline(0.67, color='gray', ls='--', lw=0.6, alpha=0.5)
 ax.axvline(1.63, color='gray', ls='--', lw=0.6, alpha=0.5)
 
-fig.savefig(f'{out}\\fig_SM_rmin_order.pdf', dpi=600, bbox_inches='tight')
-fig.savefig(f'{out}\\fig_SM_rmin_order.png', dpi=300, bbox_inches='tight')
-print("Saved fig_SM_rmin_order.pdf/.png")
+out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1\OLD'
+fig.savefig(f'{out}\\fig_SM_shell_radii_vs_temp.pdf', dpi=600, bbox_inches='tight')
+fig.savefig(f'{out}\\fig_SM_shell_radii_vs_temp.png', dpi=300, bbox_inches='tight')
+print(f"Saved to OLD/fig_SM_shell_radii_vs_temp.pdf/.png")
 plt.close(fig)
-
-# ===== Figure 2: Configuration snapshots =====
-fig2, axes = plt.subplots(2, 3, figsize=(10, 7))
-plt.subplots_adjust(wspace=0.3, hspace=0.35)
-
-for idx, beta in enumerate(snapshot_betas):
-    ax = axes[idx // 3, idx % 3]
-    pc = configs[beta]
-    phase, r_min = classify(pc)
-
-    # Find V_total for title
-    vf = None
-    for b, v, rm, ph, ro in results:
-        if abs(b - beta) < 0.001:
-            vf = v; break
-
-    ax.plot(pc[:, 0], pc[:, 1], 'ko', ms=3.5, markeredgewidth=0.3)
-    ax.set_xlim(-4, 4); ax.set_ylim(-4, 4); ax.set_aspect('equal')
-
-    title = r'$\beta\hbar\omega=%.2f$  (%s)' % (beta, phase)
-    if vf is not None:
-        title += r'  $V=%.2f$' % vf
-    ax.set_title(title, fontsize=10)
-    ax.set_xlabel(r'$x/a_0$', fontsize=9)
-    ax.set_ylabel(r'$y/a_0$', fontsize=9)
-
-fig2.savefig(f'{out}\\fig_SM_struct_configs.pdf', dpi=600, bbox_inches='tight')
-fig2.savefig(f'{out}\\fig_SM_struct_configs.png', dpi=300, bbox_inches='tight')
-print("Saved fig_SM_struct_configs.pdf/.png")
-plt.close(fig2)
-print("All done.")
+print("Done.")

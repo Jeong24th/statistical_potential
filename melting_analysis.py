@@ -56,7 +56,7 @@ def find_minimum(beta):
     grd = lambda v: grad_func(v, omega_phi, sigma2, beta_phi)
 
     best_f, best_x = np.inf, None
-    n_seeds = 20 if N <= 10 else 8
+    n_seeds = 20 if N <= 10 else 25
     for seed in range(n_seeds):
         rng = np.random.RandomState(seed)
         x0 = np.zeros((N, 2)); idx = 0
@@ -76,6 +76,47 @@ def find_minimum(beta):
                        options={'maxiter': 30000, 'ftol': 1e-15})
         if res.fun < best_f:
             best_f, best_x = res.fun, res.x.reshape(N, 2)
+    # Structured seeds for N > 10
+    if N > 10:
+        # G-type (one at origin)
+        for seed in range(5):
+            rng = np.random.RandomState(seed + 100)
+            x0 = np.zeros((N, 2)); x0[0] = [0, 0]
+            for i in range(1, N):
+                angle = 2*np.pi*rng.rand() + seed*0.5
+                r = 0.5 + 3.0*np.sqrt(i/N) + rng.randn()*0.08
+                x0[i] = [r*np.cos(angle), r*np.sin(angle)]
+            res = minimize(obj, x0.ravel(), jac=grd, method='L-BFGS-B',
+                           options={'maxiter': 30000, 'ftol': 1e-15})
+            if res.fun < best_f: best_f, best_x = res.fun, res.x.reshape(N, 2)
+        # I-type (two near center)
+        for seed in range(5):
+            rng = np.random.RandomState(seed + 200)
+            x0 = np.zeros((N, 2))
+            ang0 = rng.rand()*2*np.pi
+            x0[0] = [0.3*np.cos(ang0), 0.3*np.sin(ang0)]
+            x0[1] = [-0.3*np.cos(ang0), -0.3*np.sin(ang0)]
+            for i in range(2, N):
+                angle = 2*np.pi*rng.rand()
+                r = 0.6 + 2.8*np.sqrt((i-2)/(N-2)) + rng.randn()*0.08
+                x0[i] = [r*np.cos(angle), r*np.sin(angle)]
+            res = minimize(obj, x0.ravel(), jac=grd, method='L-BFGS-B',
+                           options={'maxiter': 30000, 'ftol': 1e-15})
+            if res.fun < best_f: best_f, best_x = res.fun, res.x.reshape(N, 2)
+        # P-type (triangle at center)
+        for seed in range(5):
+            rng = np.random.RandomState(seed + 300)
+            x0 = np.zeros((N, 2))
+            for k in range(3):
+                angle = 2*np.pi*k/3 + rng.randn()*0.1
+                x0[k] = [0.43*np.cos(angle), 0.43*np.sin(angle)]
+            for i in range(3, N):
+                angle = 2*np.pi*rng.rand()
+                r = 0.8 + 2.5*np.sqrt((i-3)/(N-3)) + rng.randn()*0.08
+                x0[i] = [r*np.cos(angle), r*np.sin(angle)]
+            res = minimize(obj, x0.ravel(), jac=grd, method='L-BFGS-B',
+                           options={'maxiter': 30000, 'ftol': 1e-15})
+            if res.fun < best_f: best_f, best_x = res.fun, res.x.reshape(N, 2)
     return best_x, best_f, beta_phi, omega_phi, sigma2
 
 def compute_forces(pc, sigma2, beta_phi):
@@ -242,7 +283,7 @@ ax.legend(fontsize=9, framealpha=0.9)
 panel_label(ax, '(d)')
 add_table_lines(ax)
 
-out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
+out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
 fig.savefig(f'{out}\\melting_force_N{N}.pdf', dpi=600, bbox_inches='tight')
 fig.savefig(f'{out}\\melting_force_N{N}.png', dpi=300, bbox_inches='tight')
 print(f"\nSaved melting_force_N{N}.pdf / .png")
