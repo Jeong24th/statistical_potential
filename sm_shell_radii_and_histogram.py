@@ -139,7 +139,7 @@ ax5.set_xlabel(r'$N$')
 ax5.set_ylabel(r'Shell radius $/\, a_0$')
 ax5.set_xticks(Ns)
 
-out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
+out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
 fig5.savefig(f'{out}\\fig_SM_shell_radii.pdf', dpi=600, bbox_inches='tight')
 fig5.savefig(f'{out}\\fig_SM_shell_radii.png', dpi=300, bbox_inches='tight')
 print("Saved fig_SM_shell_radii")
@@ -166,29 +166,61 @@ for a in range(N):
 
 dists_att=np.array(dists_att); dists_rep=np.array(dists_rep)
 max_d=max(dists_att.max(),dists_rep.max())
-bins=np.linspace(0, max_d*1.01, 15)
+bins=np.linspace(0, max_d*1.01, 28)
 centers=0.5*(bins[:-1]+bins[1:]); width=bins[1]-bins[0]
 
-na_hist=[((dists_att>=bins[i])&(dists_att<bins[i+1])).sum() for i in range(len(bins)-1)]
-nr_hist=[((dists_rep>=bins[i])&(dists_rep<bins[i+1])).sum() for i in range(len(bins)-1)]
+na_hist=np.array([((dists_att>=bins[i])&(dists_att<bins[i+1])).sum() for i in range(len(bins)-1)])
+nr_hist=np.array([((dists_rep>=bins[i])&(dists_rep<bins[i+1])).sum() for i in range(len(bins)-1)])
 
-fig6, (ax6a, ax6b) = plt.subplots(2, 1, figsize=(5, 5), sharex=True)
-plt.subplots_adjust(hspace=0.08)
+# Shell radii for N=55 at phi=2
+shell_r = get_shell_radii(pc, N)
+print(f"  Shell radii: {[f'{r:.2f}' for r in shell_r]}")
 
-ax6a.bar(centers-width*0.2, na_hist, width*0.4, color='#CC0000', alpha=0.7, label='Attractive')
-ax6a.bar(centers+width*0.2, nr_hist, width*0.4, color='#2255CC', alpha=0.7, label='Repulsive')
+fig6, (ax6a, ax6b) = plt.subplots(2, 1, figsize=(5.5, 5), sharex=True,
+                                   gridspec_kw={'height_ratios': [1.4, 1]})
+plt.subplots_adjust(hspace=0.06)
+
+ax6a.bar(centers-width*0.22, na_hist, width*0.42, color='#CC0000', alpha=0.75,
+         edgecolor='#990000', linewidth=0.4, label='Attractive')
+ax6a.bar(centers+width*0.22, nr_hist, width*0.42, color='#2255CC', alpha=0.75,
+         edgecolor='#113399', linewidth=0.4, label='Repulsive')
 ax6a.set_ylabel('Number of pairs')
-ax6a.legend(fontsize=9)
+ax6a.legend(fontsize=9, framealpha=0.9)
 ax6a.set_title(rf'$N=55$, $\varphi=2$', fontsize=11)
 
-# Fraction attractive
-frac_att = [na_hist[i]/(na_hist[i]+nr_hist[i]) if (na_hist[i]+nr_hist[i])>0 else 0
-            for i in range(len(bins)-1)]
-ax6b.bar(centers, frac_att, width*0.8, color='#CC0000', alpha=0.5)
-ax6b.axhline(0.5, color='grey', ls='--', lw=0.8)
+# Fraction attractive — color by dominance
+frac_att = np.array([na_hist[i]/(na_hist[i]+nr_hist[i]) if (na_hist[i]+nr_hist[i])>0 else np.nan
+                     for i in range(len(bins)-1)])
+colors_frac = ['#CC0000' if f > 0.5 else '#2255CC' for f in frac_att]
+ax6b.bar(centers, frac_att, width*0.85, color=colors_frac, alpha=0.6,
+         edgecolor=[c if not np.isnan(f) else 'none' for c, f in zip(colors_frac, frac_att)],
+         linewidth=0.4)
+ax6b.axhline(0.5, color='k', ls='--', lw=0.7, alpha=0.5)
+# Background shading: attraction-dominated (>0.5) vs repulsion-dominated (<0.5) bands
+valid = ~np.isnan(frac_att)
+if valid.any():
+    c_valid = centers[valid]; f_valid = frac_att[valid]
+    in_att = f_valid > 0.5
+    i = 0
+    while i < len(c_valid):
+        j = i
+        while j < len(c_valid) and in_att[j] == in_att[i]:
+            j += 1
+        x0 = c_valid[i] - width/2
+        x1 = c_valid[j-1] + width/2
+        col = '#CC0000' if in_att[i] else '#2255CC'
+        ax6b.axvspan(x0, x1, color=col, alpha=0.06, zorder=0)
+        i = j
 ax6b.set_xlabel(r'Pair distance $/\, a_0$')
 ax6b.set_ylabel(r'Attractive fraction')
-ax6b.set_ylim(0, 1)
+ax6b.set_ylim(0, 1.02)
+ax6b.set_yticks([0, 0.25, 0.5, 0.75, 1.0])
+ax6b.set_yticklabels(['0', '', '0.5', '', '1'])
+
+# x-axis
+ax6b.set_xlim(0, 7)
+ax6b.set_xticks(range(8))
+ax6b.xaxis.set_minor_locator(plt.MultipleLocator(0.5))
 
 fig6.savefig(f'{out}\\fig_SM_distance_histogram.pdf', dpi=600, bbox_inches='tight')
 fig6.savefig(f'{out}\\fig_SM_distance_histogram.png', dpi=300, bbox_inches='tight')
