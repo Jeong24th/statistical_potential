@@ -1,7 +1,8 @@
 """
-Phase diagram: ATT vs REP dominance in (N, beta) space.
+Phase diagram: ATT vs REP dominance in (N, T) space.
 For each (N, beta), minimize V_total and check whether the
 globally strongest pairwise force is attractive or repulsive.
+Now covers N=2..55 with analytic gradient.
 """
 
 import numpy as np
@@ -18,8 +19,30 @@ plt.rcParams.update({
 })
 
 # ── Scan parameters ───────────────────────────────────────────
-N_values = [3, 6, 10, 15, 21, 28, 30, 33, 36, 39, 42, 45, 48, 50, 52, 55]
+N_values = list(range(2, 56))
 beta_values = [0.5, 0.7, 1.0, 1.2, 1.5, 1.7, 2.0, 2.3, 2.5, 2.7, 3.0]
+
+class VtotalCached:
+    def __init__(self, N, bp, wp):
+        self.N = N; self.bp = bp; self.wp2 = wp * wp
+        self.coeff = 2.0 / (bp * bp); self.inv_2s2 = 1.0 / (2.0 * bp)
+        self._ck = None; self._cv = None
+    def _c(self, v):
+        k = v.tobytes()
+        if self._ck == k: return self._cv
+        N = self.N; pos = v.reshape(N, 2)
+        diff = pos[:, None, :] - pos[None, :, :]
+        d2 = np.sum(diff * diff, axis=2)
+        K = np.exp(-self.inv_2s2 * d2)
+        sign, logdet = np.linalg.slogdet(K)
+        if sign <= 0 or not np.isfinite(logdet):
+            r = (1e100, np.zeros_like(v)); self._cv = r; self._ck = k; return r
+        Kinv = np.linalg.inv(K); S = Kinv * K
+        val = 0.5 * self.wp2 * np.sum(pos * pos) - logdet / self.bp
+        grad = self.wp2 * pos + self.coeff * np.einsum('ab,abj->aj', S, diff)
+        r = (val, grad.ravel()); self._cv = r; self._ck = k; return r
+    def fun(self, v): return self._c(v)[0]
+    def jac(self, v): return self._c(v)[1]
 
 def analyze(N, beta):
     phi_p = beta
@@ -27,23 +50,10 @@ def analyze(N, beta):
     omega_phi = 1.0 / np.cosh(phi_p / 2.0)
     sigma2 = beta_phi
 
-    def V_total(v):
-        pos = v.reshape(N, 2)
-        Vh = 0.5 * omega_phi**2 * np.sum(pos**2)
-        d2 = np.sum((pos[:, None, :] - pos[None, :, :])**2, axis=2)
-        K = np.exp(-d2 / (2.0 * sigma2))
-        s, ld = np.linalg.slogdet(K)
-        Vs = -ld / beta_phi if s > 0 else 1e10
-        return Vh + Vs
-
-    def V_grad(v):
-        eps = 1e-6; f0 = V_total(v); g = np.empty_like(v)
-        for i in range(len(v)):
-            vp = v.copy(); vp[i] += eps; g[i] = (V_total(vp) - f0) / eps
-        return g
+    obj = VtotalCached(N, beta_phi, omega_phi)
 
     best_f, best_x = np.inf, None
-    n_seeds = 10 if N <= 15 else 6
+    n_seeds = 20 if N <= 20 else 15
     for seed in range(n_seeds):
         rng = np.random.RandomState(seed)
         x0 = np.zeros((N, 2)); idx = 0
@@ -59,7 +69,7 @@ def analyze(N, beta):
                     a = 2*np.pi*k/ni + rng.randn()*0.05 + seed*0.3
                     x0[idx] = [r*np.cos(a), r*np.sin(a)]; idx += 1
             if idx >= N: break
-        res = minimize(V_total, x0.ravel(), jac=V_grad, method='L-BFGS-B',
+        res = minimize(obj.fun, x0.ravel(), jac=obj.jac, method='L-BFGS-B',
                        options={'maxiter': 30000, 'ftol': 1e-15})
         if res.fun < best_f:
             best_f, best_x = res.fun, res.x.reshape(N, 2)
@@ -105,10 +115,8 @@ for i, N in enumerate(N_values):
 # ═══════════════════════════════════════════════════════════════
 print("\nPlotting ...", flush=True)
 
-T_values = [1.0/b for b in beta_values]
-
-fig, ax = plt.subplots(1, 1, figsize=(5.0, 3.5))
-plt.subplots_adjust(left=0.12, right=0.95, bottom=0.15, top=0.95)
+fig, ax = plt.subplots(1, 1, figsize=(5.5, 5.0))
+plt.subplots_adjust(left=0.12, right=0.95, bottom=0.10, top=0.95)
 
 for i, N in enumerate(N_values):
     for j, beta in enumerate(beta_values):
@@ -120,20 +128,19 @@ for i, N in enumerate(N_values):
         else:
             color = '#2255CC'
             marker = 'o'
-        size = 30 + 50 * min(abs(np.log10(ratio)), 2)
+        size = 25 + 40 * min(abs(np.log10(max(ratio, 1e-3))), 2)
         ax.scatter(T, N, c=color, marker=marker, s=size,
                    edgecolors='k', linewidths=0.3, zorder=5)
 
 # Mark closed shells
 closed = [3, 6, 10, 15, 21, 28, 36, 45, 55]
-for N in closed:
-    if N in N_values:
-        ax.axhline(N, color='grey', ls=':', lw=0.4, alpha=0.5)
+for Nc in closed:
+    ax.axhline(Nc, color='grey', ls=':', lw=0.4, alpha=0.4)
 
 ax.set_xlabel(r'$k_{\rm B}T\,/\,\hbar\omega$')
 ax.set_ylabel(r'$N$')
-ax.set_yticks(N_values)
-ax.set_yticklabels([str(n) for n in N_values], fontsize=8)
+ax.set_yticks([5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55])
+ax.set_ylim(1.5, 56)
 
 from matplotlib.lines import Line2D
 leg = [Line2D([0],[0], marker='s', color='w', markerfacecolor='#CC0000',
