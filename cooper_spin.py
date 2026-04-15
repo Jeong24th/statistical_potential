@@ -39,15 +39,18 @@ def V_total(pos_flat, gs):
     return Vh + Vs
 
 def V_grad(pos_flat, gs):
-    eps = 1e-6; f0 = V_total(pos_flat, gs)
-    g = np.empty_like(pos_flat)
-    for i in range(len(pos_flat)):
-        vp = pos_flat.copy(); vp[i] += eps
-        g[i] = (V_total(vp, gs) - f0) / eps
-    return g
+    pos  = pos_flat.reshape(N, 2)
+    diff = pos[:, None, :] - pos[None, :, :]
+    d2   = np.sum(diff**2, axis=2)
+    K    = np.exp(-d2 / (2.0 * sigma2))
+    Kinv = np.linalg.inv(K)
+    wp2  = omega_phi**2
+    bp   = beta_phi
+    grad = wp2 * pos + (2.0 / (gs * bp * bp)) * np.einsum('ab,abj->aj', Kinv * K, diff)
+    return grad.ravel()
 
 
-def find_minimum(gs, n_seeds=12):
+def find_minimum(gs, n_seeds=300):
     """Find V_total minimum using multi-seed L-BFGS-B."""
     best_f, best_x = np.inf, None
     for seed in range(n_seeds):
@@ -264,7 +267,7 @@ leg = [Line2D([0],[0], color='#CC0000', lw=2.5, label='Attractive'),
 fig.legend(handles=leg, fontsize=9, loc='upper center', ncol=3,
            framealpha=0.9, bbox_to_anchor=(0.5, 0.99))
 
-out = (r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics'
+out = (r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics'
        r'\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1')
 fig.savefig(f'{out}\\fig_cooper_N{N}.pdf', dpi=600, bbox_inches='tight')
 fig.savefig(f'{out}\\fig_cooper_N{N}.png', dpi=300, bbox_inches='tight')

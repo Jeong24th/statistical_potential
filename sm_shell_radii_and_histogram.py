@@ -107,7 +107,7 @@ def psi_neg_logdet_and_grad(x, N, states):
 
 # ==================== Seeds ====================
 
-def make_seeds(N, n_seeds=80):
+def make_seeds(N, n_seeds=300):
     cfgs = []
     for seed in range(n_seeds):
         rng = np.random.RandomState(seed)
@@ -257,6 +257,6 @@ if __name__ == '__main__':
 
     ax.grid(True, alpha=0.2)
     plt.tight_layout()
-    out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1\fig_SM_shell_radii.pdf'
+    out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1\fig_SM_shell_radii.pdf'
     plt.savefig(out, dpi=600, bbox_inches='tight')
     print(f"Figure saved to {out}")

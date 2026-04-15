@@ -26,11 +26,15 @@ def find_min(N, beta):
         K=np.exp(-d2/(2.0*s2)); s,ld=np.linalg.slogdet(K)
         return Vh+(-ld/bp if s>0 else 1e10)
     def Vg(v):
-        eps=1e-6;f0=Vt(v);g=np.empty_like(v)
-        for i in range(len(v)):vp=v.copy();vp[i]+=eps;g[i]=(Vt(vp)-f0)/eps
-        return g
+        pos = v.reshape(N, 2)
+        diff = pos[:, None, :] - pos[None, :, :]
+        d2 = np.sum(diff**2, axis=2)
+        K = np.exp(-d2 / (2.0 * s2))
+        Kinv = np.linalg.inv(K)
+        g = op**2 * pos + (2.0 / (s2 * s2)) * np.einsum('ab,abj->aj', Kinv * K, diff) / bp
+        return g.ravel()
     bf,bx=np.inf,None
-    ns=100
+    ns=300
     for seed in range(ns):
         rng=np.random.RandomState(seed);x0=np.zeros((N,2));idx=0
         ms=int(np.ceil(np.sqrt(2*N)));r=0.0
@@ -111,7 +115,7 @@ for j, beta in enumerate(betas_N6):
     ax.set_xlabel(r'$x/a_0$')
 
 fig3.text(0.02,0.95,r'$N=6$',fontsize=11,fontweight='bold',va='top')
-out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
+out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
 fig3.savefig(f'{out}\\fig_SM_temp_N6.pdf',dpi=600,bbox_inches='tight')
 fig3.savefig(f'{out}\\fig_SM_temp_N6.png',dpi=300,bbox_inches='tight')
 print("Saved fig_SM_temp_N6")

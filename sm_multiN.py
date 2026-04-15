@@ -29,12 +29,16 @@ def find_min_and_forces(N):
         s,ld = np.linalg.slogdet(K)
         return Vh + (-ld/beta_phi if s>0 else 1e10)
     def V_grad(v):
-        eps=1e-6; f0=V_total(v); g=np.empty_like(v)
-        for i in range(len(v)): vp=v.copy(); vp[i]+=eps; g[i]=(V_total(vp)-f0)/eps
-        return g
+        pos = v.reshape(N, 2)
+        diff = pos[:, None, :] - pos[None, :, :]
+        d2 = np.sum(diff**2, axis=2)
+        K = np.exp(-d2 / (2.0 * sigma2))
+        Kinv = np.linalg.inv(K)
+        g = omega_phi**2 * pos + (2.0 / (sigma2 * sigma2)) * np.einsum('ab,abj->aj', Kinv * K, diff) / beta_phi
+        return g.ravel()
 
     best_f, best_x = np.inf, None
-    ns = 100
+    ns = 300
     for seed in range(ns):
         rng=np.random.RandomState(seed); x0=np.zeros((N,2)); idx=0
         ms=int(np.ceil(np.sqrt(2*N))); r=0.0
@@ -120,7 +124,7 @@ for idx, N in enumerate(Ns):
     ax.set_xticks([]); ax.set_yticks([])
     ax.text(0.05,0.95,rf'$N={N}$',transform=ax.transAxes,fontsize=9,va='top',fontweight='bold')
 
-out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
+out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
 fig1.savefig(f'{out}\\fig_SM_multiN_forces.pdf', dpi=600, bbox_inches='tight')
 fig1.savefig(f'{out}\\fig_SM_multiN_forces.png', dpi=300, bbox_inches='tight')
 print("Saved fig_SM_multiN_forces")

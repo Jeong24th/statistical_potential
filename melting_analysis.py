@@ -42,13 +42,16 @@ def V_total_func(pos_flat, omega_phi, sigma2, beta_phi):
     return Vh + Vs
 
 def grad_func(pos_flat, omega_phi, sigma2, beta_phi):
-    eps = 1e-6
-    f0 = V_total_func(pos_flat, omega_phi, sigma2, beta_phi)
-    g = np.empty_like(pos_flat)
-    for i in range(len(pos_flat)):
-        vp = pos_flat.copy(); vp[i] += eps
-        g[i] = (V_total_func(vp, omega_phi, sigma2, beta_phi) - f0) / eps
-    return g
+    pos = pos_flat.reshape(N, 2)
+    diff = pos[:, None, :] - pos[None, :, :]          # (N, N, 2)
+    d2 = np.sum(diff**2, axis=2)                       # (N, N)
+    K = np.exp(-d2 / (2.0 * sigma2))
+    Kinv = np.linalg.inv(K)
+    # grad of  -logdet(K)/beta_phi  w.r.t. pos_a
+    # = (2/(beta_phi * sigma2)) * sum_b [ Kinv_ab * K_ab * (pos_a - pos_b) ]
+    grad_stat = (2.0 / (beta_phi * sigma2)) * np.einsum('ab,abj->aj', Kinv * K, diff)
+    grad_harm = omega_phi**2 * pos
+    return (grad_harm + grad_stat).ravel()
 
 def find_minimum(beta):
     beta_phi, omega_phi, sigma2 = get_params(beta)
@@ -56,7 +59,7 @@ def find_minimum(beta):
     grd = lambda v: grad_func(v, omega_phi, sigma2, beta_phi)
 
     best_f, best_x = np.inf, None
-    n_seeds = 100
+    n_seeds = 300
     for seed in range(n_seeds):
         rng = np.random.RandomState(seed)
         x0 = np.zeros((N, 2)); idx = 0
@@ -283,7 +286,7 @@ ax.legend(fontsize=9, framealpha=0.9)
 panel_label(ax, '(d)')
 add_table_lines(ax)
 
-out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
+out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
 fig.savefig(f'{out}\\melting_force_N{N}.pdf', dpi=600, bbox_inches='tight')
 fig.savefig(f'{out}\\melting_force_N{N}.png', dpi=300, bbox_inches='tight')
 print(f"\nSaved melting_force_N{N}.pdf / .png")

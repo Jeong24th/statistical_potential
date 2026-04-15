@@ -34,13 +34,17 @@ def make_Vt(bp, wp, s2):
         Vs = -ld / bp if s_ > 0 else 1e10
         return Vh + Vs
     def Vg(v):
-        eps = 1e-6; f0 = Vt(v); g = np.empty_like(v)
-        for i in range(len(v)):
-            vp = v.copy(); vp[i] += eps; g[i] = (Vt(vp) - f0) / eps
-        return g
+        pos = v.reshape(N, 2)
+        diff = pos[:, None, :] - pos[None, :, :]          # (N, N, 2)
+        d2 = np.sum(diff**2, axis=2)                       # (N, N)
+        K = np.exp(-d2 / (2.0 * s2))
+        Kinv = np.linalg.inv(K)
+        g_stat = (2.0 / (s2 * bp)) * np.einsum('ab,abj->aj', Kinv * K, diff)
+        g = m_p * wp**2 * pos + g_stat
+        return g.ravel()
     return Vt, Vg
 
-def find_min(bp, wp, s2, n_seeds=100):
+def find_min(bp, wp, s2, n_seeds=300):
     Vt, Vg = make_Vt(bp, wp, s2)
     bf, bx = np.inf, None
     for seed in range(n_seeds):
@@ -126,7 +130,7 @@ results = []
 print(f"Scanning {len(betas_scan)} beta values for N={N}...")
 for i, beta in enumerate(betas_scan):
     bp, wp, s2 = get_params(beta)
-    pc = find_min(bp, wp, s2, n_seeds=100)
+    pc = find_min(bp, wp, s2, n_seeds=300)
     radii = np.linalg.norm(pc, axis=1)
 
     shells = get_shells(pc)
@@ -166,7 +170,7 @@ ax.set_xlim(0, 2.65)
 ax.axvline(0.67, color='gray', ls='--', lw=0.6, alpha=0.5)
 ax.axvline(1.63, color='gray', ls='--', lw=0.6, alpha=0.5)
 
-out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1\OLD'
+out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1\OLD'
 fig.savefig(f'{out}\\fig_SM_shell_radii_vs_temp.pdf', dpi=600, bbox_inches='tight')
 fig.savefig(f'{out}\\fig_SM_shell_radii_vs_temp.png', dpi=300, bbox_inches='tight')
 print(f"Saved to OLD/fig_SM_shell_radii_vs_temp.pdf/.png")

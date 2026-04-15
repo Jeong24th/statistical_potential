@@ -34,13 +34,17 @@ def make_Vt(bp, wp, s2):
         Vs = -ld / bp if s_ > 0 else 1e10
         return Vh + Vs
     def Vg(v):
-        eps = 1e-6; f0 = Vt(v); g = np.empty_like(v)
-        for i in range(len(v)):
-            vp = v.copy(); vp[i] += eps; g[i] = (Vt(vp) - f0) / eps
-        return g
+        pos = v.reshape(N, 2)
+        diff = pos[:, None, :] - pos[None, :, :]          # (N, N, 2)
+        d2 = np.sum(diff**2, axis=2)                       # (N, N)
+        K = np.exp(-d2 / (2.0 * s2))
+        Kinv = np.linalg.inv(K)
+        g_stat = (2.0 / (s2 * bp)) * np.einsum('ab,abj->aj', Kinv * K, diff)
+        g = m_p * wp**2 * pos + g_stat
+        return g.ravel()
     return Vt, Vg
 
-def find_min(bp, wp, s2, n_seeds=100):
+def find_min(bp, wp, s2, n_seeds=300):
     Vt, Vg = make_Vt(bp, wp, s2)
     bf, bx = np.inf, None
     # Random seeds
@@ -131,7 +135,7 @@ configs = {}
 print(f"Scanning {len(betas_scan)} beta values for N={N}...")
 for i, beta in enumerate(betas_scan):
     bp, wp, s2 = get_params(beta)
-    vf, pc = find_min(bp, wp, s2, n_seeds=100)
+    vf, pc = find_min(bp, wp, s2, n_seeds=300)
     phase, r_min = classify(pc)
     # Outer shell radius
     radii = np.linalg.norm(pc, axis=1)
@@ -155,7 +159,7 @@ for i, beta in enumerate(betas_scan):
 print("Scan complete.", flush=True)
 
 # ===== Figure 1: r_min order parameter =====
-out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
+out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
 
 fig, ax = plt.subplots(1, 1, figsize=(5.5, 4.5))
 plt.subplots_adjust(left=0.14, right=0.95, bottom=0.12, top=0.93)

@@ -60,7 +60,7 @@ class VtotalCached:
     def jac(self, v):
         return self._compute(v)[1]
 
-def find_min(N, bp, wp, n_seeds=15):
+def find_min(N, bp, wp, n_seeds=300):
     obj = VtotalCached(N, bp, wp)
     best_f, best_x = np.inf, None
     for seed in range(n_seeds):
@@ -98,7 +98,7 @@ for N in N_values:
     print(f"N={N} ...", flush=True)
     rmin_vals = []
     T_vals = []
-    ns = 100
+    ns = 300
     for beta in betas:
         bp, wp = get_params(beta)
         rm = find_min(N, bp, wp, n_seeds=ns)
@@ -113,7 +113,7 @@ ax.set_ylabel(r'$r_{\min}\,/\,a_0$')
 ax.set_ylim(bottom=0)
 ax.legend(fontsize=10, framealpha=0.9)
 
-out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
+out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
 fig.savefig(f'{out}\\fig_SM_rmin_multiN.pdf', dpi=600, bbox_inches='tight')
 print(f"\nSaved fig_SM_rmin_multiN.pdf")
 print("Done")

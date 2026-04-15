@@ -49,15 +49,38 @@ def V_total(pos_flat):
     V_stat = -ld / beta_phi if s > 0 else 1e10
     return V_harm + V_stat
 
-def V_total_grad(pos_flat):
-    eps = 1e-6
-    f0 = V_total(pos_flat)
-    g = np.empty_like(pos_flat)
-    for i in range(len(pos_flat)):
-        vp = pos_flat.copy()
-        vp[i] += eps
-        g[i] = (V_total(vp) - f0) / eps
-    return g
+class VtotalCached:
+    """Compute V_total value and analytical gradient together (shared intermediates)."""
+    def __init__(self):
+        self.wp2 = m_p * omega_phi**2
+        self.bp = beta_phi
+        self.coeff = 2.0 / (self.bp * self.bp)   # 2/(sigma2 * beta_phi) with sigma2=beta_phi
+        self.inv_2s2 = 1.0 / (2.0 * sigma2)
+        self._ck = None; self._cv = None
+    def _c(self, v):
+        k = v.tobytes()
+        if self._ck == k:
+            return self._cv
+        pos = v.reshape(N, 2)
+        diff = pos[:, None, :] - pos[None, :, :]
+        d2 = np.sum(diff * diff, axis=2)
+        K = np.exp(-self.inv_2s2 * d2)
+        sign, logdet = np.linalg.slogdet(K)
+        if sign <= 0 or not np.isfinite(logdet):
+            r = (1e100, np.zeros_like(v))
+            self._cv = r; self._ck = k; return r
+        Kinv = np.linalg.inv(K)
+        S = Kinv * K
+        val = 0.5 * self.wp2 * np.sum(pos * pos) - logdet / self.bp
+        grad = self.wp2 * pos + self.coeff * np.einsum('ab,abj->aj', S, diff)
+        r = (val, grad.ravel())
+        self._cv = r; self._ck = k; return r
+    def fun(self, v):
+        return self._c(v)[0]
+    def jac(self, v):
+        return self._c(v)[1]
+
+vtotal_cached = VtotalCached()
 
 # ── V_stat only (for conditional map) ─────────────────────────
 def V_stat_at(pos):
@@ -70,7 +93,7 @@ def V_stat_at(pos):
 print("Finding V_total minimum ...", flush=True)
 
 best_f, best_x = np.inf, None
-n_seeds = 100
+n_seeds = 300
 
 for seed in range(n_seeds):
     rng = np.random.RandomState(seed)
@@ -97,8 +120,8 @@ for seed in range(n_seeds):
         if idx >= N:
             break
 
-    # L-BFGS-B with numerical gradient
-    res = minimize(V_total, x0.ravel(), jac=V_total_grad,
+    # L-BFGS-B with analytical gradient
+    res = minimize(vtotal_cached.fun, x0.ravel(), jac=vtotal_cached.jac,
                    method='L-BFGS-B', options={'maxiter': 30000, 'ftol': 1e-15})
     if res.fun < best_f:
         best_f, best_x = res.fun, res.x.reshape(N, 2)
@@ -217,7 +240,7 @@ ax.text(0.05, 0.95, rf'$N={N}$', transform=ax.transAxes,
         fontsize=11, va='top', ha='left', fontweight='bold')
 
 # ── Save ──
-out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
+out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
 btag = f'beta{int(beta)}' if beta == int(beta) else f'beta{beta}'
 fig.savefig(f'{out}\\fig_N{N}_{btag}.pdf', dpi=600, bbox_inches='tight')
 fig.savefig(f'{out}\\fig_N{N}_{btag}.png', dpi=300, bbox_inches='tight')

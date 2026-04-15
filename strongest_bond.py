@@ -33,15 +33,44 @@ def V_total(pos_flat):
     Vs = -ld / beta_phi if s > 0 else 1e10
     return Vh + Vs
 
+class _VTotalCached:
+    """Value + analytical gradient, cached so L-BFGS-B never recomputes."""
+    def __init__(self):
+        self._x = None
+        self._val = None
+        self._grad = None
+
+    def _compute(self, pos_flat):
+        pos = pos_flat.reshape(N, 2)
+        diff = pos[:, None, :] - pos[None, :, :]
+        d2 = np.sum(diff * diff, axis=2)
+        K = np.exp(-d2 / (2.0 * sigma2))
+        sign, logdet = np.linalg.slogdet(K)
+        Kinv = np.linalg.inv(K)
+        self._val = 0.5 * omega_phi**2 * np.sum(pos * pos) - logdet / beta_phi
+        self._grad = (omega_phi**2 * pos
+                      + (2.0 / (sigma2 * beta_phi))
+                      * np.einsum('ab,abj->aj', Kinv * K, diff)).ravel()
+        self._x = pos_flat.copy()
+
+    def val(self, pos_flat):
+        if self._x is None or not np.array_equal(pos_flat, self._x):
+            self._compute(pos_flat)
+        return self._val
+
+    def grad(self, pos_flat):
+        if self._x is None or not np.array_equal(pos_flat, self._x):
+            self._compute(pos_flat)
+        return self._grad
+
+_vtc = _VTotalCached()
+
 def V_grad(v):
-    eps = 1e-6; f0 = V_total(v); g = np.empty_like(v)
-    for i in range(len(v)):
-        vp = v.copy(); vp[i] += eps; g[i] = (V_total(vp) - f0) / eps
-    return g
+    return _vtc.grad(v)
 
 print("Finding V_total minimum ...", flush=True)
 best_f, best_x = np.inf, None
-n_seeds = 100
+n_seeds = 300
 for seed in range(n_seeds):
     rng = np.random.RandomState(seed)
     x0 = np.zeros((N, 2)); idx = 0
@@ -153,7 +182,7 @@ leg = [Line2D([0],[0], color='#CC0000', lw=2.5, label='Attractive'),
        Line2D([0],[0], color='#2255CC', lw=2.5, label='Repulsive')]
 ax.legend(handles=leg, fontsize=9, loc='upper right', framealpha=0.9)
 
-out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
+out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
 btag = f'beta{int(beta)}' if beta == int(beta) else f'beta{beta}'
 fig.savefig(f'{out}\\fig_strongest_N{N}_{btag}.pdf', dpi=600, bbox_inches='tight')
 fig.savefig(f'{out}\\fig_strongest_N{N}_{btag}.png', dpi=300, bbox_inches='tight')
