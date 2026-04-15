@@ -1,228 +1,262 @@
 """
-SM: Shell radii comparison + distance-dependent ATT/REP histogram
+Figure SM6: Shell radii at V_total min vs |Psi_0| max for closed-shell N at phi=2.
+Vectorized Slater determinant using precomputed 1D HO wavefunctions.
 """
 import numpy as np
-import matplotlib.pyplot as plt
 from scipy.optimize import minimize
-from scipy.special import genlaguerre
+from scipy.special import hermite
 from math import factorial
+from multiprocessing import Pool, cpu_count
+import time
 
-plt.rcParams.update({
-    'font.family': 'serif', 'font.size': 10, 'mathtext.fontset': 'cm',
-    'axes.linewidth': 0.8, 'xtick.direction': 'in', 'ytick.direction': 'in',
-})
+MAX_WORKERS = max(1, int(cpu_count() * 0.7))
+PHI = 2.0
 
-beta = 2.0
-phi_p = beta
-beta_phi = np.sinh(phi_p)/phi_p*beta
-omega_phi = 1.0/np.cosh(phi_p/2.0)
-sigma2 = beta_phi
+# ==================== 2D HO states ====================
 
-# Polar basis
-def build_states(N):
-    states=[]; E=1
-    while len(states)<N:
-        for n_r in range(E):
-            abs_m=E-1-2*n_r
-            if abs_m<0: continue
-            if abs_m==0: states.append((n_r,0))
-            else: states.append((n_r,abs_m)); states.append((n_r,-abs_m))
-            if len(states)>=N: break
-        E+=1
+def get_2d_ho_states(N):
+    states = []
+    for E in range(200):
+        for nx in range(E + 1):
+            ny = E - nx
+            states.append((nx, ny))
+            if len(states) >= N:
+                return states[:N]
     return states[:N]
 
-def polar_wf(n_r,m,x,y):
-    r2=x**2+y**2;r=np.sqrt(r2);am=abs(m);th=np.arctan2(y,x)
-    norm=np.sqrt(2.0*factorial(n_r)/factorial(n_r+am))/np.sqrt(np.pi)
-    if m==0:norm/=np.sqrt(2.0)
-    L=genlaguerre(n_r,am);rad=r**am*L(r2)*np.exp(-r2/2.0)
-    if m>0:ang=np.cos(m*th)
-    elif m<0:ang=np.sin(am*th)
-    else:ang=1.0
-    return norm*rad*ang
+# Precompute hermite polynomial coefficients
+_hermite_cache = {}
+def get_hermite(n):
+    if n not in _hermite_cache:
+        _hermite_cache[n] = hermite(n)
+    return _hermite_cache[n]
 
-def find_vtotal_min(N):
-    def Vt(v):
-        pos=v.reshape(N,2);Vh=0.5*omega_phi**2*np.sum(pos**2)
-        d2=np.sum((pos[:,None,:]-pos[None,:,:])**2,axis=2)
-        K=np.exp(-d2/(2.0*sigma2));s,ld=np.linalg.slogdet(K)
-        return Vh+(-ld/beta_phi if s>0 else 1e10)
-    def Vg(v):
-        eps=1e-6;f0=Vt(v);g=np.empty_like(v)
-        for i in range(len(v)):vp=v.copy();vp[i]+=eps;g[i]=(Vt(vp)-f0)/eps
-        return g
-    bf,bx=np.inf,None
-    ns=20 if N<=15 else 8
-    for seed in range(ns):
-        rng=np.random.RandomState(seed);x0=np.zeros((N,2));idx=0
-        ms=int(np.ceil(np.sqrt(2*N)));r=0.0
-        for s in range(ms+1):
-            ni=s+1
-            if idx+ni>N:ni=N-idx
-            if ni<=0:break
-            if s==0:x0[idx]=[0,0];idx+=1;r=0.7
+_norm_cache = {}
+def get_norm(n):
+    if n not in _norm_cache:
+        _norm_cache[n] = (np.pi**0.5 * 2**n * factorial(n))**(-0.5)
+    return _norm_cache[n]
+
+def ho_wf_array(n, x_arr):
+    """Evaluate phi_n(x) for array of x values. Returns array."""
+    H = get_hermite(n)
+    norm = get_norm(n)
+    return norm * H(x_arr) * np.exp(-0.5 * x_arr * x_arr)
+
+def ho_wf_deriv_array(n, x_arr):
+    """d/dx phi_n(x) = sqrt(n/2)*phi_{n-1}(x) - sqrt((n+1)/2)*phi_{n+1}(x)"""
+    result = -np.sqrt((n + 1) / 2.0) * ho_wf_array(n + 1, x_arr)
+    if n > 0:
+        result += np.sqrt(n / 2.0) * ho_wf_array(n - 1, x_arr)
+    return result
+
+def build_slater_matrix(pos, states):
+    """Build Slater matrix M[i,j] = phi_i(r_j), fully vectorized."""
+    N = len(pos)
+    xs = pos[:, 0]  # (N,)
+    ys = pos[:, 1]  # (N,)
+    M = np.zeros((N, N))
+    for i, (nx, ny) in enumerate(states):
+        M[i, :] = ho_wf_array(nx, xs) * ho_wf_array(ny, ys)
+    return M
+
+# ==================== V_total ====================
+
+def compute_K(pos, sigma2):
+    diff = pos[:, None, :] - pos[None, :, :]
+    return np.exp(-np.sum(diff**2, axis=2) / (2.0 * sigma2))
+
+def vtotal_and_grad(x, N, wp2, beta_phi, sigma2):
+    pos = x.reshape(N, 2)
+    K = compute_K(pos, sigma2)
+    sign, logdet = np.linalg.slogdet(K)
+    if sign <= 0:
+        return 1e10, np.zeros_like(x)
+    val = 0.5 * wp2 * np.sum(pos * pos) - logdet / beta_phi
+    Kinv = np.linalg.inv(K)
+    W = Kinv * K
+    diff = pos[None, :, :] - pos[:, None, :]
+    c = 2.0 / (sigma2 * beta_phi)
+    grad = wp2 * pos - c * np.einsum('ab,abd->ad', W, diff)
+    return val, grad.flatten()
+
+# ==================== |Psi_0| ====================
+
+def psi_neg_logdet_and_grad(x, N, states):
+    pos = x.reshape(N, 2)
+    xs, ys = pos[:, 0], pos[:, 1]
+    M = build_slater_matrix(pos, states)
+    sign, logdet = np.linalg.slogdet(M)
+    if sign == 0:
+        return 1e10, np.zeros_like(x)
+    val = -logdet
+
+    Minv = np.linalg.inv(M)  # (N, N)
+    grad = np.zeros((N, 2))
+    # dM[i,j]/dx_j = dphi_nx(x_j)/dx * phi_ny(y_j)
+    # dM[i,j]/dy_j = phi_nx(x_j) * dphi_ny(y_j)/dy
+    # d(-logdet)/dx_j = -sum_i Minv[j,i] * dM[i,j]/dx_j
+    for i, (nx, ny) in enumerate(states):
+        dMdx_i = ho_wf_deriv_array(nx, xs) * ho_wf_array(ny, ys)  # (N,)
+        dMdy_i = ho_wf_array(nx, xs) * ho_wf_deriv_array(ny, ys)  # (N,)
+        # Minv[j, i] for all j
+        grad[:, 0] -= Minv[:, i] * dMdx_i
+        grad[:, 1] -= Minv[:, i] * dMdy_i
+
+    return val, grad.flatten()
+
+# ==================== Seeds ====================
+
+def make_seeds(N, n_seeds=80):
+    cfgs = []
+    for seed in range(n_seeds):
+        rng = np.random.RandomState(seed)
+        x0 = np.zeros((N, 2)); idx = 0
+        ms = int(np.ceil(np.sqrt(2 * N))); r = 0.0
+        for s in range(ms + 1):
+            ns = min(s + 1, N - idx)
+            if ns <= 0: break
+            if s == 0: x0[idx] = [0, 0]; idx += 1; r = 0.7
             else:
-                r+=0.55+rng.randn()*0.03
-                for k in range(ni):
-                    a=2*np.pi*k/ni+rng.randn()*0.05+seed*0.3
-                    x0[idx]=[r*np.cos(a),r*np.sin(a)];idx+=1
-            if idx>=N:break
-        res=minimize(Vt,x0.ravel(),jac=Vg,method='L-BFGS-B',
-                     options={'maxiter':30000,'ftol':1e-15})
-        if res.fun<bf:bf,bx=res.fun,res.x.reshape(N,2)
-    return bx[np.argsort(np.linalg.norm(bx,axis=1))]
+                r += 0.55 + rng.randn() * 0.03
+                for k in range(ns):
+                    a = 2*np.pi*k/ns + rng.randn()*0.05 + seed*0.3
+                    x0[idx] = [r*np.cos(a), r*np.sin(a)]; idx += 1
+            if idx >= N: break
+        cfgs.append(x0.flatten())
+    return cfgs
 
-def find_slater_max(N):
-    states=build_states(N)
-    def smat(pos):
-        S=np.empty((N,N))
-        for i,(nr,m) in enumerate(states):S[i]=polar_wf(nr,m,pos[:,0],pos[:,1])
-        return S
-    def neg_ld(v):
-        s,ld=np.linalg.slogdet(smat(v.reshape(N,2)));return -2*ld if s!=0 else 1e30
-    def neg_g(v):
-        eps=1e-6;f0=neg_ld(v);g=np.empty_like(v)
-        for i in range(len(v)):vp=v.copy();vp[i]+=eps;g[i]=(neg_ld(vp)-f0)/eps
-        return g
-    bf,bx=np.inf,None
-    ns=20 if N<=15 else 8
-    for seed in range(ns):
-        rng=np.random.RandomState(seed);x0=np.zeros((N,2));idx=0
-        ms=int(np.ceil(np.sqrt(2*N)));r=0.0
-        for s in range(ms+1):
-            ni=s+1
-            if idx+ni>N:ni=N-idx
-            if ni<=0:break
-            if s==0:x0[idx]=[0,0];idx+=1;r=0.7
-            else:
-                r+=0.55+rng.randn()*0.03
-                for k in range(ni):
-                    a=2*np.pi*k/ni+rng.randn()*0.05+seed*0.3
-                    x0[idx]=[r*np.cos(a),r*np.sin(a)];idx+=1
-            if idx>=N:break
-        res=minimize(neg_ld,x0.ravel(),jac=neg_g,method='L-BFGS-B',
-                     options={'maxiter':30000,'ftol':1e-14})
-        if res.fun<bf:bf,bx=res.fun,res.x.reshape(N,2)
-    return bx[np.argsort(np.linalg.norm(bx,axis=1))]
+# ==================== Worker ====================
 
-def get_shell_radii(pc, N):
-    r = np.linalg.norm(pc, axis=1)
-    shells = []; start=0
-    for i in range(1,N):
-        if r[i]-r[i-1]>0.15:
-            shells.append(np.mean(r[start:i])); start=i
-    shells.append(np.mean(r[start:]))
+def worker(N):
+    print(f"  Starting N={N}...", flush=True)
+    t0 = time.time()
+
+    beta_phi = np.sinh(PHI)
+    omega_phi = 1.0 / np.cosh(PHI / 2.0)
+    sigma2 = beta_phi
+    wp2 = omega_phi ** 2
+    states = get_2d_ho_states(N)
+
+    cfgs = make_seeds(N, 80)
+
+    # --- V_total min ---
+    best_v, best_xv = 1e10, None
+    for cfg in cfgs:
+        try:
+            f0, g0 = vtotal_and_grad(cfg, N, wp2, beta_phi, sigma2)
+            res = minimize(lambda x: vtotal_and_grad(x, N, wp2, beta_phi, sigma2)[0],
+                           cfg, method='L-BFGS-B',
+                           jac=lambda x: vtotal_and_grad(x, N, wp2, beta_phi, sigma2)[1],
+                           options={'maxiter': 30000, 'ftol': 1e-15, 'gtol': 1e-12})
+            if res.fun < best_v:
+                best_v, best_xv = res.fun, res.x
+        except:
+            pass
+
+    # --- |Psi_0| max ---
+    best_p, best_xp = 1e10, None
+    for cfg in cfgs:
+        try:
+            res = minimize(lambda x: psi_neg_logdet_and_grad(x, N, states)[0],
+                           cfg, method='L-BFGS-B',
+                           jac=lambda x: psi_neg_logdet_and_grad(x, N, states)[1],
+                           options={'maxiter': 30000, 'ftol': 1e-15, 'gtol': 1e-12})
+            if res.fun < best_p:
+                best_p, best_xp = res.fun, res.x
+        except:
+            pass
+
+    dt = time.time() - t0
+    print(f"  N={N} done in {dt:.1f}s", flush=True)
+    return N, best_xv, best_xp
+
+# ==================== Shell radii ====================
+
+def extract_shells(pos, tol=0.15):
+    radii = np.sort(np.sqrt(np.sum(pos**2, axis=1)))
+    shells = []
+    i = 0
+    while i < len(radii):
+        cnt = 1
+        while i + cnt < len(radii) and abs(radii[i + cnt] - radii[i]) < tol:
+            cnt += 1
+        shells.append((cnt, np.mean(radii[i:i + cnt])))
+        i += cnt
     return shells
 
-# ═══════════════════════════════════════════════════════════════
-#  FIG 5: Shell radii vs N
-# ═══════════════════════════════════════════════════════════════
-print("=== Shell radii comparison ===")
-Ns = [3, 6, 10, 15, 21, 28, 36, 45, 55]
-fig5, ax5 = plt.subplots(1, 1, figsize=(5, 3.5))
+# ==================== MAIN ====================
 
-for N in Ns:
-    print(f"  N={N}", flush=True)
-    pc_v = find_vtotal_min(N)
-    pc_s = find_slater_max(N)
-    r_v = get_shell_radii(pc_v, N)
-    r_s = get_shell_radii(pc_s, N)
-    for i, (rv, rs) in enumerate(zip(r_v, r_s)):
-        ax5.plot(N, rv, 'bs', ms=4, zorder=5)
-        ax5.plot(N, rs, 'r^', ms=4, zorder=5)
+if __name__ == '__main__':
+    closed_shell_N = [3, 6, 10, 15, 21, 28, 36, 45, 55]
 
-from matplotlib.lines import Line2D
-leg5 = [Line2D([0],[0],marker='s',color='w',markerfacecolor='b',ms=5,label=r'$V_{\rm total}$ min'),
-        Line2D([0],[0],marker='^',color='w',markerfacecolor='r',ms=5,label=r'$|\Psi_0|$ max')]
-ax5.legend(handles=leg5, fontsize=9)
-ax5.set_xlabel(r'$N$')
-ax5.set_ylabel(r'Shell radius $/\, a_0$')
-ax5.set_xticks(Ns)
+    print(f"Fig SM6: N = {closed_shell_N}, phi = {PHI}")
+    print(f"Using {MAX_WORKERS} processes")
+    t0 = time.time()
 
-out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
-fig5.savefig(f'{out}\\fig_SM_shell_radii.pdf', dpi=600, bbox_inches='tight')
-fig5.savefig(f'{out}\\fig_SM_shell_radii.png', dpi=300, bbox_inches='tight')
-print("Saved fig_SM_shell_radii")
+    with Pool(processes=MAX_WORKERS) as pool:
+        results = list(pool.imap_unordered(worker, closed_shell_N))
 
-# ═══════════════════════════════════════════════════════════════
-#  FIG 6: Distance-dependent ATT/REP histogram for N=55
-# ═══════════════════════════════════════════════════════════════
-print("=== Distance histogram N=55 ===")
-N = 55
-pc = find_vtotal_min(N)
-d2_pc = np.sum((pc[:,None,:]-pc[None,:,:])**2, axis=2)
-K = np.exp(-d2_pc/(2.0*sigma2))
-Kinv = np.linalg.inv(K)
+    results.sort(key=lambda t: t[0])
+    print(f"\nTotal: {time.time() - t0:.1f}s\n")
 
-dists_att, dists_rep = [], []
-for a in range(N):
-    for b in range(a+1,N):
-        coeff=Kinv[a,b]*K[a,b]
-        f=(2.0/sigma2)*(pc[b]-pc[a])*coeff/beta_phi
-        dr=pc[b]-pc[a]; dist=np.linalg.norm(dr)
-        dot=np.dot(f,dr/dist)
-        if dot>0: dists_att.append(dist)
-        else: dists_rep.append(dist)
+    all_data = {}
+    for N, xv, xp in results:
+        pv = xv.reshape(N, 2) if xv is not None else None
+        pp = xp.reshape(N, 2) if xp is not None else None
+        sv = extract_shells(pv) if pv is not None else []
+        sp = extract_shells(pp) if pp is not None else []
+        all_data[N] = (sv, sp)
 
-dists_att=np.array(dists_att); dists_rep=np.array(dists_rep)
-max_d=max(dists_att.max(),dists_rep.max())
-bins=np.linspace(0, max_d*1.01, 28)
-centers=0.5*(bins[:-1]+bins[1:]); width=bins[1]-bins[0]
+        print(f"N={N}:")
+        print(f"  V_total shells: {[(n, f'{r:.3f}') for n, r in sv]}")
+        print(f"  |Psi_0| shells: {[(n, f'{r:.3f}') for n, r in sp]}")
+        rv = np.array([r for _, r in sv])
+        rp = np.array([r for _, r in sp])
+        if len(rv) == len(rp) and len(rv) > 0:
+            rmsd = np.sqrt(np.mean((rv - rp)**2))
+            print(f"  RMSD = {rmsd:.4f} a_0")
+        print()
 
-na_hist=np.array([((dists_att>=bins[i])&(dists_att<bins[i+1])).sum() for i in range(len(bins)-1)])
-nr_hist=np.array([((dists_rep>=bins[i])&(dists_rep<bins[i+1])).sum() for i in range(len(bins)-1)])
+    # ==================== PLOT ====================
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    from matplotlib.lines import Line2D
+    matplotlib.rcParams['font.family'] = 'serif'
+    matplotlib.rcParams['mathtext.fontset'] = 'cm'
+    matplotlib.rcParams['font.size'] = 13
 
-# Shell radii for N=55 at phi=2
-shell_r = get_shell_radii(pc, N)
-print(f"  Shell radii: {[f'{r:.2f}' for r in shell_r]}")
+    fig, ax = plt.subplots(figsize=(11, 7))
 
-fig6, (ax6a, ax6b) = plt.subplots(2, 1, figsize=(5.5, 5), sharex=True,
-                                   gridspec_kw={'height_ratios': [1.4, 1]})
-plt.subplots_adjust(hspace=0.06)
+    x_ticks = np.arange(len(closed_shell_N))
+    offset = 0.12
 
-ax6a.bar(centers-width*0.22, na_hist, width*0.42, color='#CC0000', alpha=0.75,
-         edgecolor='#990000', linewidth=0.4, label='Attractive')
-ax6a.bar(centers+width*0.22, nr_hist, width*0.42, color='#2255CC', alpha=0.75,
-         edgecolor='#113399', linewidth=0.4, label='Repulsive')
-ax6a.set_ylabel('Number of pairs')
-ax6a.legend(fontsize=9, framealpha=0.9)
-ax6a.set_title(rf'$N=55$, $\varphi=2$', fontsize=11)
+    for idx, N in enumerate(closed_shell_N):
+        sv, sp = all_data[N]
+        for _, r in sv:
+            ax.scatter(idx - offset, r, marker='s', s=90, c='royalblue', zorder=3,
+                       edgecolors='navy', linewidths=0.5)
+        for _, r in sp:
+            ax.scatter(idx + offset, r, marker='^', s=90, c='tomato', zorder=3,
+                       edgecolors='darkred', linewidths=0.5)
 
-# Fraction attractive — color by dominance
-frac_att = np.array([na_hist[i]/(na_hist[i]+nr_hist[i]) if (na_hist[i]+nr_hist[i])>0 else np.nan
-                     for i in range(len(bins)-1)])
-colors_frac = ['#CC0000' if f > 0.5 else '#2255CC' for f in frac_att]
-ax6b.bar(centers, frac_att, width*0.85, color=colors_frac, alpha=0.6,
-         edgecolor=[c if not np.isnan(f) else 'none' for c, f in zip(colors_frac, frac_att)],
-         linewidth=0.4)
-ax6b.axhline(0.5, color='k', ls='--', lw=0.7, alpha=0.5)
-# Background shading: attraction-dominated (>0.5) vs repulsion-dominated (<0.5) bands
-valid = ~np.isnan(frac_att)
-if valid.any():
-    c_valid = centers[valid]; f_valid = frac_att[valid]
-    in_att = f_valid > 0.5
-    i = 0
-    while i < len(c_valid):
-        j = i
-        while j < len(c_valid) and in_att[j] == in_att[i]:
-            j += 1
-        x0 = c_valid[i] - width/2
-        x1 = c_valid[j-1] + width/2
-        col = '#CC0000' if in_att[i] else '#2255CC'
-        ax6b.axvspan(x0, x1, color=col, alpha=0.06, zorder=0)
-        i = j
-ax6b.set_xlabel(r'Pair distance $/\, a_0$')
-ax6b.set_ylabel(r'Attractive fraction')
-ax6b.set_ylim(0, 1.02)
-ax6b.set_yticks([0, 0.25, 0.5, 0.75, 1.0])
-ax6b.set_yticklabels(['0', '', '0.5', '', '1'])
+    ax.set_xticks(x_ticks)
+    ax.set_xticklabels([str(n) for n in closed_shell_N])
+    ax.set_xlabel(r'$N$', fontsize=15)
+    ax.set_ylabel(r'Shell radius $/a_0$', fontsize=15)
+    ax.set_ylim(-0.1, 3.8)
+    ax.set_title(r'Shell radii at $\varphi = 2$', fontsize=15)
 
-# x-axis
-ax6b.set_xlim(0, 7)
-ax6b.set_xticks(range(8))
-ax6b.xaxis.set_minor_locator(plt.MultipleLocator(0.5))
+    ax.legend(handles=[
+        Line2D([0], [0], marker='s', color='w', markerfacecolor='royalblue', markersize=10,
+               markeredgecolor='navy', label=r'$V_{\mathrm{total}}$ min'),
+        Line2D([0], [0], marker='^', color='w', markerfacecolor='tomato', markersize=10,
+               markeredgecolor='darkred', label=r'$|\Psi_0|$ max'),
+    ], fontsize=12, loc='upper left')
 
-fig6.savefig(f'{out}\\fig_SM_distance_histogram.pdf', dpi=600, bbox_inches='tight')
-fig6.savefig(f'{out}\\fig_SM_distance_histogram.png', dpi=300, bbox_inches='tight')
-print("Saved fig_SM_distance_histogram")
-print("Done")
+    ax.grid(True, alpha=0.2)
+    plt.tight_layout()
+    out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1\fig_SM_shell_radii.pdf'
+    plt.savefig(out, dpi=600, bbox_inches='tight')
+    print(f"Figure saved to {out}")
