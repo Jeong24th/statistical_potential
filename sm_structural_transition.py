@@ -40,7 +40,7 @@ def make_Vt(bp, wp, s2):
         return g
     return Vt, Vg
 
-def find_min(bp, wp, s2, n_seeds=25):
+def find_min(bp, wp, s2, n_seeds=100):
     Vt, Vg = make_Vt(bp, wp, s2)
     bf, bx = np.inf, None
     # Random seeds
@@ -131,7 +131,7 @@ configs = {}
 print(f"Scanning {len(betas_scan)} beta values for N={N}...")
 for i, beta in enumerate(betas_scan):
     bp, wp, s2 = get_params(beta)
-    vf, pc = find_min(bp, wp, s2, n_seeds=25)
+    vf, pc = find_min(bp, wp, s2, n_seeds=100)
     phase, r_min = classify(pc)
     # Outer shell radius
     radii = np.linalg.norm(pc, axis=1)

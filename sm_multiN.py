@@ -34,7 +34,7 @@ def find_min_and_forces(N):
         return g
 
     best_f, best_x = np.inf, None
-    ns = 20 if N<=15 else 8
+    ns = 100
     for seed in range(ns):
         rng=np.random.RandomState(seed); x0=np.zeros((N,2)); idx=0
         ms=int(np.ceil(np.sqrt(2*N))); r=0.0

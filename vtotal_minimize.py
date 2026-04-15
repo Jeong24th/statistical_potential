@@ -70,7 +70,7 @@ def V_stat_at(pos):
 print("Finding V_total minimum ...", flush=True)
 
 best_f, best_x = np.inf, None
-n_seeds = 40 if N <= 10 else 12
+n_seeds = 100
 
 for seed in range(n_seeds):
     rng = np.random.RandomState(seed)

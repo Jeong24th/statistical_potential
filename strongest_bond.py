@@ -41,7 +41,7 @@ def V_grad(v):
 
 print("Finding V_total minimum ...", flush=True)
 best_f, best_x = np.inf, None
-n_seeds = 20 if N <= 10 else 12
+n_seeds = 100
 for seed in range(n_seeds):
     rng = np.random.RandomState(seed)
     x0 = np.zeros((N, 2)); idx = 0

@@ -56,7 +56,7 @@ def find_minimum(beta):
     grd = lambda v: grad_func(v, omega_phi, sigma2, beta_phi)
 
     best_f, best_x = np.inf, None
-    n_seeds = 20 if N <= 10 else 25
+    n_seeds = 100
     for seed in range(n_seeds):
         rng = np.random.RandomState(seed)
         x0 = np.zeros((N, 2)); idx = 0

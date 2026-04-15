@@ -98,7 +98,7 @@ for N in N_values:
     print(f"N={N} ...", flush=True)
     rmin_vals = []
     T_vals = []
-    ns = 30 if N <= 36 else 50
+    ns = 100
     for beta in betas:
         bp, wp = get_params(beta)
         rm = find_min(N, bp, wp, n_seeds=ns)

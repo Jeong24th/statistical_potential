@@ -30,7 +30,7 @@ def find_min(N, beta):
         for i in range(len(v)):vp=v.copy();vp[i]+=eps;g[i]=(Vt(vp)-f0)/eps
         return g
     bf,bx=np.inf,None
-    ns=20 if N<=10 else 8
+    ns=100
     for seed in range(ns):
         rng=np.random.RandomState(seed);x0=np.zeros((N,2));idx=0
         ms=int(np.ceil(np.sqrt(2*N)));r=0.0
