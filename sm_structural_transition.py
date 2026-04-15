@@ -155,7 +155,7 @@ for i, beta in enumerate(betas_scan):
 print("Scan complete.", flush=True)
 
 # ===== Figure 1: r_min order parameter =====
-out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
+out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
 
 fig, ax = plt.subplots(1, 1, figsize=(5.5, 4.5))
 plt.subplots_adjust(left=0.14, right=0.95, bottom=0.12, top=0.93)
