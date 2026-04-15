@@ -53,7 +53,7 @@ def analyze(N, beta):
     obj = VtotalCached(N, beta_phi, omega_phi)
 
     best_f, best_x = np.inf, None
-    n_seeds = 300
+    n_seeds = 1000
     for seed in range(n_seeds):
         rng = np.random.RandomState(seed)
         x0 = np.zeros((N, 2)); idx = 0
