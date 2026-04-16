@@ -124,7 +124,9 @@ for idx, N in enumerate(Ns):
     ax.set_xticks([]); ax.set_yticks([])
     ax.text(0.05,0.95,rf'$N={N}$',transform=ax.transAxes,fontsize=9,va='top',fontweight='bold')
 
-out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
+fig1.supxlabel(r'$x\,/\,a_0$', fontsize=11)
+fig1.supylabel(r'$y\,/\,a_0$', fontsize=11)
+out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
 fig1.savefig(f'{out}\\fig_SM_multiN_forces.pdf', dpi=600, bbox_inches='tight')
 fig1.savefig(f'{out}\\fig_SM_multiN_forces.png', dpi=300, bbox_inches='tight')
 print("Saved fig_SM_multiN_forces")
@@ -168,6 +170,8 @@ for idx, N in enumerate(Ns):
         ax.text(0.95,0.05,rf'{n_att_b}a/{n_rep_b}r',transform=ax.transAxes,
                 fontsize=7,va='bottom',ha='right',color='#666666')
 
+fig2.supxlabel(r'$x\,/\,a_0$', fontsize=11)
+fig2.supylabel(r'$y\,/\,a_0$', fontsize=11)
 fig2.savefig(f'{out}\\fig_SM_multiN_strongest.pdf', dpi=600, bbox_inches='tight')
 fig2.savefig(f'{out}\\fig_SM_multiN_strongest.png', dpi=300, bbox_inches='tight')
 print("Saved fig_SM_multiN_strongest")

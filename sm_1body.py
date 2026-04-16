@@ -143,7 +143,7 @@ ax.set_ylabel(r'$y/a_0$')
 ax.text(0.05, 0.95, rf'$N={N}$', transform=ax.transAxes,
         fontsize=11, va='top', ha='left', fontweight='bold')
 
-out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
+out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
 fig.savefig(f'{out}\\fig_SM_1body_N{N}.pdf', dpi=600, bbox_inches='tight')
 fig.savefig(f'{out}\\fig_SM_1body_N{N}.png', dpi=300, bbox_inches='tight')
 print(f"Saved fig_SM_1body_N{N}.pdf / .png")

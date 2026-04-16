@@ -182,7 +182,7 @@ leg = [Line2D([0],[0], color='#CC0000', lw=2.5, label='Attractive'),
        Line2D([0],[0], color='#2255CC', lw=2.5, label='Repulsive')]
 ax.legend(handles=leg, fontsize=9, loc='upper right', framealpha=0.9)
 
-out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
+out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
 btag = f'beta{int(beta)}' if beta == int(beta) else f'beta{beta}'
 fig.savefig(f'{out}\\fig_strongest_N{N}_{btag}.pdf', dpi=600, bbox_inches='tight')
 fig.savefig(f'{out}\\fig_strongest_N{N}_{btag}.png', dpi=300, bbox_inches='tight')

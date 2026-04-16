@@ -20,7 +20,7 @@ plt.rcParams.update({
 
 # ── Scan parameters ───────────────────────────────────────────
 N_values = list(range(2, 56))
-beta_values = [0.5, 0.7, 1.0, 1.2, 1.5, 1.7, 2.0, 2.3, 2.5, 2.7, 3.0]
+beta_values = [0.5, 4.0/7.0, 0.7, 0.8, 1.0, 1.2, 1.5, 1.7, 2.0, 2.3, 2.5, 2.7, 3.0]
 
 class VtotalCached:
     def __init__(self, N, bp, wp):
@@ -149,7 +149,7 @@ leg = [Line2D([0],[0], marker='s', color='w', markerfacecolor='#CC0000',
               markeredgecolor='k', ms=8, label=r'$\max|F_{\rm rep}| > \max|F_{\rm att}|$')]
 ax.legend(handles=leg, fontsize=8, loc='upper right', framealpha=0.9)
 
-out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
+out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
 fig.savefig(f'{out}\\fig_phase_diagram.pdf', dpi=600, bbox_inches='tight')
 fig.savefig(f'{out}\\fig_phase_diagram.png', dpi=300, bbox_inches='tight')
 print("Saved fig_phase_diagram.pdf / .png")

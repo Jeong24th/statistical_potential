@@ -231,7 +231,7 @@ ax.plot(T_arr, [r['F_rep'] for r in results], 'b^-', ms=5, lw=1.5, label='Repuls
 ax.set_xlabel(r'$k_{\rm B}T\,/\,\hbar\omega$')
 ax.set_ylabel(r'$\sum |F_{b\to a}|$')
 ax.legend(fontsize=9, framealpha=0.9)
-ax.set_title(rf'$N={N}$', fontsize=12)
+ax.set_title(rf'$\mathbf{{N={N}}}$', fontsize=14, fontweight='bold')
 ax.set_yscale('log')
 panel_label(ax, '(a)')
 add_table_lines(ax)
@@ -286,7 +286,7 @@ ax.legend(fontsize=9, framealpha=0.9)
 panel_label(ax, '(d)')
 add_table_lines(ax)
 
-out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
+out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
 fig.savefig(f'{out}\\melting_force_N{N}.pdf', dpi=600, bbox_inches='tight')
 fig.savefig(f'{out}\\melting_force_N{N}.png', dpi=300, bbox_inches='tight')
 print(f"\nSaved melting_force_N{N}.pdf / .png")
