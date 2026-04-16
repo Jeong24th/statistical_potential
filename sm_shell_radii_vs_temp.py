@@ -170,7 +170,7 @@ ax.set_xlim(0, 2.65)
 ax.axvline(0.67, color='gray', ls='--', lw=0.6, alpha=0.5)
 ax.axvline(1.63, color='gray', ls='--', lw=0.6, alpha=0.5)
 
-out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1\OLD'
+out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1\OLD'
 fig.savefig(f'{out}\\fig_SM_shell_radii_vs_temp.pdf', dpi=600, bbox_inches='tight')
 fig.savefig(f'{out}\\fig_SM_shell_radii_vs_temp.png', dpi=300, bbox_inches='tight')
 print(f"Saved to OLD/fig_SM_shell_radii_vs_temp.pdf/.png")

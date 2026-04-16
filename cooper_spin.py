@@ -267,7 +267,7 @@ leg = [Line2D([0],[0], color='#CC0000', lw=2.5, label='Attractive'),
 fig.legend(handles=leg, fontsize=9, loc='upper center', ncol=3,
            framealpha=0.9, bbox_to_anchor=(0.5, 0.99))
 
-out = (r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics'
+out = (r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics'
        r'\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1')
 fig.savefig(f'{out}\\fig_cooper_N{N}.pdf', dpi=600, bbox_inches='tight')
 fig.savefig(f'{out}\\fig_cooper_N{N}.png', dpi=300, bbox_inches='tight')

@@ -113,7 +113,7 @@ ax.set_ylabel(r'$r_{\min}\,/\,a_0$')
 ax.set_ylim(bottom=0)
 ax.legend(fontsize=10, framealpha=0.9)
 
-out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
+out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
 fig.savefig(f'{out}\\fig_SM_rmin_multiN.pdf', dpi=600, bbox_inches='tight')
 print(f"\nSaved fig_SM_rmin_multiN.pdf")
 print("Done")

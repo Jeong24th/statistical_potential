@@ -34,7 +34,7 @@ def find_min_and_forces(N):
         d2 = np.sum(diff**2, axis=2)
         K = np.exp(-d2 / (2.0 * sigma2))
         Kinv = np.linalg.inv(K)
-        g = omega_phi**2 * pos + (2.0 / (sigma2 * sigma2)) * np.einsum('ab,abj->aj', Kinv * K, diff) / beta_phi
+        g = omega_phi**2 * pos + (2.0 / (beta_phi * beta_phi)) * np.einsum('ab,abj->aj', Kinv * K, diff)
         return g.ravel()
 
     best_f, best_x = np.inf, None
@@ -126,7 +126,7 @@ for idx, N in enumerate(Ns):
 
 fig1.supxlabel(r'$x\,/\,a_0$', fontsize=11)
 fig1.supylabel(r'$y\,/\,a_0$', fontsize=11)
-out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
+out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
 fig1.savefig(f'{out}\\fig_SM_multiN_forces.pdf', dpi=600, bbox_inches='tight')
 fig1.savefig(f'{out}\\fig_SM_multiN_forces.png', dpi=300, bbox_inches='tight')
 print("Saved fig_SM_multiN_forces")

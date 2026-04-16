@@ -240,7 +240,7 @@ ax.text(0.05, 0.95, rf'$N={N}$', transform=ax.transAxes,
         fontsize=11, va='top', ha='left', fontweight='bold')
 
 # ── Save ──
-out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
+out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
 btag = f'beta{int(beta)}' if beta == int(beta) else f'beta{beta}'
 fig.savefig(f'{out}\\fig_N{N}_{btag}.pdf', dpi=600, bbox_inches='tight')
 fig.savefig(f'{out}\\fig_N{N}_{btag}.png', dpi=300, bbox_inches='tight')

@@ -69,13 +69,10 @@ print(f"N={N}", flush=True)
 print("Finding Pauli crystal (max |Psi_0|) ...", flush=True)
 def neg_ld(v): return -2*log_det_slater(v.reshape(N,2))
 def neg_g(v):
-    pos = v.reshape(N, 2)
-    diff = pos[:, None, :] - pos[None, :, :]          # (N, N, 2)
-    d2 = np.sum(diff**2, axis=2)                       # (N, N)
-    K = np.exp(-d2 / (2.0 * sigma2))
-    Kinv = np.linalg.inv(K)
-    grad = (2.0 / sigma2) * np.einsum('ab,abj->aj', Kinv * K, diff)
-    return grad.ravel()
+    eps = 1e-7; f0 = neg_ld(v); g = np.empty_like(v)
+    for i in range(len(v)):
+        vp = v.copy(); vp[i] += eps; g[i] = (neg_ld(vp) - f0) / eps
+    return g
 
 best_f, best_x = np.inf, None
 n_seeds = 300
@@ -148,7 +145,7 @@ ax.set_ylabel(r'$y/a_0$')
 ax.text(0.05, 0.95, rf'$N={N}$', transform=ax.transAxes,
         fontsize=11, va='top', ha='left', fontweight='bold')
 
-out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
+out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
 fig.savefig(f'{out}\\fig_SM_density_N{N}.pdf', dpi=600, bbox_inches='tight')
 fig.savefig(f'{out}\\fig_SM_density_N{N}.png', dpi=300, bbox_inches='tight')
 print(f"Saved fig_SM_density_N{N}.pdf / .png")
