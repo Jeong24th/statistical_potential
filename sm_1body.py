@@ -118,11 +118,8 @@ pc = best_x[np.argsort(np.linalg.norm(best_x, axis=1))]
 #  PLOT
 # ═══════════════════════════════════════════════════════════════
 print("Plotting ...", flush=True)
-fig, ax = plt.subplots(1, 1, figsize=(5.0, 4.5) if N > 10 else (3.6, 3.2))
-if N > 10:
-    plt.subplots_adjust(left=0.12, right=0.95, bottom=0.12, top=0.95)
-else:
-    plt.subplots_adjust(left=0.15, right=0.95, bottom=0.14, top=0.95)
+fig, ax = plt.subplots(1, 1, figsize=(4.5, 4.5))
+plt.subplots_adjust(left=0.13, right=0.96, bottom=0.13, top=0.96)
 
 lim = gr
 
