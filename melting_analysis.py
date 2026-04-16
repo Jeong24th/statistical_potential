@@ -209,7 +209,10 @@ betas_arr = np.array([r['beta'] for r in results])
 T_arr = 1.0 / betas_arr
 
 fig, axes = plt.subplots(2, 2, figsize=(8, 6))
-plt.subplots_adjust(hspace=0.35, wspace=0.35)
+plt.subplots_adjust(hspace=0.35, wspace=0.35, top=0.92)
+
+# Figure-level N label (prominent, centered at top)
+fig.suptitle(rf'$N = {N}$', fontsize=16, fontweight='bold', y=0.98)
 
 # Table II temperatures (N=55 only)
 table_II_T = [2.0, 1.0, 1.0/1.5, 0.5, 1.0/3.0] if N > 10 else []
@@ -231,7 +234,6 @@ ax.plot(T_arr, [r['F_rep'] for r in results], 'b^-', ms=5, lw=1.5, label='Repuls
 ax.set_xlabel(r'$k_{\rm B}T\,/\,\hbar\omega$')
 ax.set_ylabel(r'$\sum |F_{b\to a}|$')
 ax.legend(fontsize=9, framealpha=0.9)
-ax.set_title(rf'$\mathbf{{N={N}}}$', fontsize=14, fontweight='bold')
 ax.set_yscale('log')
 panel_label(ax, '(a)')
 add_table_lines(ax)
