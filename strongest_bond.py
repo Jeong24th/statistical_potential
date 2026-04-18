@@ -19,7 +19,7 @@ sigma2 = beta_phi
 print(f"N={N}, beta={beta}, sigma2={sigma2:.4f}")
 
 plt.rcParams.update({
-    'font.family': 'serif', 'font.size': 10, 'mathtext.fontset': 'cm',
+    'text.usetex': True, 'font.family': 'serif', 'font.size': 10,
     'axes.linewidth': 0.8, 'xtick.direction': 'in', 'ytick.direction': 'in',
 })
 
@@ -187,12 +187,4 @@ btag = f'beta{int(beta)}' if beta == int(beta) else f'beta{beta}'
 fig.savefig(f'{out}\\fig_strongest_N{N}_{btag}.pdf', dpi=600, bbox_inches='tight')
 fig.savefig(f'{out}\\fig_strongest_N{N}_{btag}.png', dpi=300, bbox_inches='tight')
 print(f"Saved fig_strongest_N{N}_{btag}.pdf / .png")
-
-# No-label version
-ax.set_xlabel('')
-ax.set_ylabel('')
-ax.tick_params(labelbottom=True, labelleft=True)
-fig.savefig(f'{out}\\fig_strongest_N{N}_{btag}_nolabel.pdf', dpi=600, bbox_inches='tight')
-fig.savefig(f'{out}\\fig_strongest_N{N}_{btag}_nolabel.png', dpi=300, bbox_inches='tight')
-print(f"Saved fig_strongest_N{N}_{btag}_nolabel.pdf / .png")
 print("Done")

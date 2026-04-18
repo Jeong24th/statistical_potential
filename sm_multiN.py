@@ -8,7 +8,7 @@ from scipy.optimize import minimize
 from matplotlib.lines import Line2D
 
 plt.rcParams.update({
-    'font.family': 'serif', 'font.size': 8, 'mathtext.fontset': 'cm',
+    'text.usetex': True, 'font.family': 'serif', 'font.size': 8,
     'axes.linewidth': 0.6, 'xtick.direction': 'in', 'ytick.direction': 'in',
 })
 

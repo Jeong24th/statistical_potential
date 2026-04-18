@@ -10,7 +10,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 plt.rcParams.update({
-    'font.family': 'serif', 'font.size': 11, 'mathtext.fontset': 'cm',
+    'text.usetex': True, 'font.family': 'serif', 'font.size': 11,
     'axes.linewidth': 0.8, 'xtick.direction': 'in', 'ytick.direction': 'in',
 })
 

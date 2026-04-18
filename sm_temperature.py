@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 
 plt.rcParams.update({
-    'font.family': 'serif', 'font.size': 9, 'mathtext.fontset': 'cm',
+    'text.usetex': True, 'font.family': 'serif', 'font.size': 9,
     'axes.linewidth': 0.6, 'xtick.direction': 'in', 'ytick.direction': 'in',
 })
 

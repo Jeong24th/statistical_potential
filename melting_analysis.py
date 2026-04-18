@@ -14,9 +14,9 @@ from scipy.optimize import minimize
 N = int(sys.argv[1]) if len(sys.argv) > 1 else 6
 
 plt.rcParams.update({
+    'text.usetex': True,
     'font.family': 'serif',
     'font.size': 10,
-    'mathtext.fontset': 'cm',
     'axes.linewidth': 0.8,
     'xtick.major.width': 0.6,
     'ytick.major.width': 0.6,

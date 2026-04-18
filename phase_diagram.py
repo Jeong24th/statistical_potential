@@ -10,9 +10,9 @@ import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 
 plt.rcParams.update({
+    'text.usetex': True,
     'font.family': 'serif',
     'font.size': 10,
-    'mathtext.fontset': 'cm',
     'axes.linewidth': 0.8,
     'xtick.direction': 'in',
     'ytick.direction': 'in',

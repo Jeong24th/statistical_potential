@@ -223,8 +223,8 @@ if __name__ == '__main__':
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
     from matplotlib.lines import Line2D
+    matplotlib.rcParams['text.usetex'] = True
     matplotlib.rcParams['font.family'] = 'serif'
-    matplotlib.rcParams['mathtext.fontset'] = 'cm'
     matplotlib.rcParams['font.size'] = 13
 
     fig, ax = plt.subplots(figsize=(11, 7))

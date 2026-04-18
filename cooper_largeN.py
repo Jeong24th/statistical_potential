@@ -21,7 +21,7 @@ print(f"N={N}, beta={beta:.1f}, beta_phi={beta_phi:.4f}, "
       f"omega_phi={omega_phi:.4f}, sigma2={sigma2:.4f}")
 
 plt.rcParams.update({
-    'font.family': 'serif', 'font.size': 10, 'mathtext.fontset': 'cm',
+    'text.usetex': True, 'font.family': 'serif', 'font.size': 10,
     'axes.linewidth': 0.8, 'xtick.direction': 'in', 'ytick.direction': 'in',
 })
 
