@@ -151,8 +151,14 @@ for a in range(N):
 #  PLOT
 # ═══════════════════════════════════════════════════════════════
 print("\nPlotting ...", flush=True)
-fig, ax = plt.subplots(1, 1, figsize=(5.0, 4.5))
-plt.subplots_adjust(left=0.12, right=0.95, bottom=0.12, top=0.95)
+if N <= 10:
+    fig, ax = plt.subplots(1, 1, figsize=(3.6, 3.2))
+    plt.subplots_adjust(left=0.15, right=0.95, bottom=0.14, top=0.95)
+    ms_dot = 5.6
+else:
+    fig, ax = plt.subplots(1, 1, figsize=(5.0, 4.5))
+    plt.subplots_adjust(left=0.12, right=0.95, bottom=0.12, top=0.95)
+    ms_dot = 5
 
 lim = 4.5 if N > 10 else 2.5
 fmax_bond = max(force_mag[a, b] for a, b in bonds)
@@ -167,8 +173,7 @@ for (a, b) in bonds:
             color=col, lw=lw, alpha=alpha, zorder=3, solid_capstyle='round')
 
 for a in range(N):
-    ax.plot(pc[a,0], pc[a,1], '*', color='black',
-            ms=5 if N > 10 else 7,
+    ax.plot(pc[a,0], pc[a,1], '*', color='black', ms=ms_dot,
             markeredgecolor='black', markeredgewidth=0.3, zorder=6)
 
 ax.set_xlim(-lim, lim); ax.set_ylim(-lim, lim); ax.set_aspect('equal')
@@ -182,7 +187,8 @@ leg = [Line2D([0],[0], color='#CC0000', lw=2.5, label='Attractive'),
        Line2D([0],[0], color='#2255CC', lw=2.5, label='Repulsive')]
 ax.legend(handles=leg, fontsize=9, loc='upper right', framealpha=0.9)
 
-out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
+import os
+out = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 btag = f'beta{int(beta)}' if beta == int(beta) else f'beta{beta}'
 fig.savefig(f'{out}\\fig_strongest_N{N}_{btag}.pdf', dpi=600, bbox_inches='tight')
 fig.savefig(f'{out}\\fig_strongest_N{N}_{btag}.png', dpi=300, bbox_inches='tight')
