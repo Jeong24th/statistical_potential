@@ -126,7 +126,7 @@ for idx, N in enumerate(Ns):
 
 fig1.supxlabel(r'$x\,/\,a_0$', fontsize=11)
 fig1.supylabel(r'$y\,/\,a_0$', fontsize=11)
-out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
+out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1_2'
 fig1.savefig(f'{out}\\fig_SM_multiN_forces.pdf', dpi=600, bbox_inches='tight')
 fig1.savefig(f'{out}\\fig_SM_multiN_forces.png', dpi=300, bbox_inches='tight')
 print("Saved fig_SM_multiN_forces")

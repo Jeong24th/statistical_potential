@@ -86,34 +86,70 @@ def find_min(N, bp, wp, n_seeds=300):
     return np.min(np.linalg.norm(best_x, axis=1))
 
 # ── Scan ──
+import os
 N_values = [28, 36, 45, 55]
-betas = [0.3, 0.4, 0.5, 0.6, 0.65, 0.7, 0.75, 0.8, 0.9, 1.0,
-         1.2, 1.5, 1.6, 1.65, 1.7, 1.8, 2.0, 2.5, 3.0]
+# Refined beta grid (denser near transitions in 0.6-1.7); ~24 points
+betas = [0.30, 0.40, 0.50, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90,
+         1.00, 1.10, 1.20, 1.35, 1.50, 1.60, 1.65, 1.70, 1.80, 2.00,
+         2.20, 2.50, 2.80, 3.00]
 colors = {28: '#2255CC', 36: '#22AA44', 45: '#CC8800', 55: '#CC0000'}
 markers = {28: 'o', 36: 's', 45: '^', 55: 'D'}
 
-fig, ax = plt.subplots(1, 1, figsize=(6, 4))
+# Cache results so plotting can be re-run without recomputing
+cache_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                          'rmin_multiN_cache.npz')
+
+# Use 500 seeds (originally 300); enough to suppress most noise at competing-minima
+# points. Cache file lets the user bump this and rerun individual N values cheaply.
+N_SEEDS = 500
+
+results = {}
+if os.path.exists(cache_file):
+    print(f"Loading cache from {cache_file}", flush=True)
+    cached = np.load(cache_file, allow_pickle=True)
+    cached_betas = cached['betas']
+    if list(cached_betas) == list(betas):
+        for N in N_values:
+            key = f'N{N}'
+            if key in cached.files:
+                results[N] = cached[key]
+        print("  (cache valid)", flush=True)
+    else:
+        print("  (cache stale: beta grid changed)", flush=True)
 
 for N in N_values:
-    print(f"N={N} ...", flush=True)
+    if N in results:
+        print(f"N={N}: cached, skipping compute", flush=True)
+        continue
+    print(f"N={N}, seeds={N_SEEDS} ...", flush=True)
     rmin_vals = []
-    T_vals = []
-    ns = 300
     for beta in betas:
         bp, wp = get_params(beta)
-        rm = find_min(N, bp, wp, n_seeds=ns)
+        rm = find_min(N, bp, wp, n_seeds=N_SEEDS)
         rmin_vals.append(rm)
-        T_vals.append(1.0 / beta)
-        print(f"  beta={beta:.2f}  r_min={rm:.4f}")
-    ax.plot(T_vals, rmin_vals, marker=markers[N], color=colors[N],
-            ms=5, lw=1.5, label=rf'$N={N}$')
+        print(f"  beta={beta:.3f}  r_min={rm:.4f}", flush=True)
+    results[N] = np.array(rmin_vals)
+    # Persist incrementally so a long crash leaves partial data
+    np.savez(cache_file, betas=np.array(betas),
+             **{f'N{n}': results[n] for n in results})
 
+# ── Plot ──
+fig, ax = plt.subplots(1, 1, figsize=(6.5, 4.2))
+plt.subplots_adjust(left=0.13, right=0.95, bottom=0.13, top=0.95)
+T_vals = [1.0 / b for b in betas]
+for N in N_values:
+    if N not in results:
+        continue
+    ax.plot(T_vals, results[N], marker=markers[N], color=colors[N],
+            ms=5, lw=1.4, label=rf'$N={N}$')
 ax.set_xlabel(r'$k_{\rm B}T\,/\,\hbar\omega$')
 ax.set_ylabel(r'$r_{\min}\,/\,a_0$')
 ax.set_ylim(bottom=0)
+ax.grid(True, alpha=0.2)
 ax.legend(fontsize=10, framealpha=0.9)
 
-out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1'
+out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1_2'
 fig.savefig(f'{out}\\fig_SM_rmin_multiN.pdf', dpi=600, bbox_inches='tight')
-print(f"\nSaved fig_SM_rmin_multiN.pdf")
+fig.savefig(f'{out}\\fig_SM_rmin_multiN.png', dpi=300, bbox_inches='tight')
+print(f"\nSaved fig_SM_rmin_multiN.pdf / .png")
 print("Done")

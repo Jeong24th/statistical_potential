@@ -1,0 +1,8 @@
+# Debug logs from script runs
+*_run.log
+phase_diagram_run.log
+
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo

@@ -173,16 +173,20 @@ def worker(N):
 
 # ==================== Shell radii ====================
 
-def extract_shells(pos, tol=0.15):
+def extract_shells(pos, gap_tol=0.25):
+    """Cluster particles into shells by gap-based segmentation:
+    sort radii, split where consecutive gap exceeds gap_tol.
+    Robust to within-shell spread (unlike first-element threshold)."""
     radii = np.sort(np.sqrt(np.sum(pos**2, axis=1)))
+    if len(radii) == 0:
+        return []
     shells = []
-    i = 0
-    while i < len(radii):
-        cnt = 1
-        while i + cnt < len(radii) and abs(radii[i + cnt] - radii[i]) < tol:
-            cnt += 1
-        shells.append((cnt, np.mean(radii[i:i + cnt])))
-        i += cnt
+    start = 0
+    for i in range(1, len(radii)):
+        if radii[i] - radii[i-1] > gap_tol:
+            shells.append((i - start, float(np.mean(radii[start:i]))))
+            start = i
+    shells.append((len(radii) - start, float(np.mean(radii[start:]))))
     return shells
 
 # ==================== MAIN ====================
@@ -190,73 +194,141 @@ def extract_shells(pos, tol=0.15):
 if __name__ == '__main__':
     closed_shell_N = [3, 6, 10, 15, 21, 28, 36, 45, 55]
 
-    print(f"Fig SM6: N = {closed_shell_N}, phi = {PHI}")
-    print(f"Using {MAX_WORKERS} processes")
-    t0 = time.time()
+    import os
+    cache_dir = os.path.dirname(os.path.abspath(__file__))
+    cache_file = os.path.join(cache_dir, 'shell_radii_cache.npz')
 
-    with Pool(processes=MAX_WORKERS) as pool:
-        results = list(pool.imap_unordered(worker, closed_shell_N))
+    if os.path.exists(cache_file):
+        print(f"Loading cached results from {cache_file}")
+        d = np.load(cache_file)
+        all_data = {}
+        for N in closed_shell_N:
+            sv_arr = d[f'sv_{N}']
+            sp_arr = d[f'sp_{N}']
+            sv = [(int(round(s[0])), float(s[1])) for s in sv_arr]
+            sp = [(int(round(s[0])), float(s[1])) for s in sp_arr]
+            all_data[N] = (sv, sp)
+    else:
+        print(f"Fig SM6: N = {closed_shell_N}, phi = {PHI}")
+        print(f"Using {MAX_WORKERS} processes")
+        t0 = time.time()
 
-    results.sort(key=lambda t: t[0])
-    print(f"\nTotal: {time.time() - t0:.1f}s\n")
+        with Pool(processes=MAX_WORKERS) as pool:
+            results = list(pool.imap_unordered(worker, closed_shell_N))
 
-    all_data = {}
-    for N, xv, xp in results:
-        pv = xv.reshape(N, 2) if xv is not None else None
-        pp = xp.reshape(N, 2) if xp is not None else None
-        sv = extract_shells(pv) if pv is not None else []
-        sp = extract_shells(pp) if pp is not None else []
-        all_data[N] = (sv, sp)
+        results.sort(key=lambda t: t[0])
+        print(f"\nTotal: {time.time() - t0:.1f}s\n")
 
-        print(f"N={N}:")
-        print(f"  V_total shells: {[(n, f'{r:.3f}') for n, r in sv]}")
-        print(f"  |Psi_0| shells: {[(n, f'{r:.3f}') for n, r in sp]}")
-        rv = np.array([r for _, r in sv])
-        rp = np.array([r for _, r in sp])
-        if len(rv) == len(rp) and len(rv) > 0:
-            rmsd = np.sqrt(np.mean((rv - rp)**2))
-            print(f"  RMSD = {rmsd:.4f} a_0")
-        print()
+        all_data = {}
+        for N, xv, xp in results:
+            pv = xv.reshape(N, 2) if xv is not None else None
+            pp = xp.reshape(N, 2) if xp is not None else None
+            sv = extract_shells(pv) if pv is not None else []
+            sp = extract_shells(pp) if pp is not None else []
+            all_data[N] = (sv, sp)
 
-    # ==================== PLOT ====================
+            print(f"N={N}:")
+            print(f"  V_total shells: {[(n, f'{r:.3f}') for n, r in sv]}")
+            print(f"  |Psi_0| shells: {[(n, f'{r:.3f}') for n, r in sp]}")
+            rv = np.array([r for _, r in sv])
+            rp = np.array([r for _, r in sp])
+            if len(rv) == len(rp) and len(rv) > 0:
+                rmsd = np.sqrt(np.mean((rv - rp)**2))
+                print(f"  RMSD = {rmsd:.4f} a_0")
+            print()
+
+        cache_payload = {}
+        for N in closed_shell_N:
+            sv, sp = all_data[N]
+            cache_payload[f'sv_{N}'] = np.array(sv) if sv else np.array([]).reshape(0, 2)
+            cache_payload[f'sp_{N}'] = np.array(sp) if sp else np.array([]).reshape(0, 2)
+        cache_payload['Ns'] = np.array(closed_shell_N)
+        np.savez(cache_file, **cache_payload)
+        print(f"Cached results to {cache_file}")
+
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
     from matplotlib.lines import Line2D
     matplotlib.rcParams['text.usetex'] = True
     matplotlib.rcParams['font.family'] = 'serif'
-    matplotlib.rcParams['font.size'] = 13
+    matplotlib.rcParams['font.size'] = 11
 
-    fig, ax = plt.subplots(figsize=(11, 7))
+    # Two-panel: main scatter (top) + per-shell residual (bottom)
+    fig, (ax, axR) = plt.subplots(2, 1, figsize=(9, 6.2),
+                                  gridspec_kw={'height_ratios': [3, 1], 'hspace': 0.08},
+                                  sharex=True)
 
     x_ticks = np.arange(len(closed_shell_N))
-    offset = 0.12
+    offset = 0.06  # tighter pairing
 
+    # Color-code each pair by shell index (inner -> dark, outer -> light)
+    cmap = plt.get_cmap('plasma')
+    max_shells = max(max(len(all_data[N][0]), len(all_data[N][1]))
+                     for N in closed_shell_N)
+    rmsd_per_N = []
     for idx, N in enumerate(closed_shell_N):
         sv, sp = all_data[N]
-        for _, r in sv:
-            ax.scatter(idx - offset, r, marker='s', s=90, c='royalblue', zorder=3,
-                       edgecolors='navy', linewidths=0.5)
-        for _, r in sp:
-            ax.scatter(idx + offset, r, marker='^', s=90, c='tomato', zorder=3,
-                       edgecolors='darkred', linewidths=0.5)
+        rs_v = [r for _, r in sv]
+        rs_p = [r for _, r in sp]
+        # Plot pairs with thin connecting line per shell (inner-to-outer order)
+        n_pairs = min(len(rs_v), len(rs_p))
+        for k in range(n_pairs):
+            c = cmap(k / max(max_shells - 1, 1) * 0.95)
+            ax.plot([idx - offset, idx + offset], [rs_v[k], rs_p[k]],
+                    color=c, lw=1.2, alpha=0.85, zorder=2)
+            ax.scatter(idx - offset, rs_v[k], marker='s', s=85, c=[c],
+                       edgecolors='black', linewidths=0.3, zorder=3)
+            ax.scatter(idx + offset, rs_p[k], marker='^', s=85, c=[c],
+                       edgecolors='black', linewidths=0.3, zorder=3)
+        # Any leftover shells (mismatched count): plot uncoupled
+        for k in range(n_pairs, len(rs_v)):
+            c = cmap(k / max(max_shells - 1, 1) * 0.95)
+            ax.scatter(idx - offset, rs_v[k], marker='s', s=85, c=[c],
+                       edgecolors='black', linewidths=0.3, zorder=3)
+        for k in range(n_pairs, len(rs_p)):
+            c = cmap(k / max(max_shells - 1, 1) * 0.95)
+            ax.scatter(idx + offset, rs_p[k], marker='^', s=85, c=[c],
+                       edgecolors='black', linewidths=0.3, zorder=3)
 
-    ax.set_xticks(x_ticks)
-    ax.set_xticklabels([str(n) for n in closed_shell_N])
-    ax.set_xlabel(r'$N$', fontsize=15)
-    ax.set_ylabel(r'Shell radius $/a_0$', fontsize=15)
-    ax.set_ylim(-0.1, 3.8)
-    ax.set_title(r'Shell radii at $\varphi = 2$', fontsize=15)
+        # RMSD over paired shells
+        if n_pairs > 0:
+            rv = np.array(rs_v[:n_pairs]); rp = np.array(rs_p[:n_pairs])
+            rmsd = float(np.sqrt(np.mean((rv - rp)**2)))
+        else:
+            rmsd = float('nan')
+        rmsd_per_N.append(rmsd)
 
+    # Top panel cosmetics
+    ax.set_ylabel(r'Shell radius $/a_0$')
+    ax.set_ylim(-0.15, 3.9)
+    ax.grid(True, axis='y', alpha=0.2)
     ax.legend(handles=[
-        Line2D([0], [0], marker='s', color='w', markerfacecolor='royalblue', markersize=10,
-               markeredgecolor='navy', label=r'$V_{\mathrm{total}}$ min'),
-        Line2D([0], [0], marker='^', color='w', markerfacecolor='tomato', markersize=10,
-               markeredgecolor='darkred', label=r'$|\Psi_0|$ max'),
-    ], fontsize=12, loc='upper left')
+        Line2D([0], [0], marker='s', color='w', markerfacecolor='gray', markersize=8,
+               markeredgecolor='black', label=r'$V_{\mathrm{total}}$ min'),
+        Line2D([0], [0], marker='^', color='w', markerfacecolor='gray', markersize=8,
+               markeredgecolor='black', label=r'$|\Psi_0|$ max'),
+    ], fontsize=10, loc='upper left', framealpha=0.9)
+    ax.set_title(r'Shell radii at $\varphi = 2$ (color: shell index, inner $\to$ outer)',
+                 fontsize=11)
 
-    ax.grid(True, alpha=0.2)
-    plt.tight_layout()
-    out = r'C:\Users\user\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1\fig_SM_shell_radii.pdf'
+    # Bottom panel: per-N RMSD (paired shells)
+    rmsd_arr = np.array(rmsd_per_N)
+    bars = axR.bar(x_ticks, rmsd_arr, width=0.6,
+                   color=['#9b9bd2' if not np.isnan(v) else 'lightgray' for v in rmsd_arr],
+                   edgecolor='black', linewidth=0.5)
+    for x, v in zip(x_ticks, rmsd_arr):
+        if not np.isnan(v):
+            axR.text(x, v + 0.001, f'{v:.3f}', ha='center', va='bottom', fontsize=8)
+    axR.set_ylabel(r'RMSD $/a_0$', fontsize=10)
+    axR.set_xlabel(r'$N$ (closed shells)')
+    axR.set_xticks(x_ticks)
+    axR.set_xticklabels([str(n) for n in closed_shell_N])
+    axR.set_ylim(0, max(0.025, np.nanmax(rmsd_arr) * 1.4))
+    axR.grid(True, axis='y', alpha=0.2)
+
+    plt.subplots_adjust(left=0.10, right=0.97, bottom=0.08, top=0.94)
+    out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1_2\fig_SM_shell_radii.pdf'
     plt.savefig(out, dpi=600, bbox_inches='tight')
+    plt.savefig(out.replace('.pdf', '.png'), dpi=300, bbox_inches='tight')
     print(f"Figure saved to {out}")
