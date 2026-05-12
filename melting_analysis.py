@@ -6,6 +6,7 @@ Track total force magnitude, attractive/repulsive decomposition.
 Usage: python melting_force.py [<N>]
 """
 
+import os
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
@@ -232,7 +233,7 @@ ax.plot(T_arr, [r['F_total'] for r in results], 'ko-', ms=5, lw=1.8, label='Tota
 ax.plot(T_arr, [r['F_att'] for r in results], 'rs-', ms=5, lw=1.5, label='Attractive')
 ax.plot(T_arr, [r['F_rep'] for r in results], 'b^-', ms=5, lw=1.5, label='Repulsive')
 ax.set_xlabel(r'$k_{\rm B}T\,/\,\hbar\omega$')
-ax.set_ylabel(r'$\sum |F_{b\to a}|$')
+ax.set_ylabel(r'$\sum |F_{b\to a}|\,a_0/\hbar\omega$')
 ax.legend(fontsize=9, framealpha=0.9)
 ax.set_yscale('log')
 panel_label(ax, '(a)')
@@ -259,7 +260,7 @@ for i, r in enumerate(results):
     ax.plot(T_arr[i], fmax_vals[i], marker, color=col, ms=7,
             markeredgecolor='k', markeredgewidth=0.4, zorder=5)
 ax.set_xlabel(r'$k_{\rm B}T\,/\,\hbar\omega$')
-ax.set_ylabel(r'$\max\,|F_{b\to a}|$')
+ax.set_ylabel(r'$\max\,|F_{b\to a}|\,a_0/\hbar\omega$')
 from matplotlib.lines import Line2D
 leg_max = [Line2D([0],[0], marker='s', color='w', markerfacecolor='#CC0000',
                   markeredgecolor='k', ms=6, label='Attractive'),
@@ -288,9 +289,9 @@ ax.legend(fontsize=9, framealpha=0.9)
 panel_label(ax, '(d)')
 add_table_lines(ax)
 
-out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1_2'
-fig.savefig(f'{out}\\melting_force_N{N}.pdf', dpi=600, bbox_inches='tight')
-fig.savefig(f'{out}\\melting_force_N{N}.png', dpi=300, bbox_inches='tight')
+out = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+fig.savefig(os.path.join(out, f'melting_force_N{N}.pdf'), dpi=600, bbox_inches='tight')
+fig.savefig(os.path.join(out, f'melting_force_N{N}.png'), dpi=300, bbox_inches='tight')
 print(f"\nSaved melting_force_N{N}.pdf / .png")
 
 # ── SM figure: Attraction/Repulsion ratio (moved from main Fig 3) ──
@@ -302,7 +303,7 @@ ax_sm.set_xlabel(r'$k_{\rm B}T\,/\,\hbar\omega$')
 ax_sm.set_ylabel(r'$\sum|F_{\rm att}|\,/\,\sum|F_{\rm rep}|$')
 ax_sm.set_title(rf'$N={N}$', fontsize=11)
 ax_sm.set_ylim(bottom=0)
-fig_sm.savefig(f'{out}\\fig_SM_ratio_N{N}.pdf', dpi=600, bbox_inches='tight')
+fig_sm.savefig(os.path.join(out, f'fig_SM_ratio_N{N}.pdf'), dpi=600, bbox_inches='tight')
 print(f"Saved fig_SM_ratio_N{N}.pdf")
 
 print("Done")

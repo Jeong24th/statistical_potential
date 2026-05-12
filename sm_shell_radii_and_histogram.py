@@ -2,6 +2,7 @@
 Figure SM6: Shell radii at V_total min vs |Psi_0| max for closed-shell N at phi=2.
 Vectorized Slater determinant using precomputed 1D HO wavefunctions.
 """
+import os
 import numpy as np
 from scipy.optimize import minimize
 from scipy.special import hermite
@@ -262,10 +263,9 @@ if __name__ == '__main__':
     x_ticks = np.arange(len(closed_shell_N))
     offset = 0.06  # tighter pairing
 
-    # Color-code each pair by shell index (inner -> dark, outer -> light)
-    cmap = plt.get_cmap('plasma')
-    max_shells = max(max(len(all_data[N][0]), len(all_data[N][1]))
-                     for N in closed_shell_N)
+    # Single color: shell index is already encoded in the y-axis (radius)
+    marker_color = '#4c72b0'
+    line_color = '#888888'
     rmsd_per_N = []
     for idx, N in enumerate(closed_shell_N):
         sv, sp = all_data[N]
@@ -274,21 +274,18 @@ if __name__ == '__main__':
         # Plot pairs with thin connecting line per shell (inner-to-outer order)
         n_pairs = min(len(rs_v), len(rs_p))
         for k in range(n_pairs):
-            c = cmap(k / max(max_shells - 1, 1) * 0.95)
             ax.plot([idx - offset, idx + offset], [rs_v[k], rs_p[k]],
-                    color=c, lw=1.2, alpha=0.85, zorder=2)
-            ax.scatter(idx - offset, rs_v[k], marker='s', s=85, c=[c],
+                    color=line_color, lw=1.0, alpha=0.7, zorder=2)
+            ax.scatter(idx - offset, rs_v[k], marker='s', s=85, c=marker_color,
                        edgecolors='black', linewidths=0.3, zorder=3)
-            ax.scatter(idx + offset, rs_p[k], marker='^', s=85, c=[c],
+            ax.scatter(idx + offset, rs_p[k], marker='^', s=85, c=marker_color,
                        edgecolors='black', linewidths=0.3, zorder=3)
         # Any leftover shells (mismatched count): plot uncoupled
         for k in range(n_pairs, len(rs_v)):
-            c = cmap(k / max(max_shells - 1, 1) * 0.95)
-            ax.scatter(idx - offset, rs_v[k], marker='s', s=85, c=[c],
+            ax.scatter(idx - offset, rs_v[k], marker='s', s=85, c=marker_color,
                        edgecolors='black', linewidths=0.3, zorder=3)
         for k in range(n_pairs, len(rs_p)):
-            c = cmap(k / max(max_shells - 1, 1) * 0.95)
-            ax.scatter(idx + offset, rs_p[k], marker='^', s=85, c=[c],
+            ax.scatter(idx + offset, rs_p[k], marker='^', s=85, c=marker_color,
                        edgecolors='black', linewidths=0.3, zorder=3)
 
         # RMSD over paired shells
@@ -304,13 +301,12 @@ if __name__ == '__main__':
     ax.set_ylim(-0.15, 3.9)
     ax.grid(True, axis='y', alpha=0.2)
     ax.legend(handles=[
-        Line2D([0], [0], marker='s', color='w', markerfacecolor='gray', markersize=8,
+        Line2D([0], [0], marker='s', color='w', markerfacecolor='#4c72b0', markersize=8,
                markeredgecolor='black', label=r'$V_{\mathrm{total}}$ min'),
-        Line2D([0], [0], marker='^', color='w', markerfacecolor='gray', markersize=8,
+        Line2D([0], [0], marker='^', color='w', markerfacecolor='#4c72b0', markersize=8,
                markeredgecolor='black', label=r'$|\Psi_0|$ max'),
     ], fontsize=10, loc='upper left', framealpha=0.9)
-    ax.set_title(r'Shell radii at $\varphi = 2$ (color: shell index, inner $\to$ outer)',
-                 fontsize=11)
+    ax.set_title(r'Shell radii at $\varphi = 2$', fontsize=11)
 
     # Bottom panel: per-N RMSD (paired shells)
     rmsd_arr = np.array(rmsd_per_N)
@@ -328,7 +324,8 @@ if __name__ == '__main__':
     axR.grid(True, axis='y', alpha=0.2)
 
     plt.subplots_adjust(left=0.10, right=0.97, bottom=0.08, top=0.94)
-    out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1_2\fig_SM_shell_radii.pdf'
+    out_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+    out = os.path.join(out_dir, 'fig_SM_shell_radii.pdf')
     plt.savefig(out, dpi=600, bbox_inches='tight')
     plt.savefig(out.replace('.pdf', '.png'), dpi=300, bbox_inches='tight')
     print(f"Figure saved to {out}")
