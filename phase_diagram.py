@@ -14,6 +14,7 @@ Parallelized with multiprocessing.
 import os
 import sys
 import time
+from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
@@ -29,6 +30,11 @@ plt.rcParams.update({
     'ytick.direction': 'in',
 })
 
+SCRIPT_DIR = Path(__file__).resolve().parent
+MANUSCRIPT_DIR = SCRIPT_DIR.parents[1] / 'Nature_Comm'
+OUTPUT_DIR = MANUSCRIPT_DIR / 'figures' if MANUSCRIPT_DIR.exists() else SCRIPT_DIR / 'figures'
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
 # ── Scan parameters ───────────────────────────────────────────
 N_values = list(range(2, 56))
 beta_values = [0.5, 4.0/7.0, 0.7, 0.8, 1.0, 1.2, 1.5, 1.7,
@@ -36,8 +42,7 @@ beta_values = [0.5, 4.0/7.0, 0.7, 0.8, 1.0, 1.2, 1.5, 1.7,
 N_SEEDS = 1000
 MAX_WORKERS = max(1, int(cpu_count() * 0.7))
 
-CACHE_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                          'phase_diagram_cache.npz')
+CACHE_FILE = SCRIPT_DIR / 'phase_diagram_cache.npz'
 
 # ── V_total + analytic gradient (per-process) ────────────────
 class VtotalCached:
@@ -161,42 +166,87 @@ if __name__ == '__main__':
     #  lower temperatures are on the LEFT.
     # ═══════════════════════════════════════════════════════════
     fig, ax = plt.subplots(1, 1, figsize=(5.5, 5.0))
-    plt.subplots_adjust(left=0.13, right=0.96, bottom=0.11, top=0.95)
+    fig.set_size_inches(6.0, 5.0)
+    plt.subplots_adjust(left=0.12, right=0.96, bottom=0.12, top=0.96)
 
-    for i, N in enumerate(N_values):
-        for j, beta in enumerate(beta_values):
-            phi = beta  # varphi = beta * hbar * omega; we use natural units
-            T_norm = 1.0 / phi  # k_B T / (hbar*omega)
-            r = ratio[i, j]
-            if r > 1:
-                color = '#CC0000'; marker = 's'
-            else:
-                color = '#2255CC'; marker = 'o'
-            size = 25 + 40 * min(abs(np.log10(max(r, 1e-3))), 2)
-            ax.scatter(T_norm, N, c=color, marker=marker, s=size,
-                       edgecolors='k', linewidths=0.3, zorder=5)
-
+    T_values = 1.0 / np.asarray(beta_values)
+    order = np.argsort(T_values)
+    T_values = T_values[order]
+    ratio_T = ratio[:, order]
+    T_min, T_max = 0.30, 2.10
     closed = [3, 6, 10, 15, 21, 28, 36, 45, 55]
+
+    def crossover_temperature(row):
+        """First low-T attraction-to-repulsion crossing on heating."""
+        if row[0] <= 1.0:
+            return np.nan
+        repulsive = np.flatnonzero(row <= 1.0)
+        if not len(repulsive):
+            return T_values[-1]
+        k = int(repulsive[0])
+        t1, t2 = T_values[k - 1], T_values[k]
+        r1, r2 = row[k - 1], row[k]
+        return t1 + (1.0 - r1) * (t2 - t1) / (r2 - r1)
+
+    Tc = np.asarray([crossover_temperature(row) for row in ratio_T])
+
+    ax.set_facecolor('#e9f1fa')
+    for N, tc in zip(N_values, Tc):
+        if np.isfinite(tc):
+            ax.fill_betweenx([N - 0.42, N + 0.42], T_min, tc,
+                             color='#efb3b3', lw=0, zorder=2)
+
+    # Draw T_c(N) only across consecutive particle numbers; N is discrete.
+    finite = np.isfinite(Tc)
+    start = None
+    for i in range(len(N_values) + 1):
+        if i < len(N_values) and finite[i]:
+            if start is None:
+                start = i
+        elif start is not None:
+            stop = i
+            ax.plot(Tc[start:stop], np.asarray(N_values[start:stop]),
+                    color='#8b0000', lw=1.2, zorder=4)
+            start = None
+
+    open_mask = finite & ~np.isin(N_values, closed)
+    closed_mask = finite & np.isin(N_values, closed)
+    ax.scatter(Tc[open_mask], np.asarray(N_values)[open_mask], s=20,
+               color='#b30000', edgecolor='white', linewidth=0.35, zorder=5)
+    ax.scatter(Tc[closed_mask], np.asarray(N_values)[closed_mask], s=34,
+               marker='D', facecolor='white', edgecolor='#8b0000',
+               linewidth=1.0, zorder=6)
+
     for Nc in closed:
-        ax.axhline(Nc, color='grey', ls=':', lw=0.4, alpha=0.4)
+        ax.axhline(Nc, color='0.35', ls=':', lw=0.55, alpha=0.55, zorder=1)
+        ax.plot(T_max - 0.025, Nc, marker='D', ms=3.6,
+                mfc='white', mec='0.25', mew=0.7, zorder=6)
+
+    ax.text(0.43, 47.5, 'attraction-dominated', color='#8b0000',
+            fontsize=9, rotation=90, ha='center', va='center')
+    ax.text(1.50, 31, 'repulsion-dominated', color='#2255CC',
+            fontsize=9, ha='center', va='center')
+    ax.annotate(r'$T_{\rm c}(N)$', xy=(Tc[-1], N_values[-1]),
+                xytext=(0.76, 53.0), fontsize=9, color='#8b0000',
+                arrowprops=dict(arrowstyle='-', color='#8b0000', lw=0.8))
 
     ax.set_xlabel(r'$k_{\rm B}T/\hbar\omega$')
     ax.set_ylabel(r'$N$')
     ax.set_yticks([5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55])
     ax.set_ylim(1.5, 56)
-    # 1/phi ranges over [1/3.0, 1/0.5] = [0.333, 2.0]; pad a bit.
-    ax.set_xlim(0.30, 2.10)
+    ax.set_xlim(T_min, T_max)
 
-    leg = [Line2D([0], [0], marker='s', color='w', markerfacecolor='#CC0000',
-                  markeredgecolor='k', ms=8,
-                  label=r'$\max|F_{\rm att}| > \max|F_{\rm rep}|$'),
-           Line2D([0], [0], marker='o', color='w', markerfacecolor='#2255CC',
-                  markeredgecolor='k', ms=8,
-                  label=r'$\max|F_{\rm rep}| > \max|F_{\rm att}|$')]
-    ax.legend(handles=leg, fontsize=8, loc='upper right', framealpha=0.9)
+    leg = [
+        Line2D([0], [0], color='#efb3b3', lw=7,
+               label=r'$\max|F_{\rm att}|>\max|F_{\rm rep}|$'),
+        Line2D([0], [0], color='#e9f1fa', lw=7,
+               label=r'$\max|F_{\rm rep}|>\max|F_{\rm att}|$'),
+        Line2D([0], [0], marker='D', color='w', markerfacecolor='white',
+               markeredgecolor='0.25', ms=5, label='closed shell'),
+    ]
+    ax.legend(handles=leg, fontsize=8, loc='upper right', framealpha=0.94)
 
-    out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1_2'
-    fig.savefig(f'{out}\\fig_phase_diagram.pdf', dpi=600, bbox_inches='tight')
-    fig.savefig(f'{out}\\fig_phase_diagram.png', dpi=300, bbox_inches='tight')
-    print("Saved fig_phase_diagram.pdf / .png")
+    fig.savefig(OUTPUT_DIR / 'fig_phase_diagram.pdf', dpi=600, bbox_inches='tight')
+    fig.savefig(OUTPUT_DIR / 'fig_phase_diagram.png', dpi=300, bbox_inches='tight')
+    print(f"Saved fig_phase_diagram.pdf / .png to {OUTPUT_DIR}")
     print("Done")

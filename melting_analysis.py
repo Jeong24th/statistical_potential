@@ -8,11 +8,16 @@ Usage: python melting_force.py [<N>]
 
 import os
 import sys
+from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 
 N = int(sys.argv[1]) if len(sys.argv) > 1 else 6
+SCRIPT_DIR = Path(__file__).resolve().parent
+MANUSCRIPT_DIR = SCRIPT_DIR.parents[1] / 'Nature_Comm'
+OUTPUT_DIR = MANUSCRIPT_DIR / 'figures' if MANUSCRIPT_DIR.exists() else SCRIPT_DIR / 'figures'
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 plt.rcParams.update({
     'text.usetex': True,
@@ -174,25 +179,47 @@ def compute_forces(pc, sigma2, beta_phi):
 
 # ── Scan beta ─────────────────────────────────────────────────
 betas = [0.3, 0.4, 0.5, 0.6, 0.65, 0.7, 0.75, 0.8, 0.9, 1.0, 1.2, 1.5, 1.6, 1.65, 1.7, 1.8, 2.0, 2.5, 3.0]
+cache_file = SCRIPT_DIR / f'melting_analysis_cache_N{N}.npz'
+cache_keys = [
+    'F_att', 'F_rep', 'F_total', 'F_max', 'F_max_is_att', 'n_att', 'n_rep',
+    'F_net_radial_mean', 'F_net_radial_outer', 'beta', 'T', 'Vmin',
+    'omega_phi', 'shell_r', 'r_min',
+]
 results = []
 
-print(f"N={N}, scanning beta ...", flush=True)
-for beta in betas:
-    print(f"  beta={beta:.1f} ...", flush=True)
-    try:
-        pc, Vmin, beta_phi, omega_phi, sigma2 = find_minimum(beta)
-        finfo = compute_forces(pc, sigma2, beta_phi)
-        finfo['beta'] = beta
-        finfo['T'] = 1.0 / beta
-        finfo['Vmin'] = Vmin
-        finfo['omega_phi'] = omega_phi
-        finfo['shell_r'] = np.mean(np.linalg.norm(pc, axis=1))
-        finfo['r_min'] = np.min(np.linalg.norm(pc, axis=1))
-        results.append(finfo)
-        print(f"    V={Vmin:.4f}, F_max={finfo['F_max']:.4f}, "
-              f"att={finfo['n_att']}, rep={finfo['n_rep']}")
-    except Exception as e:
-        print(f"    FAILED: {e}")
+if cache_file.exists():
+    cached = np.load(cache_file)
+    if np.allclose(cached['betas'], betas):
+        for i in range(len(betas)):
+            results.append({key: cached[key][i].item() for key in cache_keys})
+        print(f"Loaded {cache_file.name}", flush=True)
+
+if not results:
+    print(f"N={N}, scanning beta ...", flush=True)
+    for beta in betas:
+        print(f"  beta={beta:.2f} ...", flush=True)
+        try:
+            pc, Vmin, beta_phi, omega_phi, sigma2 = find_minimum(beta)
+            finfo = compute_forces(pc, sigma2, beta_phi)
+            finfo['beta'] = beta
+            finfo['T'] = 1.0 / beta
+            finfo['Vmin'] = Vmin
+            finfo['omega_phi'] = omega_phi
+            finfo['shell_r'] = np.mean(np.linalg.norm(pc, axis=1))
+            finfo['r_min'] = np.min(np.linalg.norm(pc, axis=1))
+            results.append(finfo)
+            print(f"    V={Vmin:.4f}, F_max={finfo['F_max']:.4f}, "
+                  f"att={finfo['n_att']}, rep={finfo['n_rep']}")
+        except Exception as e:
+            print(f"    FAILED: {e}")
+    if len(results) != len(betas):
+        raise RuntimeError(f"Only {len(results)} of {len(betas)} temperatures completed")
+    np.savez(
+        cache_file,
+        betas=np.asarray(betas),
+        **{key: np.asarray([r[key] for r in results]) for key in cache_keys},
+    )
+    print(f"Saved {cache_file.name}", flush=True)
 
 # ── Print table ───────────────────────────────────────────────
 print(f"\n{'beta':>5s} {'T':>5s} {'F_total':>9s} {'F_att':>9s} {'F_rep':>9s} "
@@ -209,12 +236,6 @@ for r in results:
 betas_arr = np.array([r['beta'] for r in results])
 T_arr = 1.0 / betas_arr
 
-fig, axes = plt.subplots(2, 2, figsize=(8, 6))
-plt.subplots_adjust(hspace=0.35, wspace=0.35, top=0.92)
-
-# Figure-level N label (prominent, centered at top)
-fig.suptitle(rf'$N = {N}$', fontsize=16, fontweight='bold', y=0.98)
-
 # Table II temperatures (N=55 only)
 table_II_T = [2.0, 1.0, 1.0/1.5, 0.5, 1.0/3.0] if N > 10 else []
 
@@ -223,76 +244,125 @@ def add_table_lines(ax):
         ax.axvline(T, color='grey', ls=':', lw=0.7, alpha=0.5, zorder=0)
 
 # Panel label helper
-def panel_label(ax, label):
-    ax.text(0.04, 0.94, label, transform=ax.transAxes,
+def panel_label(ax, label, y=0.94):
+    ax.text(0.04, y, label, transform=ax.transAxes,
             fontsize=12, fontweight='bold', va='top', ha='left')
 
-# (a) Total, attractive, repulsive force vs T
-ax = axes[0, 0]
-ax.plot(T_arr, [r['F_total'] for r in results], 'ko-', ms=5, lw=1.8, label='Total')
-ax.plot(T_arr, [r['F_att'] for r in results], 'rs-', ms=5, lw=1.5, label='Attractive')
-ax.plot(T_arr, [r['F_rep'] for r in results], 'b^-', ms=5, lw=1.5, label='Repulsive')
-ax.set_xlabel(r'$k_{\rm B}T\,/\,\hbar\omega$')
-ax.set_ylabel(r'$\sum |F_{b\to a}|\,a_0/\hbar\omega$')
-ax.legend(fontsize=9, framealpha=0.9)
-ax.set_yscale('log')
-panel_label(ax, '(a)')
-add_table_lines(ax)
-
-# (b) r_min order parameter
-ax = axes[0, 1]
-rmin_vals = [r['r_min'] for r in results]
-ax.plot(T_arr, rmin_vals, 'go-', ms=6, lw=1.8)
-ax.set_xlabel(r'$k_{\rm B}T\,/\,\hbar\omega$')
-ax.set_ylabel(r'$r_{\min}\,/\,a_0$')
-ax.set_ylim(bottom=0)
-panel_label(ax, '(b)')
-add_table_lines(ax)
-
-# (c) Max force — colored by ATT/REP
-ax = axes[1, 0]
-fmax_vals = [r['F_max'] for r in results]
-ax.plot(T_arr, fmax_vals, '-', color='grey', lw=1.0, zorder=1)
-for i, r in enumerate(results):
-    is_att = r.get('F_max_is_att', False)
-    col = '#CC0000' if is_att else '#2255CC'
-    marker = 's' if is_att else 'o'
-    ax.plot(T_arr[i], fmax_vals[i], marker, color=col, ms=7,
-            markeredgecolor='k', markeredgewidth=0.4, zorder=5)
-ax.set_xlabel(r'$k_{\rm B}T\,/\,\hbar\omega$')
-ax.set_ylabel(r'$\max\,|F_{b\to a}|\,a_0/\hbar\omega$')
 from matplotlib.lines import Line2D
 leg_max = [Line2D([0],[0], marker='s', color='w', markerfacecolor='#CC0000',
                   markeredgecolor='k', ms=6, label='Attractive'),
            Line2D([0],[0], marker='o', color='w', markerfacecolor='#2255CC',
                   markeredgecolor='k', ms=6, label='Repulsive')]
-if N <= 10:
-    ax.text(0.95, 0.90, 'all repulsive', transform=ax.transAxes,
-            fontsize=9, ha='right', va='top', color='#2255CC', fontstyle='italic')
+
+def plot_force_sums(ax):
+    ax.plot(T_arr, [r['F_total'] for r in results], 'ko-', ms=5, lw=1.8, label='Total')
+    ax.plot(T_arr, [r['F_att'] for r in results], 'rs-', ms=5, lw=1.5, label='Attractive')
+    ax.plot(T_arr, [r['F_rep'] for r in results], 'b^-', ms=5, lw=1.5, label='Repulsive')
+    ax.set_ylabel(r'$\sum |F_{b\to a}|\,a_0/\hbar\omega$')
+    ax.legend(fontsize=9, framealpha=0.9)
+    ax.set_yscale('log')
+    add_table_lines(ax)
+
+def plot_rmin(ax):
+    ax.plot(T_arr, [r['r_min'] for r in results], 'o-', color='#16853a',
+            ms=6, lw=1.8, markeredgecolor='k', markeredgewidth=0.25, zorder=4)
+    ax.set_ylabel(r'$r_{\min}\,/\,a_0$')
+    ax.set_ylim(bottom=0)
+    add_table_lines(ax)
+
+def plot_fmax(ax):
+    fmax_vals = [r['F_max'] for r in results]
+    ax.plot(T_arr, fmax_vals, '-', color='0.45', lw=1.0, zorder=2)
+    for i, r in enumerate(results):
+        is_att = r.get('F_max_is_att', False)
+        col = '#CC0000' if is_att else '#2255CC'
+        marker = 's' if is_att else 'o'
+        ax.plot(T_arr[i], fmax_vals[i], marker, color=col, ms=7,
+                markeredgecolor='k', markeredgewidth=0.4, zorder=5)
+    ax.set_ylabel(r'$\max\,|F_{b\to a}|\,a_0/\hbar\omega$')
+    ax.set_yscale('log')
+    if N <= 10:
+        ax.text(0.95, 0.90, 'all repulsive', transform=ax.transAxes,
+                fontsize=9, ha='right', va='top', color='#2255CC', fontstyle='italic')
+        ax.set_ylim(1e-1, 1e1)
+    else:
+        ax.legend(handles=leg_max, fontsize=8, loc='upper right', framealpha=0.9)
+    add_table_lines(ax)
+
+def plot_pair_counts(ax):
+    total_pairs = N*(N-1)//2
+    ax.plot(T_arr, [r['n_att'] for r in results], 'rs-', ms=5, lw=1.5, label='Attractive')
+    ax.plot(T_arr, [r['n_rep'] for r in results], 'b^-', ms=5, lw=1.5, label='Repulsive')
+    ax.axhline(total_pairs/2, color='grey', ls='--', lw=0.8, alpha=0.5)
+    ax.set_ylabel('Number of pairs')
+    ax.legend(fontsize=9, framealpha=0.9)
+    add_table_lines(ax)
+
+def shade_regimes(ax, show_labels=False):
+    """Shade the N=55 structural regimes across a shared temperature axis."""
+    xlo, xhi = 0.30, 3.42
+    regimes = [
+        (xlo, 0.60, '#f5d7df', 'P'),
+        (0.60, 1.50, '#f6ecd0', 'I'),
+        (1.50, xhi, '#dce9f5', 'G'),
+    ]
+    for left, right, color, label in regimes:
+        ax.axvspan(left, right, color=color, alpha=0.62, lw=0, zorder=0)
+        if show_labels:
+            label_y = 0.58 if label == 'P' else 0.96
+            ax.text((left + right) / 2, label_y, label,
+                    transform=ax.get_xaxis_transform(), ha='center', va='top',
+                    fontsize=10, fontweight='bold', color='0.25')
+    for boundary in (0.60, 1.50):
+        ax.axvline(boundary, color='0.35', ls='--', lw=0.8, zorder=1)
+    ax.set_xlim(xlo, xhi)
+
+if N == 55:
+    # Main Fig. 4: structural and mechanical diagnostics on one temperature axis.
+    fig, axes = plt.subplots(2, 1, figsize=(6.2, 5.5), sharex=True)
+    plt.subplots_adjust(hspace=0.08, left=0.16, right=0.97, bottom=0.12, top=0.97)
+    plot_rmin(axes[0])
+    plot_fmax(axes[1])
+    shade_regimes(axes[0], show_labels=True)
+    shade_regimes(axes[1])
+    panel_label(axes[0], '(a)', y=0.68)
+    panel_label(axes[1], '(b)', y=0.90)
+    axes[1].set_xlabel(r'$k_{\rm B}T\,/\,\hbar\omega$')
+    fig.savefig(OUTPUT_DIR / 'melting_force_N55.pdf', dpi=600, bbox_inches='tight')
+    fig.savefig(OUTPUT_DIR / 'melting_force_N55.png', dpi=300, bbox_inches='tight')
+
+    # Supplementary Fig.: the two panels removed from the old main figure.
+    fig_si, axes_si = plt.subplots(2, 1, figsize=(6.2, 5.5), sharex=True)
+    plt.subplots_adjust(hspace=0.08, left=0.16, right=0.97, bottom=0.12, top=0.97)
+    plot_force_sums(axes_si[0])
+    plot_pair_counts(axes_si[1])
+    shade_regimes(axes_si[0], show_labels=True)
+    shade_regimes(axes_si[1])
+    panel_label(axes_si[0], '(a)', y=0.90)
+    panel_label(axes_si[1], '(b)', y=0.90)
+    axes_si[1].set_xlabel(r'$k_{\rm B}T\,/\,\hbar\omega$')
+    fig_si.savefig(OUTPUT_DIR / 'fig_SM_melting_N55_sums_counts.pdf',
+                   dpi=600, bbox_inches='tight')
+    fig_si.savefig(OUTPUT_DIR / 'fig_SM_melting_N55_sums_counts.png',
+                   dpi=300, bbox_inches='tight')
 else:
-    ax.legend(handles=leg_max, fontsize=7, loc='best', framealpha=0.9)
-ax.set_yscale('log')
-if N <= 10:
-    ax.set_ylim(1e-1, 1e1)
-panel_label(ax, '(c)')
-add_table_lines(ax)
+    # Keep the four-panel N=6 companion figure in the Supplementary Information.
+    fig, axes = plt.subplots(2, 2, figsize=(8, 6))
+    plt.subplots_adjust(hspace=0.35, wspace=0.35, top=0.92)
+    fig.suptitle(rf'$N = {N}$', fontsize=16, fontweight='bold', y=0.98)
+    plot_force_sums(axes[0, 0])
+    plot_rmin(axes[0, 1])
+    plot_fmax(axes[1, 0])
+    plot_pair_counts(axes[1, 1])
+    for ax, label in zip(axes.flat, ('(a)', '(b)', '(c)', '(d)')):
+        ax.set_xlabel(r'$k_{\rm B}T\,/\,\hbar\omega$')
+        panel_label(ax, label)
+    fig.savefig(OUTPUT_DIR / f'melting_force_N{N}.pdf',
+                dpi=600, bbox_inches='tight')
+    fig.savefig(OUTPUT_DIR / f'melting_force_N{N}.png',
+                dpi=300, bbox_inches='tight')
 
-# (d) Number of attractive pairs
-ax = axes[1, 1]
-total_pairs = N*(N-1)//2
-ax.plot(T_arr, [r['n_att'] for r in results], 'rs-', ms=5, lw=1.5, label='Attractive')
-ax.plot(T_arr, [r['n_rep'] for r in results], 'b^-', ms=5, lw=1.5, label='Repulsive')
-ax.axhline(total_pairs/2, color='grey', ls='--', lw=0.8, alpha=0.5)
-ax.set_xlabel(r'$k_{\rm B}T\,/\,\hbar\omega$')
-ax.set_ylabel('Number of pairs')
-ax.legend(fontsize=9, framealpha=0.9)
-panel_label(ax, '(d)')
-add_table_lines(ax)
-
-out = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
-fig.savefig(os.path.join(out, f'melting_force_N{N}.pdf'), dpi=600, bbox_inches='tight')
-fig.savefig(os.path.join(out, f'melting_force_N{N}.png'), dpi=300, bbox_inches='tight')
-print(f"\nSaved melting_force_N{N}.pdf / .png")
+print(f"\nSaved melting_force_N{N}.pdf / .png to {OUTPUT_DIR}")
 
 # ── SM figure: Attraction/Repulsion ratio (moved from main Fig 3) ──
 fig_sm, ax_sm = plt.subplots(1, 1, figsize=(4, 3))
@@ -303,7 +373,7 @@ ax_sm.set_xlabel(r'$k_{\rm B}T\,/\,\hbar\omega$')
 ax_sm.set_ylabel(r'$\sum|F_{\rm att}|\,/\,\sum|F_{\rm rep}|$')
 ax_sm.set_title(rf'$N={N}$', fontsize=11)
 ax_sm.set_ylim(bottom=0)
-fig_sm.savefig(os.path.join(out, f'fig_SM_ratio_N{N}.pdf'), dpi=600, bbox_inches='tight')
+fig_sm.savefig(OUTPUT_DIR / f'fig_SM_ratio_N{N}.pdf', dpi=600, bbox_inches='tight')
 print(f"Saved fig_SM_ratio_N{N}.pdf")
 
 print("Done")

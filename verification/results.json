@@ -1,0 +1,128 @@
+{
+ "A_max_rel_err": 2.4095370143584205e-09,
+ "B": {
+  "3": {
+   "nullity": 0,
+   "predicted": 0
+  },
+  "4": {
+   "nullity": 1,
+   "predicted": 1
+  },
+  "5": {
+   "nullity": 3,
+   "predicted": 3
+  },
+  "6": {
+   "nullity": 6,
+   "predicted": 6
+  },
+  "7": {
+   "nullity": 10,
+   "predicted": 10
+  },
+  "8": {
+   "nullity": 15,
+   "predicted": 15
+  }
+ },
+ "C": {
+  "null_residual": 3.226585665316861e-16,
+  "total_force_change": 1.4033219031261979e-13,
+  "c_before": -94.69837236371018,
+  "c_after": 94.69837236371018
+ },
+ "D": {
+  "6": {
+   "V_total": 3.7206502129498045,
+   "shells": [
+    [
+     1,
+     7.772080578007341e-07
+    ],
+    [
+     5,
+     1.2669732769160997
+    ]
+   ]
+  },
+  "10": {
+   "V_total": 9.450457355715123,
+   "shells": [
+    [
+     3,
+     0.6154472970282862
+    ],
+    [
+     7,
+     1.6401521726141581
+    ]
+   ]
+  },
+  "55": {
+   "V_total": 163.26320397169798,
+   "shells": [
+    [
+     3,
+     0.4288325866893847
+    ],
+    [
+     9,
+     1.1230628909093445
+    ],
+    [
+     9,
+     1.741939024062715
+    ],
+    [
+     17,
+     2.436367750917977
+    ],
+    [
+     17,
+     3.3322592538427322
+    ]
+   ],
+   "table1_match": true,
+   "table1_rmsd": 0.00021824474363499267
+  }
+ },
+ "E": {
+  "6": {
+   "pairs": 15,
+   "stress_dim": 6,
+   "rankA": 9,
+   "n_att": 5,
+   "n_rep": 10,
+   "strongest_type": "repulsive",
+   "strongest_mag": 0.7770104420190407,
+   "delta_opt": 0.27374246876877406,
+   "strict_feasibility": "feasible",
+   "verdict": "ALL-REPULSIVE DECOMPOSITION EXISTS (attraction scheme-dependent)"
+  },
+  "10": {
+   "pairs": 45,
+   "stress_dim": 28,
+   "rankA": 17,
+   "n_att": 20,
+   "n_rep": 25,
+   "strongest_type": "repulsive",
+   "strongest_mag": 6.1453056000451545,
+   "delta_opt": 0.050864493766770165,
+   "strict_feasibility": "feasible",
+   "verdict": "ALL-REPULSIVE DECOMPOSITION EXISTS (attraction scheme-dependent)"
+  },
+  "55": {
+   "pairs": 1485,
+   "stress_dim": 1378,
+   "rankA": 107,
+   "n_att": 701,
+   "n_rep": 784,
+   "strongest_type": "attractive",
+   "strongest_mag": 342423.2330607011,
+   "delta_opt": -0.00013063755450532156,
+   "strict_feasibility": "status4",
+   "verdict": "NO all-repulsive decomposition: attraction is DECOMPOSITION-INDEPENDENT"
+  }
+ }
+}

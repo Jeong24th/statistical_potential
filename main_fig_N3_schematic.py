@@ -1,5 +1,5 @@
 """
-N=3 schematic: geometric origin of emergent attraction.
+N=3 schematic: geometric criterion for attractive statistical forces.
 
 Two side-by-side panels illustrating Eq. (12)-(13) of the main text:
   Left:  third particle OUTSIDE the antipodal sphere of (x_1, x_2)
