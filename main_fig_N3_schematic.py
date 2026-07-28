@@ -18,12 +18,12 @@ from matplotlib.patches import Circle, FancyArrowPatch
 plt.rcParams.update({
     'text.usetex': True,
     'font.family': 'serif',
-    'font.size': 9,
-    'axes.linewidth': 0.7,
-    'xtick.major.width': 0.55,
-    'ytick.major.width': 0.55,
-    'xtick.major.size': 3.0,
-    'ytick.major.size': 3.0,
+    'font.size': 11,
+    'axes.linewidth': 0.9,
+    'xtick.major.width': 0.8,
+    'ytick.major.width': 0.8,
+    'xtick.major.size': 4.0,
+    'ytick.major.size': 4.0,
     'xtick.direction': 'in',
     'ytick.direction': 'in',
 })
@@ -35,7 +35,7 @@ x1 = np.array([-1.0, 0.0])
 x2 = np.array([+1.0, 0.0])
 center = 0.5 * (x1 + x2)
 radius = 0.5 * np.linalg.norm(x2 - x1)
-arrow_kw = dict(arrowstyle='-|>', mutation_scale=14, lw=1.6, zorder=5)
+arrow_kw = dict(arrowstyle='-|>', mutation_scale=17, lw=2.1, zorder=5)
 
 def panel(ax, x3, attractive, title):
     # Antipodal sphere (circle on diameter x1-x2)
@@ -43,29 +43,29 @@ def panel(ax, x3, attractive, title):
                        ec='none', alpha=0.35, zorder=1)
     ax.add_patch(circ_fill)
     circ_edge = Circle(center, radius, fill=False, ec='#CC4444',
-                       ls='--', lw=1.2, alpha=0.85, zorder=2)
+                       ls='--', lw=1.6, alpha=0.9, zorder=2)
     ax.add_patch(circ_edge)
     # Diameter line
     ax.plot([x1[0], x2[0]], [x1[1], x2[1]], color='gray',
-            ls=':', lw=0.8, zorder=2)
+            ls=':', lw=1.0, zorder=2)
     # Particles 1, 2
-    ax.plot(*x1, 'o', ms=10, color='#1f4e8c',
-            markeredgecolor='black', markeredgewidth=0.6, zorder=6)
-    ax.plot(*x2, 'o', ms=10, color='#1f4e8c',
-            markeredgecolor='black', markeredgewidth=0.6, zorder=6)
-    ax.text(x1[0]-0.05, x1[1]-0.45, r'$\vec{x}_1$', fontsize=11,
+    ax.plot(*x1, 'o', ms=12, color='#1f4e8c',
+            markeredgecolor='black', markeredgewidth=0.8, zorder=6)
+    ax.plot(*x2, 'o', ms=12, color='#1f4e8c',
+            markeredgecolor='black', markeredgewidth=0.8, zorder=6)
+    ax.text(x1[0]-0.05, x1[1]-0.45, r'$\vec{x}_1$', fontsize=13,
             ha='center', va='top')
-    ax.text(x2[0]+0.05, x2[1]-0.45, r'$\vec{x}_2$', fontsize=11,
+    ax.text(x2[0]+0.05, x2[1]-0.45, r'$\vec{x}_2$', fontsize=13,
             ha='center', va='top')
     # Particle 3
-    ax.plot(*x3, 'o', ms=10, color='#1f4e8c',
-            markeredgecolor='black', markeredgewidth=0.6, zorder=6)
-    ax.text(x3[0]+0.18, x3[1]+0.18, r'$\vec{x}_3$', fontsize=11,
+    ax.plot(*x3, 'o', ms=12, color='#1f4e8c',
+            markeredgecolor='black', markeredgewidth=0.8, zorder=6)
+    ax.text(x3[0]+0.18, x3[1]+0.18, r'$\vec{x}_3$', fontsize=13,
             ha='left', va='bottom')
     # Distance lines from x3
     for xt in (x1, x2):
         ax.plot([x3[0], xt[0]], [x3[1], xt[1]],
-                color='gray', ls='-', lw=0.5, alpha=0.6, zorder=2)
+                color='gray', ls='-', lw=0.8, alpha=0.65, zorder=2)
     # Force on particle 1 from 2 (along x1->x2 direction or reverse)
     direction = (x2 - x1) / np.linalg.norm(x2 - x1)
     if attractive:
@@ -85,7 +85,7 @@ def panel(ax, x3, attractive, title):
         flabel_text = r'$\vec{F}_{2\to 1}$ (repulsive)'
     arrow = FancyArrowPatch(start, end, color=col, **arrow_kw)
     ax.add_patch(arrow)
-    ax.text(*flabel_xy, flabel_text, fontsize=9, color=col,
+    ax.text(*flabel_xy, flabel_text, fontsize=11, color=col,
             ha='left', va='bottom', zorder=7,
             bbox=dict(boxstyle='round,pad=0.2', fc='white', ec='none', alpha=0.85))
     # By symmetry, mirror force on particle 2 (smaller arrow)
@@ -100,7 +100,7 @@ def panel(ax, x3, attractive, title):
 
     ax.set_xlim(-2.2, 2.2); ax.set_ylim(-1.6, 1.8); ax.set_aspect('equal')
     ax.set_xlabel(r'$x/\ell$'); ax.set_ylabel(r'$y/\ell$')
-    ax.set_title(title, fontsize=10)
+    ax.set_title(title, fontsize=12)
 
 # Left panel: x_3 OUTSIDE the antipodal sphere
 x3_out = np.array([0.0, 1.4])

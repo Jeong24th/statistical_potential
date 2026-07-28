@@ -14,7 +14,6 @@ import matplotlib.pyplot as plt
 from scipy.special import genlaguerre
 from scipy.optimize import minimize
 from math import factorial
-from matplotlib.lines import Line2D
 
 # ── Parameters (N=6, beta=2 = phi=2) ─────────────────────────
 N = 6
@@ -288,9 +287,6 @@ ax.set_xlabel(r'$x/a_0$'); ax.set_ylabel(r'$y/a_0$')
 ax.text(0.04, 0.96, r'(d) dominant force on each particle',
         transform=ax.transAxes, fontsize=9, va='top', ha='left',
         bbox=dict(boxstyle='round,pad=0.25', fc='white', ec='none', alpha=0.7))
-leg = [Line2D([0], [0], color='#CC0000', lw=2.5, label='Attractive'),
-       Line2D([0], [0], color='#2255CC', lw=2.5, label='Repulsive')]
-ax.legend(handles=leg, fontsize=8, loc='upper right', framealpha=0.9)
 
 # N label is conveyed through caption.
 
