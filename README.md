@@ -22,6 +22,15 @@ Reproducibility code for the Nature Communications manuscript. The work maps the
 - `sm_temperature.py` — temperature evolution of canonical forces and strongest bonds.
 - `sm_structural_transition.py` — \(N=55\) structural order parameter and representative configurations.
 
+## Ensemble Monte Carlo
+
+The `mc_ensemble/` directory contains the thermal-ensemble Monte Carlo supporting
+Methods ("Ensemble Monte Carlo") and Supplementary Note 8: a validated
+Metropolis + replica-exchange sampler of the exact positive-weight dual, the raw chains
+for the N=55 production runs and the N=6 null control, and the scripts generating the
+SI figures (ensemble force crossover at k_B T_x/hbar-omega = 0.66(1); unimodal radial
+marginals across the structural level crossings). See `mc_ensemble/README.md`.
+
 ## Verification
 
 The `verification/` directory contains three independent checks and their raw JSON outputs supporting Supplementary Note 7:
