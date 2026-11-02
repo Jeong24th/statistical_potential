@@ -71,7 +71,15 @@
   "data_sha256": {
     "configurations.json": "a6ba87b5fc9f4067939444c77f32eb4adc3ebee5c5d1b308b5fb3069122736d1",
     "reference_forces.npz": "d33869ef41c4d27609fc0ed523d3fb5f9dc0f72c55d6fa70090ccf8b038875c2",
-    "reference_results.json": "36d7009ad539ca52dae6c8dce1edc8c815a0dce2b6355b4b02d6167dd7fcfb8f"
+    "reference_results.json": "36d7009ad539ca52dae6c8dce1edc8c815a0dce2b6355b4b02d6167dd7fcfb8f",
+    "review_reference.json": "11f801efa3761476bbbbc09157ce4ad4e456d95eb5a16ae3a986d7a140b712d7"
   },
-  "provenance": "Reconstructed search coordinates, not unsaved original figure coordinates. Refined coordinates use binary64 storage and 50-digit potential/gradient evaluations. Reference pair arrays are 80-digit evaluations rounded to binary64; rerunning writes 65-significant-digit pair values."
+  "provenance": "Reconstructed search coordinates, not unsaved original figure coordinates. Refined coordinates use binary64 storage and 50-digit potential/gradient evaluations. Reference pair arrays are 80-digit evaluations rounded to binary64; rerunning writes 65-significant-digit pair values.",
+  "followup": {
+    "reference": "review_reference.json",
+    "closed_shell_configurations": 9,
+    "zero_temperature_mode_candidates": 4,
+    "script": "review_checks.py",
+    "scope": "Fixed-coordinate audit of nine original-search configurations; four independent zero-temperature multistart mode candidates; no global-minimum certificate."
+  }
 }

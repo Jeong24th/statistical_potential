@@ -1,7 +1,6 @@
-# N = 55 low-temperature precision audit
+# Low-temperature precision audit and polynomial-limit checks
 
-Reproducibility package for the low-temperature stability checks in proposed
-Supplementary Note 9. The arithmetic kernels are the same as those used for the
+Reproducibility package for the low-temperature numerical audit. The arithmetic kernels are the same as those used for the
 2026-11-02 audit. No manuscript directory, external data download, TeX installation,
 or plotting package is needed.
 
@@ -144,3 +143,63 @@ These results do not validate other particle numbers, the full interpolated
 phase boundary, an analytic T -> 0 sign pattern, or the Monte Carlo ensemble.
 Original plotting scripts/caches remain historical inputs; this package does
 not silently replace their plotted numbers or regenerate manuscript figures.
+
+## Follow-up: self-stress, smaller closed shells, and the flat-kernel limit
+
+`review_checks.py` extends the original N = 55 audit. The supplied
+`data/review_reference.json` contains the nine reconstructed configurations for
+N = 28, 36, 45 at phi = 2.5, 2.7, 3, four separately optimized zero-temperature
+mode candidates (N = 28, 36, 45, 55), and their reference summaries. These inputs
+are additional to the original 35-case dataset; they do not replace it.
+
+```bash
+# Refined N55 canonical/minimum-norm comparison, using the high-precision net force.
+python verification/low_temperature/review_checks.py self-stress
+
+# Saved-coordinate checks; nonzero exit if the reference comparison fails.
+python verification/low_temperature/review_checks.py closed-shells --saved-only --workers 4
+python verification/low_temperature/review_checks.py flat-limit --saved-only --workers 4
+
+# Repeat the original 1000-seed searches, or the 300-seed ground-state searches.
+# Use the same output directory: the finite-temperature results supply warm starts.
+python verification/low_temperature/review_checks.py closed-shells --workers 4
+python verification/low_temperature/review_checks.py flat-limit --workers 4
+```
+
+Generated search coordinates are reused if present in the selected output
+directory. Choose a fresh `--output PATH` to repeat optimization from scratch.
+The default ground-state calculation uses 300 generic seeds and one warm start
+when the corresponding finite-temperature result is available. N = 55 uses its
+bundled refined phi = 3 warm start. Local searches are not global certificates;
+results of fresh searches may differ from the saved candidates.
+
+For a closed shell N = (q+1)(q+2)/2, let P contain all monomials through degree q
+evaluated at the coordinates, and W be diagonal with a! b! on degree q and zero
+below it. At a fixed nonsingular P, with s = 1/sinh(phi) = 2 epsilon^2,
+
+    lim s^q K^{-1} = L = P^{-T} W P^{-1}
+    lim epsilon^(2q) K^{-1} = 2^(-q) L
+    lim g_ij / sinh(phi)^(q-2) = 2 r_ij L_ij.
+
+The exact Gaussian feature expansion is infinite. The truncated polynomial
+matrix controls the leading term; it is not an exact finite factorization.
+For q >= 2, L annihilates constants and both coordinate columns, so the leading
+pair field has exactly zero net force (self-stress). This explains the large
+cancelling components without interpreting them as large resultant forces.
+The script evaluates the inverse limit at s = 0.1, 0.01, 0.001 using 80 digits.
+
+All nine finite-temperature points remain repulsion-dominated and have no
+binary64/80-digit pair-sign differences. These coordinates have not undergone
+high-precision refinement; their stationarity residuals remain in the summaries.
+The separate zero-temperature candidates give leading dominance ratios
+1.00239, 0.85701, 1.12604, 1.09121 for N = 28, 36, 45, 55. Thus smaller closed
+shells are not universally repulsion-dominated at all temperatures. The limit
+depends on the geometry; no global-mode certificate or finite-temperature branch
+continuation is claimed, and the small N = 28 excess is not a shell theorem.
+
+At the refined N = 55 configurations, the minimum-norm squared fraction of the
+canonical norm is 3.96561e-13 at phi = 2 and 5.84094e-20 at phi = 3. The
+self-stress fraction is one minus this small number. The minimum-norm net force
+is obtained from the high-precision gradient, not from rounded large pair sums.
+Distance derivatives refer to the chosen potential extension; redundant
+distances do not permit an independent physical stretch of every single bond.

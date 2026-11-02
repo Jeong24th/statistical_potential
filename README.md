@@ -1,6 +1,6 @@
 # Exact classical dual of an ideal Fermi gas
 
-Reproducibility code for the Nature Communications manuscript. The work maps the configurational statistics of \(N\) identical fermions exactly to a classical ensemble governed by a collective statistical potential. Pauli-crystal geometry, the canonical force decomposition, and its temperature dependence are applications of that exact dual.
+Reproducibility code for the accompanying statistical-potential manuscript. The work maps the configurational statistics of \(N\) identical fermions exactly to a classical ensemble governed by a collective statistical potential. Pauli-crystal geometry, the canonical force decomposition, and its temperature dependence are applications of that exact dual.
 
 ## Main-text figures
 
@@ -44,7 +44,7 @@ See `verification/README.md` for conventions, limitations, and benchmark values.
 ## Low-temperature precision audit
 
 [`verification/low_temperature/`](verification/low_temperature/README.md) provides
-the N = 55 checks supporting Supplementary Note 9: freshly constructed 50- and
+the low-temperature numerical audit: freshly constructed 50- and
 80-decimal-digit kernels, temperature-resolved condition numbers, signed pair
 forces, cancellation diagnostics, and local high-precision refinement. Saved
 coordinates and benchmark results allow a direct fixed-coordinate reproduction;
@@ -52,10 +52,18 @@ separate commands repeat the original multistart searches. The lowest-temperatur
 largest force remains attractive after a 1.46% correction, while some weak bond
 signs change during coordinate refinement. See that directory for the pinned
 Python 3.12 numerical environment, execution commands, and scope limitations.
+The follow-up checks add nine low-temperature points for N = 28, 36, 45,
+the N = 55 self-stress comparison, and the analytic polynomial inverse limit
+evaluated at four zero-temperature mode candidates. The smaller-shell repulsion
+claim is restricted to the sampled finite-temperature range; the limit does not
+support a universal threshold at N = 55.
 
 ## Requirements
 
-- Python 3.8+
+- Python 3.12 for the tested precision-audit environment (pinned dependencies in
+  `verification/low_temperature/requirements.txt`). The legacy plotting scripts
+  use the packages below; compatibility with Python 3.8 is not asserted for the
+  pinned audit dependencies.
 - NumPy
 - SciPy
 - Matplotlib
