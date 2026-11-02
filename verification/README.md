@@ -1,5 +1,13 @@
 # Verification of SI Note 7 (canonicality of the pairwise decomposition)
 
+> **Note (November 2026).** The scripts in this directory document the July 2026 checks of the
+> pairwise decomposition. The revised Supplementary Note 7 characterizes the canonical decomposition
+> by continuation across spatial dimension and compares it with the minimum-norm decomposition; the
+> corresponding calculations are in `low_temperature/review_checks.py`. The scheme-level argument in
+> item 7 below is retained in the revised note only in its weaker form (any cluster-separable central
+> decomposition must contain an attractive pair somewhere). Further follow-up calculations are in
+> `revision_followup/`.
+
 **Date:** 2026-07-27. Scripts run with the paper's conventions (ℏ=m=ω=1, φ=β, β_φ=sinh φ/φ·β, ω_φ=1/cosh(φ/2); attractive ⟺ K⁻¹ᵃᵇK_ab > 0).
 
 ## Scripts

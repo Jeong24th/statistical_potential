@@ -58,6 +58,16 @@ evaluated at four zero-temperature mode candidates. The smaller-shell repulsion
 claim is restricted to the sampled finite-temperature range; the limit does not
 support a universal threshold at N = 55.
 
+## Revision follow-up (November 2026)
+
+[`verification/revision_followup/`](verification/revision_followup/README.md) contains
+the calculations added in the revised manuscript: the distance between the finite-temperature
+mode and the zero-temperature mode for N = 55 as a function of temperature (full-configuration
+comparison after optimal rotation and particle assignment), the N = 3 obtuse-triangle
+probability versus temperature (a parameter-free prediction for single-shot experiments),
+and the robustness of the shot-by-shot bond statistics against position noise, temperature
+misassignment and a missed atom, evaluated on stored Monte Carlo configurations.
+
 ## Requirements
 
 - Python 3.12 for the tested precision-audit environment (pinned dependencies in
