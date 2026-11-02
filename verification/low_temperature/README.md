@@ -139,8 +139,9 @@ The large canonical pair magnitudes therefore require cancellation-aware
 interpretation. The row-wise gradient contraction and upper-triangle pair
 assembly have different rounding behavior; both diagnostics are recorded.
 
-These results do not validate other particle numbers, the full interpolated
-phase boundary, an analytic T -> 0 sign pattern, or the Monte Carlo ensemble.
+These original N = 55 checks alone do not validate other particle numbers, the
+full interpolated boundary, a T -> 0 sign pattern, or the Monte Carlo ensemble.
+The additional finite-temperature cases and analytic limit are treated separately below.
 Original plotting scripts/caches remain historical inputs; this package does
 not silently replace their plotted numbers or regenerate manuscript figures.
 
