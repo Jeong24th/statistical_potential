@@ -65,8 +65,9 @@ the calculations added in the revised manuscript: the distance between the finit
 mode and the zero-temperature mode for N = 55 as a function of temperature (full-configuration
 comparison after optimal rotation and particle assignment), the N = 3 obtuse-triangle
 probability versus temperature (a parameter-free prediction for single-shot experiments),
-and the robustness of the shot-by-shot bond statistics against position noise, temperature
-misassignment and a missed atom, evaluated on stored Monte Carlo configurations.
+the robustness of the shot-by-shot bond statistics against position noise, temperature
+misassignment and a missed atom, evaluated on stored Monte Carlo configurations, and the
+dimensional-lifting checks of the canonical pair decomposition (N = 4 and N = 55).
 
 ## Requirements
 
