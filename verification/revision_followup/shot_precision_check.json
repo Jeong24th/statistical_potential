@@ -1,0 +1,354 @@
+{
+  "dps": 50,
+  "numpy": "2.4.4",
+  "cases": [
+    {
+      "run": "A",
+      "shot": "first",
+      "sample_index": 0,
+      "T_true": 0.4,
+      "T_assigned": 0.4,
+      "condition64": 53009061609.90109,
+      "strongest64": [
+        11,
+        30
+      ],
+      "strongest_high": [
+        11,
+        30
+      ],
+      "attractive64": false,
+      "attractive_high": false,
+      "same_strongest_pair": true,
+      "same_type": true,
+      "pair_sign_mismatches": 0,
+      "max_coefficient_error_over_largest": 2.9951353689696933e-07
+    },
+    {
+      "run": "A",
+      "shot": "worst-conditioned",
+      "sample_index": 332,
+      "T_true": 0.4,
+      "T_assigned": 0.4,
+      "condition64": 17201437172970.24,
+      "strongest64": [
+        1,
+        15
+      ],
+      "strongest_high": [
+        1,
+        15
+      ],
+      "attractive64": false,
+      "attractive_high": false,
+      "same_strongest_pair": true,
+      "same_type": true,
+      "pair_sign_mismatches": 0,
+      "max_coefficient_error_over_largest": 6.719578844644496e-05
+    },
+    {
+      "run": "A",
+      "shot": "first",
+      "sample_index": 0,
+      "T_true": 0.4,
+      "T_assigned": 0.32,
+      "condition64": 22168917100136.8,
+      "strongest64": [
+        11,
+        30
+      ],
+      "strongest_high": [
+        11,
+        30
+      ],
+      "attractive64": false,
+      "attractive_high": false,
+      "same_strongest_pair": true,
+      "same_type": true,
+      "pair_sign_mismatches": 1,
+      "max_coefficient_error_over_largest": 0.00023318061098534165
+    },
+    {
+      "run": "A",
+      "shot": "worst-conditioned",
+      "sample_index": 332,
+      "T_true": 0.4,
+      "T_assigned": 0.32,
+      "condition64": 8248496130257947.0,
+      "strongest64": [
+        15,
+        29
+      ],
+      "strongest_high": [
+        15,
+        29
+      ],
+      "attractive64": true,
+      "attractive_high": true,
+      "same_strongest_pair": true,
+      "same_type": true,
+      "pair_sign_mismatches": 0,
+      "max_coefficient_error_over_largest": 0.02361372818522223
+    },
+    {
+      "run": "B",
+      "shot": "first",
+      "sample_index": 0,
+      "T_true": 0.4,
+      "T_assigned": 0.4,
+      "condition64": 729426782302.5175,
+      "strongest64": [
+        19,
+        23
+      ],
+      "strongest_high": [
+        19,
+        23
+      ],
+      "attractive64": true,
+      "attractive_high": true,
+      "same_strongest_pair": true,
+      "same_type": true,
+      "pair_sign_mismatches": 0,
+      "max_coefficient_error_over_largest": 1.1211876363183285e-06
+    },
+    {
+      "run": "B",
+      "shot": "worst-conditioned",
+      "sample_index": 16,
+      "T_true": 0.4,
+      "T_assigned": 0.4,
+      "condition64": 34842140198973.383,
+      "strongest64": [
+        50,
+        53
+      ],
+      "strongest_high": [
+        50,
+        53
+      ],
+      "attractive64": false,
+      "attractive_high": false,
+      "same_strongest_pair": true,
+      "same_type": true,
+      "pair_sign_mismatches": 0,
+      "max_coefficient_error_over_largest": 0.0001249352734868278
+    },
+    {
+      "run": "B",
+      "shot": "first",
+      "sample_index": 0,
+      "T_true": 0.4,
+      "T_assigned": 0.32,
+      "condition64": 319208147441561.06,
+      "strongest64": [
+        19,
+        23
+      ],
+      "strongest_high": [
+        19,
+        23
+      ],
+      "attractive64": true,
+      "attractive_high": true,
+      "same_strongest_pair": true,
+      "same_type": true,
+      "pair_sign_mismatches": 1,
+      "max_coefficient_error_over_largest": 0.0006108797937129362
+    },
+    {
+      "run": "B",
+      "shot": "worst-conditioned",
+      "sample_index": 16,
+      "T_true": 0.4,
+      "T_assigned": 0.32,
+      "condition64": 1.510649412288874e+16,
+      "strongest64": [
+        50,
+        53
+      ],
+      "strongest_high": [
+        50,
+        53
+      ],
+      "attractive64": false,
+      "attractive_high": false,
+      "same_strongest_pair": true,
+      "same_type": true,
+      "pair_sign_mismatches": 10,
+      "max_coefficient_error_over_largest": 0.052624338725313906
+    },
+    {
+      "run": "C",
+      "shot": "first",
+      "sample_index": 0,
+      "T_true": 0.4,
+      "T_assigned": 0.4,
+      "condition64": 279550006554.60693,
+      "strongest64": [
+        13,
+        28
+      ],
+      "strongest_high": [
+        13,
+        28
+      ],
+      "attractive64": true,
+      "attractive_high": true,
+      "same_strongest_pair": true,
+      "same_type": true,
+      "pair_sign_mismatches": 0,
+      "max_coefficient_error_over_largest": 1.228123192974167e-06
+    },
+    {
+      "run": "C",
+      "shot": "worst-conditioned",
+      "sample_index": 466,
+      "T_true": 0.4,
+      "T_assigned": 0.4,
+      "condition64": 9477509389372.79,
+      "strongest64": [
+        10,
+        28
+      ],
+      "strongest_high": [
+        10,
+        28
+      ],
+      "attractive64": true,
+      "attractive_high": true,
+      "same_strongest_pair": true,
+      "same_type": true,
+      "pair_sign_mismatches": 0,
+      "max_coefficient_error_over_largest": 8.98178119210641e-05
+    },
+    {
+      "run": "C",
+      "shot": "first",
+      "sample_index": 0,
+      "T_true": 0.4,
+      "T_assigned": 0.32,
+      "condition64": 148946737674684.8,
+      "strongest64": [
+        28,
+        30
+      ],
+      "strongest_high": [
+        28,
+        30
+      ],
+      "attractive64": false,
+      "attractive_high": false,
+      "same_strongest_pair": true,
+      "same_type": true,
+      "pair_sign_mismatches": 0,
+      "max_coefficient_error_over_largest": 0.0003467021856580377
+    },
+    {
+      "run": "C",
+      "shot": "worst-conditioned",
+      "sample_index": 466,
+      "T_true": 0.4,
+      "T_assigned": 0.32,
+      "condition64": 6101830866355009.0,
+      "strongest64": [
+        10,
+        28
+      ],
+      "strongest_high": [
+        10,
+        28
+      ],
+      "attractive64": true,
+      "attractive_high": true,
+      "same_strongest_pair": true,
+      "same_type": true,
+      "pair_sign_mismatches": 6,
+      "max_coefficient_error_over_largest": 0.03465078704745082
+    }
+  ],
+  "condition_scan": [
+    {
+      "run": "A",
+      "T_true": 0.4,
+      "T_assigned": 0.4,
+      "condition_quantiles": [
+        12889446969.03182,
+        195172719005.6629,
+        812547846119.4719,
+        4465600093628.087,
+        17201437172970.24
+      ],
+      "nonpositive_smallest_eigenvalue": 0
+    },
+    {
+      "run": "A",
+      "T_true": 0.4,
+      "T_assigned": 0.32,
+      "condition_quantiles": [
+        6010382544142.417,
+        88163271874375.0,
+        416308420270701.25,
+        2238324032687577.2,
+        8248496130257947.0
+      ],
+      "nonpositive_smallest_eigenvalue": 0
+    },
+    {
+      "run": "B",
+      "T_true": 0.4,
+      "T_assigned": 0.4,
+      "condition_quantiles": [
+        15501399268.135086,
+        182473921062.461,
+        818060364535.8744,
+        3689151619343.4307,
+        34842140198973.383
+      ],
+      "nonpositive_smallest_eigenvalue": 0
+    },
+    {
+      "run": "B",
+      "T_true": 0.4,
+      "T_assigned": 0.32,
+      "condition_quantiles": [
+        7515010652232.88,
+        86740697498119.45,
+        398113396086329.5,
+        1808045219686086.5,
+        1.510649412288874e+16
+      ],
+      "nonpositive_smallest_eigenvalue": 0
+    },
+    {
+      "run": "C",
+      "T_true": 0.4,
+      "T_assigned": 0.4,
+      "condition_quantiles": [
+        12386403100.290556,
+        199441167737.88855,
+        760725724167.0731,
+        1957634754814.55,
+        9477509389372.79
+      ],
+      "nonpositive_smallest_eigenvalue": 0
+    },
+    {
+      "run": "C",
+      "T_true": 0.4,
+      "T_assigned": 0.32,
+      "condition_quantiles": [
+        4246202206487.017,
+        89719955343220.62,
+        367070384661180.7,
+        1010651659024844.6,
+        6101830866355009.0
+      ],
+      "nonpositive_smallest_eigenvalue": 0
+    }
+  ],
+  "all_same_strongest_pair": true,
+  "all_same_type": true,
+  "max_sign_mismatches": 10,
+  "max_coefficient_error_over_largest": 0.052624338725313906
+}
