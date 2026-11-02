@@ -41,6 +41,18 @@ The `verification/` directory contains three independent checks and their raw JS
 
 See `verification/README.md` for conventions, limitations, and benchmark values. In particular, the first-pass \(N=55\) inequality-form infeasibility result is a numerical artifact and must not be used; the equality-form constructive certificate is the relevant result.
 
+## Low-temperature precision audit
+
+[`verification/low_temperature/`](verification/low_temperature/README.md) provides
+the N = 55 checks supporting Supplementary Note 9: freshly constructed 50- and
+80-decimal-digit kernels, temperature-resolved condition numbers, signed pair
+forces, cancellation diagnostics, and local high-precision refinement. Saved
+coordinates and benchmark results allow a direct fixed-coordinate reproduction;
+separate commands repeat the original multistart searches. The lowest-temperature
+largest force remains attractive after a 1.46% correction, while some weak bond
+signs change during coordinate refinement. See that directory for the pinned
+Python 3.12 numerical environment, execution commands, and scope limitations.
+
 ## Requirements
 
 - Python 3.8+

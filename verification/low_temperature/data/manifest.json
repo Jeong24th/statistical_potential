@@ -1,0 +1,77 @@
+{
+  "N": 55,
+  "dimensions": 2,
+  "created": "2026-11-02",
+  "precisions_decimal": [
+    50,
+    80
+  ],
+  "groups": {
+    "main": [
+      "phi_0p3",
+      "phi_0p4",
+      "phi_0p5",
+      "phi_0p571428571429",
+      "phi_0p6",
+      "phi_0p65",
+      "phi_0p7",
+      "phi_0p75",
+      "phi_0p8",
+      "phi_0p9",
+      "phi_1",
+      "phi_1p2",
+      "phi_1p5",
+      "phi_1p6",
+      "phi_1p65",
+      "phi_1p7",
+      "phi_1p8",
+      "phi_2",
+      "phi_2p3",
+      "phi_2p5",
+      "phi_2p7",
+      "phi_3"
+    ],
+    "phase": [
+      "phase_phi_0p5",
+      "phi_0p571428571429",
+      "phase_phi_0p7",
+      "phase_phi_0p8",
+      "phase_phi_1",
+      "phase_phi_1p2",
+      "phase_phi_1p5",
+      "phase_phi_1p7",
+      "phase_phi_2",
+      "phi_2p3",
+      "phase_phi_2p5",
+      "phi_2p7",
+      "phase_phi_3"
+    ],
+    "refined": [
+      "phi_2_refined",
+      "phi_2p5_refined",
+      "phi_3_refined"
+    ]
+  },
+  "source_sha256": {
+    "melting_analysis.py": "285a14b78d1791deb4f1a51095f41f6ebd9b50e5d3baf62489a96f1f107ad7a8",
+    "phase_diagram.py": "159df56a1d70d98016184c9cd70b8533565b02a8d00749daa1563efedac51715",
+    "melting_analysis_cache_N55.npz": "f96743581070287cc3bd97a6535cd9b3e751427a871add26195340b0f2d41264",
+    "phase_diagram_cache.npz": "46436881e734686dd66c27e2be011108b9192a3a2818291c77a8b93dbe9b361b"
+  },
+  "source_lf_sha256": {
+    "melting_analysis.py": "f8651f8475a3c964d531d7e6ddff13f0c5ef27daf8bbc135418c06e0315d6e87",
+    "phase_diagram.py": "159df56a1d70d98016184c9cd70b8533565b02a8d00749daa1563efedac51715"
+  },
+  "environment": {
+    "python": "3.12",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "mpmath": "1.3.0"
+  },
+  "data_sha256": {
+    "configurations.json": "a6ba87b5fc9f4067939444c77f32eb4adc3ebee5c5d1b308b5fb3069122736d1",
+    "reference_forces.npz": "d33869ef41c4d27609fc0ed523d3fb5f9dc0f72c55d6fa70090ccf8b038875c2",
+    "reference_results.json": "36d7009ad539ca52dae6c8dce1edc8c815a0dce2b6355b4b02d6167dd7fcfb8f"
+  },
+  "provenance": "Reconstructed search coordinates, not unsaved original figure coordinates. Refined coordinates use binary64 storage and 50-digit potential/gradient evaluations. Reference pair arrays are 80-digit evaluations rounded to binary64; rerunning writes 65-significant-digit pair values."
+}
