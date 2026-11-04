@@ -147,6 +147,12 @@ not silently replace their plotted numbers or regenerate manuscript figures.
 
 ## Follow-up: self-stress, smaller closed shells, and the flat-kernel limit
 
+The self-stress comparison below supports Section 3 of the condensed
+Supplementary Note 7. Its N = 4 lifting table is reproduced separately by
+`../revision_followup/lifting_checks.py`. The additional N = 55 lifting
+sensitivity output retained there is no longer a table in Note 7; the
+current Table S3 belongs to the conditioning audit in Note 9.
+
 `review_checks.py` extends the original N = 55 audit. The supplied
 `data/review_reference.json` contains the nine reconstructed configurations for
 N = 28, 36, 45 at phi = 2.5, 2.7, 3, four separately optimized zero-temperature

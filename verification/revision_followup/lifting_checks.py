@@ -1,16 +1,21 @@
-"""Dimensional-lifting checks for Supplementary Note 7 (canonical pair forces).
+"""Current Note 7 lifting table and additional canonical-pair-force diagnostics.
 
 Reproduces, from the public data only:
 
-  (a) Table S2: the N=4 lifting check at phi=2 (planar canonical and minimum-norm
+  (a) Current Note 7, Section 3, Table S2: the N=4 lifting check at phi=2 (planar canonical and minimum-norm
       coefficients; unique three-dimensional decompositions for eta=0.5, 0.1, 0.01, 0.001,
       obtained by a QR solve of the lifted force equations with 80-digit forces);
-  (b) Table S3: the N=55, phi=2 lift of the refined configuration into 54 dimensions,
+  (b) Additional check (formerly Table S3): the N=55, phi=2 lift of the refined configuration into 54 dimensions,
       relative coefficient deviation for eta/eps^8 = 1, 0.3, 0.1, 0.03 at 50 and 80 digits;
-  (c) the sign-ratio scan quoted in Note 7, Section 6: the ratio R of the largest attractive
+  (c) Additional sign-ratio scan (formerly Note 7, Section 6): the ratio R of the largest attractive
       to the largest repulsive pair force along the same lift family for
       eta/eps^8 = 1, 3, 10, 30, 100, 300 (binary64, with 50/80-digit confirmation of the
       cases with R > 1) and for a second random complement (seed 27) at eta/eps^8 = 300.
+
+The condensed Note 7 retains (a); (b) and (c) remain available as additional
+numerical diagnostics. The historical JSON key N55.table_S3 is retained for
+compatibility and is not a reference to the current SM Table S3. The fixed-
+temperature continuation does not guarantee a temperature-independent tolerance.
 
 Units hbar = m = omega = 1, lengths in a0; K_ij = exp(-r_ij^2 / (2 sinh phi)),
 c_ij = 2 (K^-1)_ij K_ij / sinh(phi)^2 (positive = attraction), f_ij = c_ij r_ij.

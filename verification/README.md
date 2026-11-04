@@ -1,31 +1,75 @@
-# Verification of SI Note 7 (canonicality of the pairwise decomposition)
+# Verification of the canonical pair decomposition
 
-> **Note (November 2026).** The scripts in this directory document the July 2026 checks of the
-> pairwise decomposition. The revised Supplementary Note 7 characterizes the canonical decomposition
-> by continuation across spatial dimension and compares it with the minimum-norm decomposition; the
-> corresponding calculations are in `low_temperature/review_checks.py`. The scheme-level argument in
-> item 7 below is retained in the revised note only in its weaker form (any cluster-separable central
-> decomposition must contain an attractive pair somewhere). Further follow-up calculations are in
-> `revision_followup/`.
+## Current Supplementary Note 7 (November 2026)
 
-**Date:** 2026-07-27. Scripts run with the paper's conventions (ℏ=m=ω=1, φ=β, β_φ=sinh φ/φ·β, ω_φ=1/cosh(φ/2); attractive ⟺ K⁻¹ᵃᵇK_ab > 0).
+The condensed note has four sections: (1) definition and nonuniqueness,
+(2) characterization by continuation across dimension, (3) minimum norm and
+cluster separability, and (4) the collinear limit and one-dimensional log-gas.
+The planar freedom is described by self-stress; the dimension count is in the
+main text after Eq. (5).
 
-## Scripts
+The canonical prescription is singled out among continuous, distance-based
+assignments that reproduce the same determinant-potential force in every
+dimension up to N - 1. Continuity and distance dependence within the plane alone
+do not give uniqueness. For N = 3, the central decomposition is unique on
+non-collinear configurations; collinear values require the continuation condition.
+
+The retained numerical comparisons are:
+
+| Current result | Reproduction |
+|---|---|
+| N = 55 canonical/minimum-norm comparison, Section 3 | `low_temperature/review_checks.py self-stress` |
+| N = 4 lifting table, Table S2 in Section 3 | `revision_followup/lifting_checks.py` |
+
+The latter script additionally retains the N = 55 lifting-sensitivity and
+sign-ratio checks removed when Note 7 was condensed. They are additional
+diagnostics, not a current SM table or section. The historical JSON key
+`N55.table_S3` is retained for compatibility; current Table S3 is the
+low-temperature conditioning table of Note 9.
+
+The cluster-separability statement is limited to the following: in D >= 2,
+any cluster-separable central decomposition must contain attraction for some
+configurations, because an isolated obtuse non-collinear triple has a unique
+decomposition. It does not make the signs of individual N >= 4 bonds
+independent of the decomposition.
+
+## Earlier checks (July 2026)
+
+The scripts and raw outputs directly in this directory are preserved as
+numerical background. They predate the current Note 7 organization.
+
+Conventions: hbar = m = omega = 1, phi = beta, beta_phi = sinh(phi),
+omega_phi = 1/cosh(phi/2); positive canonical coefficients mean attraction.
+Some legacy feasibility calculations use coefficients c_ab multiplying
+(x_b - x_a), whereas the current minimum-norm comparison minimizes the sum
+of squared signed magnitudes f_ab = c_ab r_ab. These norms are different.
 
 | Script | Purpose |
 |---|---|
-| `selfstress_check.py` | (A) analytic pair-sum vs numerical gradient; (B) self-stress dimension vs (N−2)(N−3)/2; (C) explicit N=4 sign-flip counterexample; (D) reproduce paper minima; (E) first-pass LP (inequality/null-space form) |
-| `certificate_check.py` | Equality-form LP over closed shells N=3–55 (φ=2) and N=55 (φ=1, 0.5), with dual-certificate machinery |
-| `refine_N55.py` | Least-squares refinement of the borderline N=45/55 all-repulsive solutions; absolute-margin cross-check |
-| `results.json`, `certificate_results.json` | Raw outputs |
+| `selfstress_check.py` | Analytic pair-sum versus numerical gradient; generic planar self-stress dimension; an N = 4 sign-flip example; mode searches; first-pass inequality/null-space LP |
+| `certificate_check.py` | Equality-form LP over closed shells N = 3-55 at phi = 2 and N = 55 at phi = 1, 0.5 |
+| `refine_N55.py` | Least-squares refinement of the N = 45/55 all-repulsive solutions and an absolute-margin check |
+| `results.json`, `certificate_results.json` | Historical raw outputs |
 
-## Results
+1. The canonical pair sum agrees with the numerical gradient to relative
+   1e-9 to 1e-10 for the tested N = 4, 6 configurations.
+2. The generic planar nullity (N - 2)(N - 3)/2 was checked for N = 3-8.
+   Uniqueness for N = 3 assumes a non-collinear configuration.
+3. In the N = 4 example, a self-stress changes a chosen coefficient from
+   -94.70 to +94.70 while changing the net force by at most 1.4e-13.
+4. The N = 55, phi = 2 mode search gives shells 3+9+9+17+17 and a largest
+   attractive force of about 3.424e5. The later high-precision comparison
+   uses the refined coordinates in `low_temperature/`.
+5. All-repulsive pointwise decompositions were found at the studied minima.
+   The N = 55, phi = 2 equality-form solution has absolute margin 7.6e-3
+   and equality residual 2.7e-10, reduced to 6.8e-12 by refinement.
+   These examples do not prove the existence of an all-repulsive
+   decomposition at every configuration.
+6. The first-pass N = 55 inequality-form LP reported infeasibility
+   (delta = -1.3e-4, status 4). This was a numerical artifact of the
+   null-space formulation; use the later equality-form certificate and
+   refinement when interpreting that case.
 
-1. **Implementation validated.** Canonical pairwise sum reproduces −∇V_stat to relative 10⁻⁹–10⁻¹⁰ (N=4, 6).
-2. **Self-stress dimension confirmed.** Nullity of the central-decomposition map equals (N−2)(N−3)/2 exactly for N=3…8. **N=3: 0 (decomposition strictly unique). N≥4: >0 (non-unique).**
-3. **Explicit N=4 counterexample.** Self-stress t·μ_aμ_b from the affine dependence (Σμ_a=0, Σμ_a x_a=0): chosen bond coefficient −94.70 → +94.70 (sign flipped) with max change of any total force 1.4×10⁻¹³. → The PRE manuscript's unconditional "geometrically unique" is false for N≥4; SI Note 7's "canonical / representation-level unique" is the correct statement.
-4. **Paper minima reproduced.** N=55, φ=2: shells 3+9+9+17+17, radii vs Table 1 RMSD 2.2×10⁻⁴ a₀; strongest bond attractive, |F|=3.424×10⁵ ℏω/a₀ (paper: 3.4×10⁵). N=6: 5 attractive / 10 repulsive pairs (paper: 5/10), strongest repulsive.
-5. **All-repulsive pointwise re-decompositions exist at every studied minimum** — including the N=55 crystal (φ=2): explicit u > 0 with A(−u)=F, uniform absolute margin t = 7.6×10⁻³ ℏω/a₀², equality residual 2.7×10⁻¹⁰ → 6.8×10⁻¹² after refinement, positivity robust. Same for N=3–45 (φ=2, margins 10⁻²–10⁰... scaled margins shrink monotonically with N) and N=55 at φ=0.5, 1.
-   - **Note:** the first-pass inequality-form LP (`selfstress_check.py` part E) reported N=55 as infeasible (δ=−1.3×10⁻⁴, status 4). This was a numerical artifact of the null-space-basis formulation; the constructive equality-form solution with machine-precision residuals settles feasibility beyond doubt. Trust `certificate_check.py`/`refine_N55.py` for part E.
-6. **Consequence (now in SI Note 7).** For N≥4, even the *existence* of attraction is representation-dependent at any single configuration — so declaring the canonical scheme is *necessary*, not merely prudent. The N=3 antipodal criterion is unconditional.
-7. **Scheme-level rigidity (new argument, now in SI Note 7).** Any central, Newtonian decomposition *scheme* that is continuous in the configuration and has decaying pair forces at infinite separation must reduce, on well-separated triples, to the unique N=3 decomposition — which is attractive inside the antipodal ball. Hence no admissible scheme is everywhere repulsive: attraction in the many-body statistical force is scheme-independent at the scheme level, even though it is not at the single-configuration level.
+For current precision protocols, reference data and commands, see
+[low_temperature/README.md](low_temperature/README.md) and
+[revision_followup/README.md](revision_followup/README.md).

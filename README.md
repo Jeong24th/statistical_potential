@@ -1,6 +1,6 @@
-# Exact classical dual of an ideal Fermi gas
+# Exact equilibrium configurational mapping of an ideal Fermi gas
 
-Reproducibility code for the accompanying statistical-potential manuscript. The work maps the configurational statistics of \(N\) identical fermions exactly to a classical ensemble governed by a collective statistical potential. Pauli-crystal geometry, the canonical force decomposition, and its temperature dependence are applications of that exact dual.
+Reproducibility code for the accompanying statistical-potential manuscript. The mapping of equilibrium configurational statistics is exact for ideal fermions in any external potential when expressed through the exact one-particle thermal kernel. It preserves the equilibrium configurational distribution and partition function; it does not assert equivalence of classical trajectories and quantum time evolution. The calculations here use harmonic confinement, whose kernel is known in closed form and gives the canonical pair-force decomposition after the one-body trap factors are separated. A kernel approximation gives an approximate mapping.
 
 ## Main-text figures
 
@@ -31,15 +31,26 @@ for the N=55 production runs and the N=6 null control, and the scripts generatin
 SI figures (ensemble force crossover at k_B T_x/hbar-omega = 0.66(1); unimodal radial
 marginals across the structural level crossings). See `mc_ensemble/README.md`.
 
-## Verification
+## Verification and the current Supplementary Note 7
 
-The `verification/` directory contains three independent checks and their raw JSON outputs supporting Supplementary Note 7:
+The condensed Supplementary Note 7 has four sections: definition and nonuniqueness;
+characterization by continuation across dimension; minimum norm and cluster separability;
+and the collinear limit and one-dimensional log-gas.
 
-1. validation of the canonical force formula;
-2. self-stress non-uniqueness of unconstrained pair decompositions;
-3. constructive all-repulsive re-decomposition certificates, including the refined \(N=55\) feasibility calculation.
+- The retained N = 55 canonical/minimum-norm comparison (Section 3) is reproduced by
+  `verification/low_temperature/review_checks.py self-stress`.
+- The retained N = 4 lifting table (Table S2, Section 3) is reproduced by
+  `verification/revision_followup/lifting_checks.py`.
+- That lifting script also preserves additional N = 55 sensitivity and sign-ratio
+  checks, which are no longer displayed in Note 7. Its historical JSON key
+  `N55.table_S3` does not refer to the current Table S3.
+- The scripts directly in `verification/` preserve earlier force-formula,
+  self-stress and all-repulsive feasibility checks. They provide numerical
+  background rather than the current note's section structure.
 
-See `verification/README.md` for conventions, limitations, and benchmark values. In particular, the first-pass \(N=55\) inequality-form infeasibility result is a numerical artifact and must not be used; the equality-form constructive certificate is the relevant result.
+See [verification/README.md](verification/README.md) for conventions and limitations.
+The first-pass N = 55 inequality-form infeasibility result was a numerical artifact;
+the later equality-form constructive certificate is the relevant result.
 
 ## Low-temperature precision audit
 
@@ -67,7 +78,10 @@ comparison after optimal rotation and particle assignment), the N = 3 obtuse-tri
 probability versus temperature (a parameter-free prediction for single-shot experiments),
 the robustness of the shot-by-shot bond statistics against position noise, temperature
 misassignment and a missed atom, evaluated on stored Monte Carlo configurations, and the
-dimensional-lifting checks of the canonical pair decomposition (N = 4 and N = 55).
+dimensional-lifting checks of the canonical pair decomposition (the retained N = 4 table
+and additional N = 55 diagnostics). The stored robustness shots are available from the
+authors; the repository supplies their SHA-256 checksums, generation scripts and summary
+results, not those three shot files.
 
 ## Requirements
 
@@ -101,7 +115,11 @@ python sm_shell_radii_vs_temp.py
 python sm_temperature.py
 python sm_structural_transition.py
 
-# Supplementary Note 7 verification
+# Current Supplementary Note 7 numerical comparisons
+python verification/low_temperature/review_checks.py self-stress
+python verification/revision_followup/lifting_checks.py
+
+# Earlier verification and feasibility checks
 python verification/selfstress_check.py
 python verification/certificate_check.py
 python verification/refine_N55.py
