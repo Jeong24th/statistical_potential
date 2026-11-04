@@ -188,9 +188,10 @@ leg = [Line2D([0],[0], color='#CC0000', lw=2.5, label='Attractive'),
 ax.legend(handles=leg, fontsize=9, loc='upper right', framealpha=0.9)
 
 import os
-out = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+out = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'figures')
+os.makedirs(out, exist_ok=True)
 btag = f'beta{int(beta)}' if beta == int(beta) else f'beta{beta}'
-fig.savefig(f'{out}\\fig_strongest_N{N}_{btag}.pdf', dpi=600, bbox_inches='tight')
-fig.savefig(f'{out}\\fig_strongest_N{N}_{btag}.png', dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(out, f'fig_strongest_N{N}_{btag}.pdf'), dpi=600, bbox_inches='tight')
+fig.savefig(os.path.join(out, f'fig_strongest_N{N}_{btag}.png'), dpi=300, bbox_inches='tight')
 print(f"Saved fig_strongest_N{N}_{btag}.pdf / .png")
 print("Done")

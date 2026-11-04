@@ -120,7 +120,8 @@ assert r23**2 + r31**2 < r12**2, 'right panel must be inside sphere'
 panel(axes[1], x3_in, attractive=True,
       title=r'(b) $\vec{x}_3$ inside: $r_{23}^2 + r_{31}^2 < r_{12}^2$')
 
-out = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+out = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'figures')
+os.makedirs(out, exist_ok=True)
 fig.savefig(os.path.join(out, 'fig_N3_antipodal.pdf'),
             dpi=600, bbox_inches='tight')
 fig.savefig(os.path.join(out, 'fig_N3_antipodal.png'),

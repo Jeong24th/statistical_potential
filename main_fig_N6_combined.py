@@ -290,7 +290,8 @@ ax.text(0.04, 0.96, r'(d) dominant force on each particle',
 
 # N label is conveyed through caption.
 
-out = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+out = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'figures')
+os.makedirs(out, exist_ok=True)
 fig.savefig(os.path.join(out, 'fig_main_N6_combined.pdf'),
             dpi=600, bbox_inches='tight')
 fig.savefig(os.path.join(out, 'fig_main_N6_combined.png'),
