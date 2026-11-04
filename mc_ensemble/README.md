@@ -13,8 +13,8 @@ ladder with the temperature-dependent swap rule described in Methods.
 - `make_si_figs.py` — produces the SI figures `fig_SM_mc_crossover.pdf` and
   `fig_SM_mc_marginals.pdf` from the run outputs, and prints the per-run crossover
   temperatures.
-- `out/N55_run{A,B,C}.npz` — three independent N=55 replica-exchange runs (mixed, random,
-  crystalline initializations; 25 temperatures, 3x10^4 measurement sweeps, thinning 10).
+- `out/N55_run{A,B,C}.npz` — three independent N=55 replica-exchange runs (gas-like, crystalline and
+  mixed initializations; 25 temperatures, 3x10^4 measurement sweeps, thinning 10).
 - `out/N6_run{A,B}.npz` — N=6 null control (random and crystalline initializations).
 - `out/validate_val_T{0.5,1.0}.npz` — N=2 exact-distribution validation chains.
 - `out/N55_summary.json`, `out/N6_summary.json` — per-temperature diagnostics and

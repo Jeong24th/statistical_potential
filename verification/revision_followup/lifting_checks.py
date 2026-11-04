@@ -2,20 +2,19 @@
 
 Reproduces, from the public data only:
 
-  (a) Current Note 7, Section 3, Table S2: the N=4 lifting check at phi=2 (planar canonical and minimum-norm
+  (a) Current Note 7, Section 3, Table S1: the N=4 lifting check at phi=2 (planar canonical and minimum-norm
       coefficients; unique three-dimensional decompositions for eta=0.5, 0.1, 0.01, 0.001,
       obtained by a QR solve of the lifted force equations with 80-digit forces);
-  (b) Additional check (formerly Table S3): the N=55, phi=2 lift of the refined configuration into 54 dimensions,
+  (b) Additional lifting-sensitivity check: the N=55, phi=2 lift of the refined configuration into 54 dimensions,
       relative coefficient deviation for eta/eps^8 = 1, 0.3, 0.1, 0.03 at 50 and 80 digits;
-  (c) Additional sign-ratio scan (formerly Note 7, Section 6): the ratio R of the largest attractive
+  (c) Additional sign-ratio scan: the ratio R of the largest attractive
       to the largest repulsive pair force along the same lift family for
       eta/eps^8 = 1, 3, 10, 30, 100, 300 (binary64, with 50/80-digit confirmation of the
       cases with R > 1) and for a second random complement (seed 27) at eta/eps^8 = 300.
 
-The condensed Note 7 retains (a); (b) and (c) remain available as additional
-numerical diagnostics. The historical JSON key N55.table_S3 is retained for
-compatibility and is not a reference to the current SM Table S3. The fixed-
-temperature continuation does not guarantee a temperature-independent tolerance.
+Note 7 includes (a); (b) and (c) are additional N=55 diagnostics (not shown in
+the SM). The fixed-temperature continuation does not guarantee a
+temperature-independent tolerance.
 
 Units hbar = m = omega = 1, lengths in a0; K_ij = exp(-r_ij^2 / (2 sinh phi)),
 c_ij = 2 (K^-1)_ij K_ij / sinh(phi)^2 (positive = attraction), f_ij = c_ij r_ij.
@@ -144,7 +143,7 @@ def check_n55(fast):
     out = dict(phi=2, coordinate_source='configurations.json: phi_2_refined', eps8=eps8,
                complement='numpy.random.default_rng(seed).normal(size=(55,52))/sqrt(52)')
 
-    # (b) Table S3: deviation of the lifted coefficients from the planar ones, seed 1.
+    # (b) Lifting sensitivity: deviation of the lifted coefficients from the planar ones, seed 1.
     z1 = np.random.default_rng(1).normal(size=(n, 52)) / np.sqrt(52)
     h0 = forces_high(pos, 2, 50)
     rows = []
@@ -162,8 +161,8 @@ def check_n55(fast):
         dev = max(abs(a - b) for a, b in zip(ref['c'], h0['c'])) / max(map(abs, h0['c']))
         row['relative_coefficient_deviation'] = float(dev)
         rows.append(row)
-        print('table S3', row, flush=True)
-    out['table_S3'] = rows
+        print('lifting sensitivity', row, flush=True)
+    out['lifting_sensitivity'] = rows
 
     # (c) sign-ratio scan along the same lift family, and a second complement.
     scan = []

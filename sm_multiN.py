@@ -2,6 +2,7 @@
 SM: V_total + force lines AND strongest bond for multiple N (closed shells)
 3x3 grid each, at varphi=2.
 """
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
@@ -126,9 +127,10 @@ for idx, N in enumerate(Ns):
 
 fig1.supxlabel(r'$x\,/\,a_0$', fontsize=11)
 fig1.supylabel(r'$y\,/\,a_0$', fontsize=11)
-out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1_2'
-fig1.savefig(f'{out}\\fig_SM_multiN_forces.pdf', dpi=600, bbox_inches='tight')
-fig1.savefig(f'{out}\\fig_SM_multiN_forces.png', dpi=300, bbox_inches='tight')
+out = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'figures')
+os.makedirs(out, exist_ok=True)
+fig1.savefig(os.path.join(out, f'fig_SM_multiN_forces.pdf'), dpi=600, bbox_inches='tight')
+fig1.savefig(os.path.join(out, f'fig_SM_multiN_forces.png'), dpi=300, bbox_inches='tight')
 print("Saved fig_SM_multiN_forces")
 
 # ═══════════════════════════════════════════════════════════════
@@ -172,7 +174,7 @@ for idx, N in enumerate(Ns):
 
 fig2.supxlabel(r'$x\,/\,a_0$', fontsize=11)
 fig2.supylabel(r'$y\,/\,a_0$', fontsize=11)
-fig2.savefig(f'{out}\\fig_SM_multiN_strongest.pdf', dpi=600, bbox_inches='tight')
-fig2.savefig(f'{out}\\fig_SM_multiN_strongest.png', dpi=300, bbox_inches='tight')
+fig2.savefig(os.path.join(out, f'fig_SM_multiN_strongest.pdf'), dpi=600, bbox_inches='tight')
+fig2.savefig(os.path.join(out, f'fig_SM_multiN_strongest.png'), dpi=300, bbox_inches='tight')
 print("Saved fig_SM_multiN_strongest")
 print("Done")

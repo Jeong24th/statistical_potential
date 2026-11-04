@@ -148,8 +148,9 @@ ax.set_ylim(bottom=0)
 ax.grid(True, alpha=0.2)
 ax.legend(fontsize=10, framealpha=0.9)
 
-out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1_2'
-fig.savefig(f'{out}\\fig_SM_rmin_multiN.pdf', dpi=600, bbox_inches='tight')
-fig.savefig(f'{out}\\fig_SM_rmin_multiN.png', dpi=300, bbox_inches='tight')
+out = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'figures')
+os.makedirs(out, exist_ok=True)
+fig.savefig(os.path.join(out, f'fig_SM_rmin_multiN.pdf'), dpi=600, bbox_inches='tight')
+fig.savefig(os.path.join(out, f'fig_SM_rmin_multiN.png'), dpi=300, bbox_inches='tight')
 print(f"\nSaved fig_SM_rmin_multiN.pdf / .png")
 print("Done")

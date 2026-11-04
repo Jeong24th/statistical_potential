@@ -4,6 +4,7 @@ Same RdYlBu_r colormap with black dots at Pauli crystal positions.
 Usage: python fig_SM_density.py [N]
 """
 
+import os
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
@@ -142,8 +143,9 @@ ax.set_ylabel(r'$y/a_0$')
 ax.text(0.05, 0.95, rf'$N={N}$', transform=ax.transAxes,
         fontsize=11, va='top', ha='left', fontweight='bold')
 
-out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1_2'
-fig.savefig(f'{out}\\fig_SM_density_N{N}.pdf', dpi=600, bbox_inches='tight')
-fig.savefig(f'{out}\\fig_SM_density_N{N}.png', dpi=300, bbox_inches='tight')
+out = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'figures')
+os.makedirs(out, exist_ok=True)
+fig.savefig(os.path.join(out, f'fig_SM_density_N{N}.pdf'), dpi=600, bbox_inches='tight')
+fig.savefig(os.path.join(out, f'fig_SM_density_N{N}.png'), dpi=300, bbox_inches='tight')
 print(f"Saved fig_SM_density_N{N}.pdf / .png")
 print("Done")

@@ -1,4 +1,5 @@
 """SI figures from the ensemble-MC runs + per-run crossover reproducibility."""
+import os
 import glob
 import json
 
@@ -12,7 +13,8 @@ plt.rcParams.update({
     "axes.linewidth": 0.8, "xtick.direction": "in", "ytick.direction": "in",
 })
 
-OUTDIR = r"..\Nature_Comm\figures"
+OUTDIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "figures")
+os.makedirs(OUTDIR, exist_ok=True)
 
 
 def crossover(Ts, Ps):
@@ -75,7 +77,7 @@ ax[1].set_ylim(0.3, 0.55)
 ax[1].legend(frameon=False, fontsize=9)
 ax[1].text(0.02, 0.93, "(b)", transform=ax[1].transAxes)
 fig.tight_layout()
-fig.savefig(OUTDIR + r"\fig_SM_mc_crossover.pdf", bbox_inches="tight")
+fig.savefig(os.path.join(OUTDIR, "fig_SM_mc_crossover.pdf"), bbox_inches="tight")
 print("wrote fig_SM_mc_crossover.pdf")
 
 # ---------------- figure 2: radial marginals (unimodal, nearly T-independent) --
@@ -117,5 +119,5 @@ ax2[1].set_xlabel(r"$r_{3}/a_0$ (third-smallest radius)")
 ax2[1].set_xlim(0.3, 1.15)
 ax2[1].text(0.02, 0.93, "(b)", transform=ax2[1].transAxes)
 fig2.tight_layout()
-fig2.savefig(OUTDIR + r"\fig_SM_mc_marginals.pdf", bbox_inches="tight")
+fig2.savefig(os.path.join(OUTDIR, "fig_SM_mc_marginals.pdf"), bbox_inches="tight")
 print("wrote fig_SM_mc_marginals.pdf")

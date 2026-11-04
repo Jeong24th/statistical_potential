@@ -31,26 +31,18 @@ for the N=55 production runs and the N=6 null control, and the scripts generatin
 SI figures (ensemble force crossover at k_B T_x/hbar-omega = 0.66(1); unimodal radial
 marginals across the structural level crossings). See `mc_ensemble/README.md`.
 
-## Verification and the current Supplementary Note 7
+## Supplementary Note 7 checks
 
-The condensed Supplementary Note 7 has four sections: definition and nonuniqueness;
+Supplementary Note 7 has four sections: definition and nonuniqueness;
 characterization by continuation across dimension; minimum norm and cluster separability;
 and the collinear limit and one-dimensional log-gas.
 
 - The retained N = 55 canonical/minimum-norm comparison (Section 3) is reproduced by
   `verification/low_temperature/review_checks.py self-stress`.
-- The retained N = 4 lifting table (Table S2, Section 3) is reproduced by
+- The retained N = 4 lifting table (Table S1, Section 3) is reproduced by
   `verification/revision_followup/lifting_checks.py`.
-- That lifting script also preserves additional N = 55 sensitivity and sign-ratio
-  checks, which are no longer displayed in Note 7. Its historical JSON key
-  `N55.table_S3` does not refer to the current Table S3.
-- The scripts directly in `verification/` preserve earlier force-formula,
-  self-stress and all-repulsive feasibility checks. They provide numerical
-  background rather than the current note's section structure.
 
 See [verification/README.md](verification/README.md) for conventions and limitations.
-The first-pass N = 55 inequality-form infeasibility result was a numerical artifact;
-the later equality-form constructive certificate is the relevant result.
 
 ## Low-temperature precision audit
 
@@ -69,10 +61,10 @@ evaluated at four zero-temperature mode candidates. The smaller-shell repulsion
 claim is restricted to the sampled finite-temperature range; the limit does not
 support a universal threshold at N = 55.
 
-## Revision follow-up (November 2026)
+## Supplementary calculations
 
 [`verification/revision_followup/`](verification/revision_followup/README.md) contains
-the calculations added in the revised manuscript: the distance between the finite-temperature
+the calculations supporting the manuscript: the distance between the finite-temperature
 mode and the zero-temperature mode for N = 55 as a function of temperature (full-configuration
 comparison after optimal rotation and particle assignment), the N = 3 obtuse-triangle
 probability versus temperature (a parameter-free prediction for single-shot experiments),
@@ -87,8 +79,7 @@ results, not those three shot files.
 
 - Python 3.12 for the tested precision-audit environment (pinned dependencies in
   `verification/low_temperature/requirements.txt`). The legacy plotting scripts
-  use the packages below; compatibility with Python 3.8 is not asserted for the
-  pinned audit dependencies.
+  use the packages below.
 - NumPy
 - SciPy
 - Matplotlib
@@ -118,14 +109,9 @@ python sm_structural_transition.py
 # Current Supplementary Note 7 numerical comparisons
 python verification/low_temperature/review_checks.py self-stress
 python verification/revision_followup/lifting_checks.py
-
-# Earlier verification and feasibility checks
-python verification/selfstress_check.py
-python verification/certificate_check.py
-python verification/refine_N55.py
 ```
 
-Figures are written to `figures/` in a standalone clone. In the manuscript worktree, the scripts detect `Manuscript/Nature_Comm/` and write directly to its `figures/` directory.
+Figures are written to `figures/` next to each script.
 
 ## Units
 

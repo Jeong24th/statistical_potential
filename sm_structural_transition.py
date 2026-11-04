@@ -2,6 +2,7 @@
 SM: Structural phase transition of the V_total global minimum (C -> D -> T)
 Generates fig_SM_rmin_order.pdf and fig_SM_struct_configs.pdf
 """
+import os
 import numpy as np
 from scipy.optimize import minimize
 import matplotlib
@@ -159,7 +160,8 @@ for i, beta in enumerate(betas_scan):
 print("Scan complete.", flush=True)
 
 # ===== Figure 1: r_min order parameter =====
-out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1_2'
+out = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'figures')
+os.makedirs(out, exist_ok=True)
 
 fig, ax = plt.subplots(1, 1, figsize=(5.5, 4.5))
 plt.subplots_adjust(left=0.14, right=0.95, bottom=0.12, top=0.93)
@@ -191,8 +193,8 @@ ax.set_ylim(-0.1, 3.6)
 ax.axvline(0.67, color='gray', ls='--', lw=0.6, alpha=0.5)
 ax.axvline(1.63, color='gray', ls='--', lw=0.6, alpha=0.5)
 
-fig.savefig(f'{out}\\fig_SM_rmin_order.pdf', dpi=600, bbox_inches='tight')
-fig.savefig(f'{out}\\fig_SM_rmin_order.png', dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(out, f'fig_SM_rmin_order.pdf'), dpi=600, bbox_inches='tight')
+fig.savefig(os.path.join(out, f'fig_SM_rmin_order.png'), dpi=300, bbox_inches='tight')
 print("Saved fig_SM_rmin_order.pdf/.png")
 plt.close(fig)
 
@@ -221,8 +223,8 @@ for idx, beta in enumerate(snapshot_betas):
     ax.set_xlabel(r'$x/a_0$', fontsize=9)
     ax.set_ylabel(r'$y/a_0$', fontsize=9)
 
-fig2.savefig(f'{out}\\fig_SM_struct_configs.pdf', dpi=600, bbox_inches='tight')
-fig2.savefig(f'{out}\\fig_SM_struct_configs.png', dpi=300, bbox_inches='tight')
+fig2.savefig(os.path.join(out, f'fig_SM_struct_configs.pdf'), dpi=600, bbox_inches='tight')
+fig2.savefig(os.path.join(out, f'fig_SM_struct_configs.png'), dpi=300, bbox_inches='tight')
 print("Saved fig_SM_struct_configs.pdf/.png")
 plt.close(fig2)
 print("All done.")

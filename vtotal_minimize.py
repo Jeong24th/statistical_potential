@@ -8,6 +8,7 @@ Default: beta=1, N=6
 Units: hbar = m = omega = 1
 """
 
+import os
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
@@ -240,9 +241,10 @@ ax.text(0.05, 0.95, rf'$N={N}$', transform=ax.transAxes,
         fontsize=11, va='top', ha='left', fontweight='bold')
 
 # ── Save ──
-out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1_2'
+out = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'figures')
+os.makedirs(out, exist_ok=True)
 btag = f'beta{int(beta)}' if beta == int(beta) else f'beta{beta}'
-fig.savefig(f'{out}\\fig_N{N}_{btag}.pdf', dpi=600, bbox_inches='tight')
-fig.savefig(f'{out}\\fig_N{N}_{btag}.png', dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(out, f'fig_N{N}_{btag}.pdf'), dpi=600, bbox_inches='tight')
+fig.savefig(os.path.join(out, f'fig_N{N}_{btag}.png'), dpi=300, bbox_inches='tight')
 print(f"Saved fig_N{N}_{btag}.pdf / .png")
 print("Done")

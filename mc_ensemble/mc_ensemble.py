@@ -31,8 +31,7 @@ Subcommands:
     analyze   pool runs: autocorrelation/ESS/R-hat, histograms, basin fractions,
               attractive-bond statistics, crossover temperature -> json + png
 
-Conventions cross-checked against PRL_PRE_v1/CODE/vtotal_minimize.py and
-Nature_Comm/verification/*.py (attractive <=> (K^-1)_ab K_ab > 0).
+(attractive <=> (K^-1)_ab K_ab > 0).
 """
 
 import argparse

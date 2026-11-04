@@ -31,8 +31,7 @@ plt.rcParams.update({
 })
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-MANUSCRIPT_DIR = SCRIPT_DIR.parents[1] / 'Nature_Comm'
-OUTPUT_DIR = MANUSCRIPT_DIR / 'figures' if MANUSCRIPT_DIR.exists() else SCRIPT_DIR / 'figures'
+OUTPUT_DIR = SCRIPT_DIR / 'figures'
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # ── Scan parameters ───────────────────────────────────────────

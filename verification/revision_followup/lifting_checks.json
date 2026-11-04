@@ -119,7 +119,7 @@
     "coordinate_source": "configurations.json: phi_2_refined",
     "eps8": 0.00036120741324553984,
     "complement": "numpy.random.default_rng(seed).normal(size=(55,52))/sqrt(52)",
-    "table_S3": [
+    "lifting_sensitivity": [
       {
         "eta_over_eps8": 1.0,
         "eta": 0.00036120741324553984,

@@ -2,6 +2,7 @@
 SM: Inner and outer shell radii vs temperature for N=55
 Plots average radius of innermost shell and outermost shell as a function of phi.
 """
+import os
 import numpy as np
 from scipy.optimize import minimize
 import matplotlib
@@ -170,9 +171,10 @@ ax.set_xlim(0, 2.65)
 ax.axvline(0.67, color='gray', ls='--', lw=0.6, alpha=0.5)
 ax.axvline(1.63, color='gray', ls='--', lw=0.6, alpha=0.5)
 
-out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1_2\OLD'
-fig.savefig(f'{out}\\fig_SM_shell_radii_vs_temp.pdf', dpi=600, bbox_inches='tight')
-fig.savefig(f'{out}\\fig_SM_shell_radii_vs_temp.png', dpi=300, bbox_inches='tight')
+out = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'figures')
+os.makedirs(out, exist_ok=True)
+fig.savefig(os.path.join(out, f'fig_SM_shell_radii_vs_temp.pdf'), dpi=600, bbox_inches='tight')
+fig.savefig(os.path.join(out, f'fig_SM_shell_radii_vs_temp.png'), dpi=300, bbox_inches='tight')
 print(f"Saved to OLD/fig_SM_shell_radii_vs_temp.pdf/.png")
 plt.close(fig)
 print("Done.")

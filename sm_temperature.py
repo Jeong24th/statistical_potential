@@ -3,6 +3,7 @@ SM: Temperature evolution figures
 1) V_total contour for N=6 at 4 temperatures
 2) Strongest bond for N=55 at 4 temperatures
 """
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
@@ -115,9 +116,10 @@ for j, beta in enumerate(betas_N6):
     ax.set_xlabel(r'$x/a_0$')
 
 fig3.text(0.02,0.95,r'$N=6$',fontsize=11,fontweight='bold',va='top')
-out = r'C:\Users\park\Dropbox\PROJECTS\STAT_Physics\IDENTICAL_id\Statistical Potential\Manuscript\Pauli_v1_2'
-fig3.savefig(f'{out}\\fig_SM_temp_N6.pdf',dpi=600,bbox_inches='tight')
-fig3.savefig(f'{out}\\fig_SM_temp_N6.png',dpi=300,bbox_inches='tight')
+out = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'figures')
+os.makedirs(out, exist_ok=True)
+fig3.savefig(os.path.join(out, f'fig_SM_temp_N6.pdf'),dpi=600,bbox_inches='tight')
+fig3.savefig(os.path.join(out, f'fig_SM_temp_N6.png'),dpi=300,bbox_inches='tight')
 print("Saved fig_SM_temp_N6")
 
 # ═══════════════════════════════════════════════════════════════
@@ -159,7 +161,7 @@ for j, beta in enumerate(betas_N55):
     ax.set_xlabel(r'$x/a_0$')
 
 fig4.text(0.02,0.95,r'$N=55$',fontsize=11,fontweight='bold',va='top')
-fig4.savefig(f'{out}\\fig_SM_temp_N55_strongest.pdf',dpi=600,bbox_inches='tight')
-fig4.savefig(f'{out}\\fig_SM_temp_N55_strongest.png',dpi=300,bbox_inches='tight')
+fig4.savefig(os.path.join(out, f'fig_SM_temp_N55_strongest.pdf'),dpi=600,bbox_inches='tight')
+fig4.savefig(os.path.join(out, f'fig_SM_temp_N55_strongest.png'),dpi=300,bbox_inches='tight')
 print("Saved fig_SM_temp_N55_strongest")
 print("Done")

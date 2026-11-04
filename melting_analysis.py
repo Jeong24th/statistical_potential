@@ -15,8 +15,7 @@ from scipy.optimize import minimize
 
 N = int(sys.argv[1]) if len(sys.argv) > 1 else 6
 SCRIPT_DIR = Path(__file__).resolve().parent
-MANUSCRIPT_DIR = SCRIPT_DIR.parents[1] / 'Nature_Comm'
-OUTPUT_DIR = MANUSCRIPT_DIR / 'figures' if MANUSCRIPT_DIR.exists() else SCRIPT_DIR / 'figures'
+OUTPUT_DIR = SCRIPT_DIR / 'figures'
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 plt.rcParams.update({
