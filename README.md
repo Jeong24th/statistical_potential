@@ -83,6 +83,9 @@ results, not those three shot files.
 - NumPy
 - SciPy
 - Matplotlib
+- The plotting scripts use `text.usetex=True` and require a working LaTeX
+  installation with the cm-super fonts; `verification/low_temperature/` does
+  not require TeX.
 
 ## Usage
 

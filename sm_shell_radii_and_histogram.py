@@ -324,7 +324,8 @@ if __name__ == '__main__':
     axR.grid(True, axis='y', alpha=0.2)
 
     plt.subplots_adjust(left=0.10, right=0.97, bottom=0.08, top=0.94)
-    out_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+    out_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'figures')
+    os.makedirs(out_dir, exist_ok=True)
     out = os.path.join(out_dir, 'fig_SM_shell_radii.pdf')
     plt.savefig(out, dpi=600, bbox_inches='tight')
     plt.savefig(out.replace('.pdf', '.png'), dpi=300, bbox_inches='tight')

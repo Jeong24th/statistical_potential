@@ -5,8 +5,8 @@
 The note has four sections: (1) definition and nonuniqueness,
 (2) characterization by continuation across dimension, (3) minimum norm and
 cluster separability, and (4) the collinear limit and one-dimensional log-gas.
-The planar freedom is described by self-stress; the dimension count is in the
-main text after Eq. (5).
+The planar freedom is described by self-stress; the dimension count is given in the
+main text after Eq. (5) and in Supplementary Note 7, Section 1.
 
 The canonical prescription is singled out among continuous, distance-based
 assignments that reproduce the same determinant-potential force in every
