@@ -1,4 +1,4 @@
-"""Precision check of the binary64 bond classification on cold stored shots (Supplementary Note 10).
+"""Precision check of the binary64 bond classification on cold stored shots (Supplementary Note 8).
 
 For each of the three stored robustness runs (robust_{A,B,C}.npz from robustness_mc.py) the
 script takes, at the coldest ladder temperature k_B T/(hbar omega) = 0.4, the first stored shot

@@ -1,5 +1,5 @@
 """Protocol-robustness analysis on stored N=55 Monte Carlo configurations (robust_*.npz in this
-directory, produced by robustness_mc.py).  Supplementary Note 10 of the revised manuscript.
+directory, produced by robustness_mc.py).  Supplementary Note 8 of the revised manuscript.
 
 Perturbations applied to every stored shot before classification:
   * Gaussian position noise of standard deviation sigma (in a0) on every coordinate,

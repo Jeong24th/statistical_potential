@@ -1,5 +1,5 @@
 """Replica-exchange Monte Carlo for N=55 (same model, ladder and sampler as mc_ensemble/mc_ensemble.py)
-that STORES thinned configurations, for the protocol-robustness analysis of Supplementary Note 10.
+that STORES thinned configurations, for the protocol-robustness analysis of Supplementary Note 8.
 
 usage: python robustness_mc.py <run_id> <init: random|crystal|mixed> <seed> [burn=3000] [sweeps=6000] [thin=10]
 output: robust_<run_id>.npz in this directory (pos: (n_temps, n_kept, 55, 2); temps; lw)

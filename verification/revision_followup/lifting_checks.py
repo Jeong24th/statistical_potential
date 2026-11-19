@@ -2,7 +2,7 @@
 
 Reproduces, from the public data only:
 
-  (a) Current Note 7, Section 3, Table S1: the N=4 lifting check at phi=2 (planar canonical and minimum-norm
+  (a) Current Note 7, Section 3, Table S2: the N=4 lifting check at phi=2 (planar canonical and minimum-norm
       coefficients; unique three-dimensional decompositions for eta=0.5, 0.1, 0.01, 0.001,
       obtained by a QR solve of the lifted force equations with 80-digit forces);
   (b) Additional lifting-sensitivity check: the N=55, phi=2 lift of the refined configuration into 54 dimensions,

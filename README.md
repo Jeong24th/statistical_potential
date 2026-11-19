@@ -33,13 +33,14 @@ marginals across the structural level crossings). See `mc_ensemble/README.md`.
 
 ## Supplementary Note 7 checks
 
-Supplementary Note 7 has four sections: definition and nonuniqueness;
-characterization by continuation across dimension; minimum norm and cluster separability;
-and the collinear limit and one-dimensional log-gas.
+Supplementary Note 7 has five sections: definition and sign convention;
+self-stresses and the count of free parameters; characterization by continuation
+across dimension; minimum-norm comparison and cluster separability; and the
+collinear limit and one-dimensional log-gas.
 
-- The retained N = 55 canonical/minimum-norm comparison (Section 3) is reproduced by
+- The retained N = 55 canonical/minimum-norm comparison (Table S3, Section 4) is reproduced by
   `verification/low_temperature/review_checks.py self-stress`.
-- The retained N = 4 lifting table (Table S1, Section 3) is reproduced by
+- The retained N = 4 lifting table (Table S2, Section 3) is reproduced by
   `verification/revision_followup/lifting_checks.py`.
 
 See [verification/README.md](verification/README.md) for conventions and limitations.

@@ -1,4 +1,4 @@
-"""Sampling diagnostics of the stored N=55 robustness runs (Supplementary Note 10).
+"""Sampling diagnostics of the stored N=55 robustness runs (Supplementary Note 8).
 
 For the unperturbed stored configurations of the three replica-exchange runs
 (robust_A.npz, robust_B.npz, robust_C.npz, produced by robustness_mc.py) this script
@@ -7,7 +7,7 @@ For the unperturbed stored configurations of the three replica-exchange runs
   * estimates the integrated autocorrelation time of the attraction indicator per run and
     temperature (initial positive sequence estimator) and the resulting effective sample
     size and standard error of P_att, and the run-to-run spread of P_att (standard deviation
-    across the three runs, as quoted in Note 10, and the range),
+    across the three runs, as quoted in Note 8, and the range),
   * locates the crossover T_x where the pooled P_att crosses one half (linear interpolation),
   * gives a 95% block-bootstrap interval for T_x (2000 replicates, block lengths 10, 20, 50,
     the same blocks used at every temperature).
@@ -109,7 +109,7 @@ def main():
                                            no_crossing=int(np.isnan(xs).sum())))
     out['ess_min'] = min(v['ess'] for v in out['diagnostics'])
     out['se_max'] = max(v['se'] for v in out['diagnostics'])
-    out['run_spread_sd_max'] = max(v['run_spread_sd'] for v in out['diagnostics'])   # 'run-to-run spread' of Note 10
+    out['run_spread_sd_max'] = max(v['run_spread_sd'] for v in out['diagnostics'])   # 'run-to-run spread' of Note 8
     out['run_spread_range_max'] = max(v['run_spread_range'] for v in out['diagnostics'])
     args.output.write_text(json.dumps(out, indent=2))
     print(json.dumps({k: v for k, v in out.items() if k not in ('diagnostics', 'pooled_P_att')}, indent=2))
