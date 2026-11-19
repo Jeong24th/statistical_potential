@@ -147,7 +147,7 @@ not silently replace their plotted numbers or regenerate manuscript figures.
 ## Follow-up: self-stress, smaller closed shells, and the flat-kernel limit
 
 The self-stress comparison below is the N = 55 canonical/minimum-norm comparison
-of Supplementary Note 7, Section 3.
+of Supplementary Note 7, Section 4 (Table S3).
 
 `review_checks.py` extends the original N = 55 audit. The supplied
 `data/review_reference.json` contains the nine reconstructed configurations for

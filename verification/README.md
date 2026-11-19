@@ -2,11 +2,12 @@
 
 ## Supplementary Note 7
 
-The note has four sections: (1) definition and nonuniqueness,
-(2) characterization by continuation across dimension, (3) minimum norm and
-cluster separability, and (4) the collinear limit and one-dimensional log-gas.
+The five sections cover (1) the definition and sign convention, (2) self-stresses
+and the count of free parameters, (3) characterization by continuation across
+dimension, (4) the minimum-norm comparison and cluster separability, and
+(5) the collinear limit and one-dimensional log-gas.
 The planar freedom is described by self-stress; the dimension count is given in the
-main text after Eq. (5) and in Supplementary Note 7, Section 1.
+main text after Eq. (5) and in Supplementary Note 7, Section 2.
 
 The canonical prescription is singled out among continuous, distance-based
 assignments that reproduce the same determinant-potential force in every
@@ -18,8 +19,8 @@ The retained numerical comparisons are:
 
 | Current result | Reproduction |
 |---|---|
-| N = 55 canonical/minimum-norm comparison, Section 3 | `low_temperature/review_checks.py self-stress` |
-| N = 4 lifting table, Table S1 in Section 3 | `revision_followup/lifting_checks.py` |
+| N = 55 canonical/minimum-norm comparison, Table S3 in Section 4 | `low_temperature/review_checks.py self-stress` |
+| N = 4 lifting table, Table S2 in Section 3 | `revision_followup/lifting_checks.py` |
 
 The cluster-separability statement is limited to the following: in D >= 2,
 any cluster-separable central decomposition must contain attraction for some
