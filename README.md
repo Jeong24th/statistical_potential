@@ -6,10 +6,12 @@ Reproducibility code for the accompanying statistical-potential manuscript. The 
 
 - `main_fig_N3_schematic.py` — geometric sign criterion for the canonical \(N=3\) force decomposition (Fig. 1).
 - `main_fig_N6_combined.py` — one-body density, conditional density, effective-potential minimum, and dominant forces for \(N=6\) (Fig. 2).
-- `vtotal_minimize.py` — minimization of \(V_{\rm total}(X)\), shell structure, and all canonical pair forces; supplies the \(N=55\) force panel in Fig. 3.
-- `strongest_bond.py` — strongest canonical pair force on each particle; supplies the \(N=55\) dominant-force panel in Fig. 3.
+- `vtotal_minimize.py` — minimization of \(V_{\rm total}(X)\), shell structure, and all canonical pair forces (Fig. 3).
+- `strongest_bond.py` — strongest canonical pair force on each particle (Fig. 3).
 - `melting_analysis.py` — two-panel \(N=55\) temperature scan with shared structural-regime shading (Fig. 4), complementary SI diagnostics, and the \(N=6\) null control.
 - `phase_diagram.py` — force-dominance diagram and interpolated \(T_{\rm c}(N)\) boundary (Fig. 5), generated from `phase_diagram_cache.npz`.
+
+The Fig. 3 scripts run fresh minimizations, and the Fig. 4 script reads the original `melting_analysis_cache_N55.npz`. The final figures use 80-digit pair forces, with refined coordinates for both Fig. 3 panels (φ = 2) and the three coldest Fig. 4 points (φ = 2, 2.5, 3). [Low-temperature verification data and commands](verification/low_temperature/README.md)
 
 ## Supplementary figures and diagnostics
 
