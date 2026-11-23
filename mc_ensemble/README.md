@@ -22,14 +22,21 @@ ladder with the temperature-dependent swap rule described in Methods.
 
 ## Reproduce
 
+From this directory, run the validation and analyze the archived chains:
+
     python mc_ensemble.py validate --out out/validate.npz
-    python mc_ensemble.py run --N 55 --temps "0.40,...,2.00" --burn 5000 --sweeps 30000 \
-        --thin 10 --init mixed --seed 1001 --run-id N55-A --out out/N55_runA.npz
     python mc_ensemble.py analyze --pattern "out/N55_run*.npz" --out out/N55
     python make_si_figs.py
 
-Headline results: the probability that the strongest canonical bond of a single sampled
-configuration is attractive crosses one half at k_B T_x / (hbar omega) = 0.66(1) for N=55
-(per-run 0.660/0.660/0.666), stays below 0.07 for N=6 at all temperatures, and the radial
-marginals remain unimodal and nearly temperature-independent across the structural level
-crossings (mode-level transitions).
+To generate an additional N=55 chain on the same 25-temperature grid:
+
+    python mc_ensemble.py run --N 55 --temps "0.40,0.44,0.48,0.52,0.55,0.58,0.60,0.62,0.64,0.67,0.70,0.75,0.80,0.90,1.00,1.15,1.30,1.40,1.45,1.50,1.55,1.60,1.70,1.85,2.00" --burn 5000 --sweeps 30000 --thin 10 --init mixed --seed 1001 --run-id N55-example --out out/example_N55.npz
+
+For N=55, the pooled probability that a shot has an attractive strongest canonical
+bond crosses one half at \(k_{\rm B}T_\times/(\hbar\omega)=0.661\). The three long
+runs give 0.6597, 0.6595 and 0.6660, with an rms spread of 0.003 about their mean.
+The unperturbed pooled crossing of 0.639 in Table S4 comes from three separate
+[robustness runs](../verification/revision_followup/README.md).
+For N=6 the probability stays below 0.07 at all sampled temperatures. The radial
+marginals remain unimodal and nearly temperature-independent across the structural
+level crossings.

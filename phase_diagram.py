@@ -1,10 +1,9 @@
 """
-Phase diagram: ATT vs REP dominance in (N, varphi) space.
+Phase diagram: ATT vs REP dominance versus particle number and temperature.
 For each (N, beta), minimize V_total and check whether the
 globally strongest pairwise force is attractive or repulsive.
 
-X-axis is varphi = beta*hbar*omega (so low T sits on the right);
-this expands the melting-relevant region compared to the 1/T axis.
+The horizontal axis is k_B T/(hbar omega) = 1/varphi, with low temperature on the left.
 
 Caches results to phase_diagram_cache.npz so the heavy compute
 only runs once.

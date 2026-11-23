@@ -59,8 +59,8 @@ ax[0].errorbar(T55, P_pool, yerr=err, color="#CC0000", lw=1.4, marker="o",
 ax[0].plot(T6, P6, "s-", color="#2255CC", ms=3.5, lw=1.2, label=r"$N=6$")
 ax[0].axhline(0.5, ls="--", lw=0.8, c="gray")
 ax[0].axvline(Tc_pool, ls=":", lw=1.0, c="k")
-ax[0].annotate(rf"$k_{{\rm B}}T_\times/\hbar\omega={Tc_pool:.2f}$",
-               xy=(Tc_pool, 0.52), xytext=(0.95, 0.62), fontsize=9,
+ax[0].annotate(rf"$k_{{\rm B}}T_\times/\hbar\omega={Tc_pool:.3f}$",
+               xy=(Tc_pool, 0.52), xytext=(0.95, 0.585), fontsize=9,
                arrowprops=dict(arrowstyle="->", lw=0.7))
 ax[0].set_xlabel(r"$k_{\rm B}T/\hbar\omega$")
 ax[0].set_ylabel(r"$P(\mathrm{strongest\ bond\ attractive})$")

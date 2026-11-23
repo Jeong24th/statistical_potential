@@ -68,13 +68,15 @@ for T in temps:
     print(f"T={row['T']!s:5} P_obtuse={row['P_obtuse']:.5f} +- {row['P_obtuse_se']:.5f}  noise0.1 -> {row['P_obtuse_noise0.1']:.5f}  ESS={row['ess']:.3g}", flush=True)
 json.dump(rows, open(HERE / "n3_obtuse.json", "w"), indent=1)
 
-fig, ax = plt.subplots(figsize=(4.4, 3.0))
+plt.rcParams.update({"font.size": 10, "pdf.fonttype": 42})
+fig, ax = plt.subplots(figsize=(4.4, 3.0), layout="constrained")
 fin = [r for r in rows if r["T"] not in ("0", "inf")]
 ax.plot([r["T"] for r in fin], [r["P_obtuse"] for r in fin], "o-", color="#CC3311", ms=4, label="exact dual")
 ax.plot([r["T"] for r in fin], [r["P_obtuse_noise0.1"] for r in fin], "s--", color="#4477AA", ms=3.5, label=r"with position noise $\sigma=0.1\,a_0$")
-ax.axhline(0.75, color="k", ls=":", lw=1, label="independent Gaussian points: 3/4")
-ax.axhline(rows[0]["P_obtuse"], color="#CC3311", ls="-.", lw=1, label=r"$T=0$ limit")
-ax.set_xscale("log"); ax.set_xlabel(r"$k_{\rm B}T/\hbar\omega$"); ax.set_ylabel("obtuse-triangle probability")
-ax.set_ylim(0.3, 0.8); ax.legend(fontsize=7, frameon=False, loc="lower right"); fig.tight_layout()
+ax.axhline(3/4, color="black", ls=":", lw=1, label=r"independent Gaussian points, $3/4$")
+ax.axhline(15/32, color="#CC3311", ls="-.", lw=1, label=r"$T=0$ limit, $15/32$")
+ax.set(xscale="log", xlabel=r"$k_{\rm B}T/\hbar\omega$", ylabel="Obtuse-triangle probability",
+       ylim=(0.3, 0.8))
+ax.legend(fontsize=7, frameon=False, loc="lower right")
 fig.savefig(HERE / "n3_obtuse.png", dpi=150); fig.savefig(HERE / "n3_obtuse.pdf")
 print("done")
