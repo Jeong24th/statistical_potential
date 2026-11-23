@@ -26,6 +26,7 @@ From this directory, run the validation and analyze the archived chains:
 
     python mc_ensemble.py validate --out out/validate.npz
     python mc_ensemble.py analyze --pattern "out/N55_run*.npz" --out out/N55
+    python ../verification/revision_followup/mc_sampling_diagnostics.py --long-runs
     python make_si_figs.py
 
 To generate an additional N=55 chain on the same 25-temperature grid:
@@ -33,7 +34,8 @@ To generate an additional N=55 chain on the same 25-temperature grid:
     python mc_ensemble.py run --N 55 --temps "0.40,0.44,0.48,0.52,0.55,0.58,0.60,0.62,0.64,0.67,0.70,0.75,0.80,0.90,1.00,1.15,1.30,1.40,1.45,1.50,1.55,1.60,1.70,1.85,2.00" --burn 5000 --sweeps 30000 --thin 10 --init mixed --seed 1001 --run-id N55-example --out out/example_N55.npz
 
 For N=55, the pooled probability that a shot has an attractive strongest canonical
-bond crosses one half at \(k_{\rm B}T_\times/(\hbar\omega)=0.661\). The three long
+bond crosses one half at \(k_{\rm B}T_\times/(\hbar\omega)=0.661\)
+(95% block-bootstrap interval 0.653–0.671). The three long
 runs give 0.6597, 0.6595 and 0.6660, with an rms spread of 0.003 about their mean.
 The unperturbed pooled crossing of 0.639 in Table S4 comes from three separate
 [robustness runs](../verification/revision_followup/README.md).

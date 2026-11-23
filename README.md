@@ -31,7 +31,7 @@ Methods ("Ensemble Monte Carlo") and Supplementary Note 8: a validated
 Metropolis + replica-exchange sampler of the exact positive-weight dual, the raw chains
 for the N=55 production runs and the N=6 null control, and the scripts generating the
 SI figures. The three long N=55 runs give a pooled crossover at
-\(k_{\rm B}T_\times/(\hbar\omega)=0.661\), with a run-to-run rms spread of 0.003.
+\(k_{\rm B}T_\times/(\hbar\omega)=0.661\) (95% block-bootstrap interval 0.653–0.671).
 The radial marginals remain unimodal across the structural level crossings.
 The separate robustness runs have an unperturbed pooled crossover of 0.639
 (Table S4). See [ensemble runs](mc_ensemble/README.md) and

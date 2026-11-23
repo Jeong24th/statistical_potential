@@ -1,4 +1,4 @@
-"""Sampling diagnostics of the stored N=55 robustness runs (Supplementary Note 8).
+"""Sampling diagnostics of the N=55 long ensemble and robustness runs (Supplementary Note 8).
 
 For the unperturbed stored configurations of the three replica-exchange runs
 (robust_A.npz, robust_B.npz, robust_C.npz, produced by robustness_mc.py) this script
@@ -16,6 +16,11 @@ Units hbar = m = omega = 1. Usage:
     python mc_sampling_diagnostics.py --shots <directory with robust_{A,B,C}.npz>
 The stored shots (about 13 MB each) are not kept in the repository; their SHA-256 hashes
 are listed in README.md. Reference output: mc_sampling_diagnostics.json.
+
+    python mc_sampling_diagnostics.py --long-runs
+This reads the stored sign of the strongest bond from mc_ensemble/out/N55_run{A,B,C}.npz
+and estimates the pooled crossing with the same circular block bootstrap.
+Reference output: long_run_crossing.json.
 """
 import argparse
 import json
@@ -60,17 +65,11 @@ def crossing(T, p):
     return float('nan')
 
 
-def main():
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument('--shots', type=Path, required=True)
-    ap.add_argument('--output', type=Path, default=HERE / 'mc_sampling_diagnostics.json')
-    ap.add_argument('--replicates', type=int, default=2000)
-    args = ap.parse_args()
-
+def robustness_diagnostics(shots, replicates):
     runs = []
     temps = None
     for name in 'ABC':
-        d = np.load(args.shots / f'robust_{name}.npz')
+        d = np.load(shots / f'robust_{name}.npz')
         if temps is None:
             temps = d['temps']
         assert np.allclose(d['temps'], temps)
@@ -92,26 +91,73 @@ def main():
         saved = json.loads(ref.read_text())['variants']['none' if 'none' in json.loads(ref.read_text())['variants'] else 'base']['P_att']
         out['max_difference_from_robustness_json'] = float(np.max(np.abs(np.array(saved) - pooled)))
     out['crossing'] = crossing(temps, pooled)
-    rng = np.random.default_rng(834753)
-    out['block_bootstrap'] = []
-    for L in (10, 20, 50):
-        xs = []
-        for _ in range(args.replicates):
-            sample = []
-            for j in range(S.shape[0]):
-                starts = rng.integers(0, n, size=n // L)
-                ids = ((starts[:, None] + np.arange(L)) % n).ravel()
-                sample.append(S[j][:, ids].mean(axis=1))
-            xs.append(crossing(temps, np.mean(sample, axis=0)))
-        xs = np.array(xs)
-        out['block_bootstrap'].append(dict(block_length=L, replicates=len(xs),
-                                           crossing_ci95=np.nanquantile(xs, [.025, .975]).tolist(),
-                                           no_crossing=int(np.isnan(xs).sum())))
+    out['block_bootstrap'] = bootstrap_crossing(temps, S, replicates)
     out['ess_min'] = min(v['ess'] for v in out['diagnostics'])
     out['se_max'] = max(v['se'] for v in out['diagnostics'])
     out['run_spread_sd_max'] = max(v['run_spread_sd'] for v in out['diagnostics'])   # 'run-to-run spread' of Note 8
     out['run_spread_range_max'] = max(v['run_spread_range'] for v in out['diagnostics'])
-    args.output.write_text(json.dumps(out, indent=2))
+    return out
+
+
+def bootstrap_crossing(temps, indicators, replicates):
+    """Resample circular time blocks independently per run, jointly across temperatures."""
+    n = indicators.shape[2]
+    rng = np.random.default_rng(834753)
+    results = []
+    for L in (10, 20, 50):
+        xs = []
+        for _ in range(replicates):
+            sample = []
+            for run in indicators:
+                starts = rng.integers(0, n, size=n // L)
+                ids = ((starts[:, None] + np.arange(L)) % n).ravel()
+                sample.append(run[:, ids].mean(axis=1))
+            xs.append(crossing(temps, np.mean(sample, axis=0)))
+        xs = np.array(xs)
+        results.append(dict(block_length=L, replicates=len(xs),
+                            crossing_ci95=np.nanquantile(xs, [.025, .975]).tolist(),
+                            no_crossing=int(np.isnan(xs).sum())))
+    return results
+
+
+def long_run_crossing(replicates):
+    run_dir = HERE.parents[1] / 'mc_ensemble' / 'out'
+    runs = []
+    temps = None
+    for name in 'ABC':
+        with np.load(run_dir / f'N55_run{name}.npz') as data:
+            if temps is None:
+                temps = data['temps']
+            elif not np.array_equal(temps, data['temps']):
+                raise ValueError(f'Temperature grid mismatch in N55_run{name}.npz')
+            # Observable 4 is the sign of the strongest canonical pair force.
+            runs.append(data['obs'][:, :, 4] > 0)
+    indicators = np.stack(runs)
+    per_run = [crossing(temps, run.mean(axis=1)) for run in indicators]
+    return dict(shots_per_run_per_temperature=indicators.shape[2],
+                crossing=crossing(temps, indicators.mean(axis=(0, 2))),
+                per_run_crossings=dict(zip('ABC', per_run)),
+                run_to_run_rms_spread=float(np.std(per_run, ddof=0)),
+                block_bootstrap=bootstrap_crossing(temps, indicators, replicates))
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    source = ap.add_mutually_exclusive_group(required=True)
+    source.add_argument('--shots', type=Path, help='directory containing the three short robustness runs')
+    source.add_argument('--long-runs', action='store_true', help='use the archived long ensemble runs')
+    ap.add_argument('--output', type=Path)
+    ap.add_argument('--replicates', type=int, default=2000)
+    args = ap.parse_args()
+    if args.replicates < 1:
+        ap.error('--replicates must be positive')
+    if args.long_runs:
+        out = long_run_crossing(args.replicates)
+        output = args.output or HERE / 'long_run_crossing.json'
+    else:
+        out = robustness_diagnostics(args.shots, args.replicates)
+        output = args.output or HERE / 'mc_sampling_diagnostics.json'
+    output.write_text(json.dumps(out, indent=2))
     print(json.dumps({k: v for k, v in out.items() if k not in ('diagnostics', 'pooled_P_att')}, indent=2))
 
 

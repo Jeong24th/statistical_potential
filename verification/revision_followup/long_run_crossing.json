@@ -1,0 +1,39 @@
+{
+  "shots_per_run_per_temperature": 3000,
+  "crossing": 0.6608189655172414,
+  "per_run_crossings": {
+    "A": 0.6596666666666667,
+    "B": 0.6594845360824743,
+    "C": 0.666
+  },
+  "run_to_run_rms_spread": 0.0030294031814385365,
+  "block_bootstrap": [
+    {
+      "block_length": 10,
+      "replicates": 2000,
+      "crossing_ci95": [
+        0.6529986040609137,
+        0.6714557374504336
+      ],
+      "no_crossing": 0
+    },
+    {
+      "block_length": 20,
+      "replicates": 2000,
+      "crossing_ci95": [
+        0.6525297256097561,
+        0.6712809989758214
+      ],
+      "no_crossing": 0
+    },
+    {
+      "block_length": 50,
+      "replicates": 2000,
+      "crossing_ci95": [
+        0.6529963855077433,
+        0.671455251101819
+      ],
+      "no_crossing": 0
+    }
+  ]
+}
