@@ -8,8 +8,8 @@ Reproducibility code for the accompanying statistical-potential manuscript. The 
 - `main_fig_N6_combined.py` — one-body density, conditional density, effective-potential minimum, and dominant forces for \(N=6\) (Fig. 2).
 - `vtotal_minimize.py` — minimization of \(V_{\rm total}(X)\), shell structure, and all canonical pair forces (Fig. 3).
 - `strongest_bond.py` — strongest canonical pair force on each particle (Fig. 3).
-- `melting_analysis.py` — two-panel \(N=55\) temperature scan with shared structural-regime shading (Fig. 4), complementary SI diagnostics, and the \(N=6\) null control.
-- `phase_diagram.py` — force-dominance diagram and interpolated \(T_{\rm c}(N)\) boundary (Fig. 5), generated from `phase_diagram_cache.npz`.
+- `melting_analysis.py` — two-panel \(N=55\) temperature scan with shared structural-regime shading (Fig. 4), complementary SI diagnostics, and the \(N=6\) comparison.
+- `phase_diagram.py` — dominant-force sign at each of the 702 sampled configurations (Fig. 5). All 162 samples in the three coldest columns use extended-precision results. [Grid, coordinates, precision checks and plotting instructions](verification/figure5/README.md)
 
 The Fig. 3 scripts run fresh minimizations, and the Fig. 4 script reads the original `melting_analysis_cache_N55.npz`. The final figures use 80-digit pair forces, with refined coordinates for both Fig. 3 panels (φ = 2) and the three coldest Fig. 4 points (φ = 2, 2.5, 3). [Low-temperature verification data and commands](verification/low_temperature/README.md)
 
@@ -29,7 +29,7 @@ The Fig. 3 scripts run fresh minimizations, and the Fig. 4 script reads the orig
 The `mc_ensemble/` directory contains the thermal-ensemble Monte Carlo supporting
 Methods ("Ensemble Monte Carlo") and Supplementary Note 8: a validated
 Metropolis + replica-exchange sampler of the exact positive-weight dual, the raw chains
-for the N=55 production runs and the N=6 null control, and the scripts generating the
+for the N=55 production runs and the N=6 comparison, and the scripts generating the
 SI figures. The three long N=55 runs give a pooled crossover at
 \(k_{\rm B}T_\times/(\hbar\omega)=0.661\) (95% block-bootstrap interval 0.653–0.671).
 The radial marginals remain unimodal across the structural level crossings.
@@ -43,6 +43,13 @@ Supplementary Note 7 has five sections: definition and sign convention;
 self-stresses and the count of free parameters; characterization by continuation
 across dimension; minimum-norm comparison and cluster separability; and the
 collinear limit and one-dimensional log-gas.
+
+At an affinely independent configuration in \(N-1\) dimensions, the pair distances
+are locally independent and the signed central forces are the corresponding
+distance derivatives of the statistical potential. At finite positive
+temperature the Gaussian kernel matrix is positive definite for distinct
+positions. Those derivatives therefore have the same limit along every lift to
+a given planar configuration of distinct particles.
 
 - The retained N = 55 canonical/minimum-norm comparison (Table S3, Section 4) is reproduced by
   `verification/low_temperature/review_checks.py self-stress`.
@@ -90,7 +97,8 @@ results, not those three shot files.
 - NumPy
 - SciPy
 - Matplotlib
-- The plotting scripts use `text.usetex=True` and require a working LaTeX
+- Figure 5 uses Matplotlib mathtext and PyMuPDF to check every plotted symbol.
+- The legacy plotting scripts use `text.usetex=True` and require a working LaTeX
   installation with the cm-super fonts; `verification/low_temperature/` does
   not require TeX.
 

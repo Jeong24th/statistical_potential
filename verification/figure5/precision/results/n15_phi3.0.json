@@ -1,0 +1,149 @@
+{
+  "N": 15,
+  "phi": 3.0,
+  "source": "n15_phi3.0.npz",
+  "coordinate_file_sha256": "c4f9e5854373af01d3feff998deee58181c9ad25da9cd53bf86574dc5a92a451",
+  "n_seeds": 1000,
+  "winner_seed": 457,
+  "winner_success": true,
+  "archived_ratio": 0.950537255271177,
+  "reconstructed_ratio": 0.950537255271177,
+  "fixed": {
+    "binary64": {
+      "max_attractive": 241.63025777113128,
+      "max_repulsive": 254.20387936525123,
+      "ratio": 0.9505372552711769,
+      "dominance": "repulsive",
+      "n_attractive": 46
+    },
+    "dps50": {
+      "max_attractive": 241.6302577696737,
+      "max_repulsive": 254.20387936640407,
+      "ratio": 0.9505372552611323,
+      "dominance": "repulsive",
+      "n_attractive": 46
+    },
+    "dps80": {
+      "max_attractive": 241.6302577696737,
+      "max_repulsive": 254.20387936640407,
+      "ratio": 0.9505372552611323,
+      "dominance": "repulsive",
+      "n_attractive": 46
+    },
+    "gradient_max80": 6.819449195905484e-07,
+    "energy80": "10.900391764385489191224663717134165250049008593579567370708433703",
+    "cond2_binary64": 760672.7864438231,
+    "inverse_residual80": 1.6888340784485805e-79,
+    "max_pair_difference_50_80_over_Fmax": 3.792224815256004e-47,
+    "max_pair_difference_binary64_80_over_Fmax": 9.469575628538655e-12,
+    "pair_sign_mismatches_binary64_80": 0
+  },
+  "refinement_triggers": [
+    "ratio near 1"
+  ],
+  "refinement": {
+    "binary64": {
+      "max_attractive": 241.6305315655736,
+      "max_repulsive": 254.20245409283774,
+      "ratio": 0.9505436618535841,
+      "dominance": "repulsive",
+      "n_attractive": 46
+    },
+    "dps50": {
+      "max_attractive": 241.630531564167,
+      "max_repulsive": 254.2024540930518,
+      "ratio": 0.9505436618472503,
+      "dominance": "repulsive",
+      "n_attractive": 46
+    },
+    "dps80": {
+      "max_attractive": 241.630531564167,
+      "max_repulsive": 254.2024540930518,
+      "ratio": 0.9505436618472503,
+      "dominance": "repulsive",
+      "n_attractive": 46
+    },
+    "gradient_max80": 3.162903118827284e-10,
+    "energy80": "10.900391764380962907077989781370005474382415518025912108375525075",
+    "cond2_binary64": 760672.3960279408,
+    "inverse_residual80": 3.6470254389272424e-79,
+    "max_pair_difference_50_80_over_Fmax": 1.7441576007480976e-47,
+    "max_pair_difference_binary64_80_over_Fmax": 7.964438675997316e-12,
+    "pair_sign_mismatches_binary64_80": 0,
+    "positions": [
+      [
+        0.0023777809645136737,
+        -0.010336644086544198
+      ],
+      [
+        0.7623711701362182,
+        -0.6388505332181562
+      ],
+      [
+        -0.21874410955913645,
+        0.9509207028009506
+      ],
+      [
+        -0.4065996226587173,
+        -0.9077535737397476
+      ],
+      [
+        0.8262791251292754,
+        0.5370273417823889
+      ],
+      [
+        -0.9778799861838294,
+        0.12200937686102949
+      ],
+      [
+        1.6359334062498412,
+        -1.2532194783195727
+      ],
+      [
+        1.5061208168268851,
+        1.369729893125227
+      ],
+      [
+        -1.073830640242922,
+        1.6457407417681986
+      ],
+      [
+        -1.7373224095654645,
+        -0.7529189170465287
+      ],
+      [
+        0.4199602838424239,
+        -1.825644359640173
+      ],
+      [
+        1.8916850455599843,
+        0.08187620138552441
+      ],
+      [
+        0.24679616023170978,
+        1.9495298012904474
+      ],
+      [
+        -1.953235642027379,
+        0.573960273359616
+      ],
+      [
+        -0.9239113795837767,
+        -1.8420708263179424
+      ]
+    ],
+    "attempts": [
+      {
+        "success": true,
+        "message": "CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL",
+        "iterations": 19,
+        "evaluations": 22,
+        "gradient_max50": 3.162903118827284e-10
+      }
+    ],
+    "max_particle_displacement": 1.4212512767722824e-05,
+    "meets_stationarity_tolerance": true,
+    "energy_change80": -4.526284146673936e-12
+  },
+  "elapsed_seconds": 2.796
+}

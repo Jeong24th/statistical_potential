@@ -1,0 +1,44 @@
+{
+  "N": 14,
+  "phi": 2.7,
+  "source": "n14_phi2.7.npz",
+  "coordinate_file_sha256": "aa7b785d6ee61709046757a8cd931cbbaadfd15895f2c90c7b805e6ad00435f2",
+  "n_seeds": 1000,
+  "winner_seed": 233,
+  "winner_success": true,
+  "archived_ratio": 0.7392641249835614,
+  "reconstructed_ratio": 0.7392641249835614,
+  "fixed": {
+    "binary64": {
+      "max_attractive": 107.81634251966297,
+      "max_repulsive": 145.8427899799147,
+      "ratio": 0.7392641249835615,
+      "dominance": "repulsive",
+      "n_attractive": 36
+    },
+    "dps50": {
+      "max_attractive": 107.81634251972939,
+      "max_repulsive": 145.84278997989017,
+      "ratio": 0.7392641249841412,
+      "dominance": "repulsive",
+      "n_attractive": 36
+    },
+    "dps80": {
+      "max_attractive": 107.81634251972939,
+      "max_repulsive": 145.84278997989017,
+      "ratio": 0.7392641249841412,
+      "dominance": "repulsive",
+      "n_attractive": 36
+    },
+    "gradient_max80": 4.5914502937722983e-07,
+    "energy80": "11.765030481590762601267005009681470150837720888415163372036162352",
+    "cond2_binary64": 133959.844516934,
+    "inverse_residual80": 5.09126549516087e-80,
+    "max_pair_difference_50_80_over_Fmax": 1.5346515076343297e-47,
+    "max_pair_difference_binary64_80_over_Fmax": 6.499934521708313e-13,
+    "pair_sign_mismatches_binary64_80": 0
+  },
+  "refinement_triggers": [],
+  "refinement": null,
+  "elapsed_seconds": 0.312
+}

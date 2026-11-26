@@ -1,0 +1,15 @@
+{
+  "drawn_samples_verified": 702,
+  "attractive": 169,
+  "repulsive": 533,
+  "equal": 0,
+  "cold_open_shell_samples_verified": 135,
+  "cold_open_shell_attractive": 69,
+  "cold_open_shell_repulsive": 66,
+  "cold_open_shell_equal": 0,
+  "sign_digest_sha256_N_then_increasing_T": "ada9ed96052c8b77e1d6002384f6376e1f38dac7eb7037826aaa870128b0ec2c",
+  "replacement_rows": 702,
+  "cache_sha256": "46436881e734686dd66c27e2be011108b9192a3a2818291c77a8b93dbe9b361b",
+  "overrides_sha256": "f072e07fa55ee3987520839b260e6298dd715acfa736afeb4dd2df6dda163f7d",
+  "pdf_sha256": "6522d0af098bed0bb211417eb2c62978a3b1c33de47f5d60379518f6b6bec61e"
+}

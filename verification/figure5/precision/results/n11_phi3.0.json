@@ -1,0 +1,133 @@
+{
+  "N": 11,
+  "phi": 3.0,
+  "source": "n11_phi3.0.npz",
+  "coordinate_file_sha256": "6d4625ee092798f9aeed3705515a567ab4158c0d9803be13d60d025813e4a30a",
+  "n_seeds": 1000,
+  "winner_seed": 874,
+  "winner_success": true,
+  "archived_ratio": 0.9808707449460504,
+  "reconstructed_ratio": 0.9808707449460504,
+  "fixed": {
+    "binary64": {
+      "max_attractive": 26.841549065682003,
+      "max_repulsive": 27.365021542321912,
+      "ratio": 0.9808707449460501,
+      "dominance": "repulsive",
+      "n_attractive": 22
+    },
+    "dps50": {
+      "max_attractive": 26.841549065692817,
+      "max_repulsive": 27.36502154233587,
+      "ratio": 0.980870744945945,
+      "dominance": "repulsive",
+      "n_attractive": 22
+    },
+    "dps80": {
+      "max_attractive": 26.841549065692817,
+      "max_repulsive": 27.36502154233587,
+      "ratio": 0.980870744945945,
+      "dominance": "repulsive",
+      "n_attractive": 22
+    },
+    "gradient_max80": 6.989855904964554e-07,
+    "energy80": "6.4435087047784937688516275487153328475418966945432187588831138263",
+    "cond2_binary64": 53670.44989900206,
+    "inverse_residual80": 1.8356899181660017e-80,
+    "max_pair_difference_50_80_over_Fmax": 7.105257691152492e-48,
+    "max_pair_difference_binary64_80_over_Fmax": 5.403802155750378e-13,
+    "pair_sign_mismatches_binary64_80": 0
+  },
+  "refinement_triggers": [
+    "ratio near 1"
+  ],
+  "refinement": {
+    "binary64": {
+      "max_attractive": 26.841587196151124,
+      "max_repulsive": 27.364951108803016,
+      "ratio": 0.9808746629741454,
+      "dominance": "repulsive",
+      "n_attractive": 22
+    },
+    "dps50": {
+      "max_attractive": 26.84158719614712,
+      "max_repulsive": 27.364951108800074,
+      "ratio": 0.9808746629741045,
+      "dominance": "repulsive",
+      "n_attractive": 22
+    },
+    "dps80": {
+      "max_attractive": 26.84158719614712,
+      "max_repulsive": 27.364951108800074,
+      "ratio": 0.9808746629741045,
+      "dominance": "repulsive",
+      "n_attractive": 22
+    },
+    "gradient_max80": 2.8339772645629916e-10,
+    "energy80": "6.4435087047757595452370748476044703093831927541881492313193409925",
+    "cond2_binary64": 53670.594602930985,
+    "inverse_residual80": 1.7826504036978472e-80,
+    "max_pair_difference_50_80_over_Fmax": 6.336242146046494e-48,
+    "max_pair_difference_binary64_80_over_Fmax": 6.493315466667134e-13,
+    "pair_sign_mismatches_binary64_80": 0,
+    "positions": [
+      [
+        0.5925310310269932,
+        0.18662189015711925
+      ],
+      [
+        -0.14476764589306754,
+        -0.6041217439473852
+      ],
+      [
+        -0.4545252901251234,
+        0.42380473242399763
+      ],
+      [
+        1.1560432765834492,
+        -1.0779083691775146
+      ],
+      [
+        1.1670582079974314,
+        1.2469301328958395
+      ],
+      [
+        -1.287914525590734,
+        1.2008666759083881
+      ],
+      [
+        0.06320654896172731,
+        -1.747224668341194
+      ],
+      [
+        1.747371069571755,
+        0.05902076674430036
+      ],
+      [
+        -0.052268225738722376,
+        1.6247083573258227
+      ],
+      [
+        -1.6243899259242902,
+        -0.061372546379623936
+      ],
+      [
+        -1.16234452089077,
+        -1.2513252280432472
+      ]
+    ],
+    "attempts": [
+      {
+        "success": true,
+        "message": "CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL",
+        "iterations": 15,
+        "evaluations": 17,
+        "gradient_max50": 2.8339772645629916e-10
+      }
+    ],
+    "max_particle_displacement": 1.9407080525784312e-05,
+    "meets_stationarity_tolerance": true,
+    "energy_change80": -2.7342236145527013e-12
+  },
+  "elapsed_seconds": 1.484
+}

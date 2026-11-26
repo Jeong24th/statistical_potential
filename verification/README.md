@@ -31,3 +31,7 @@ independent of the decomposition.
 For current precision protocols, reference data and commands, see
 [low_temperature/README.md](low_temperature/README.md) and
 [revision_followup/README.md](revision_followup/README.md).
+
+## Figure 5
+
+The [Figure 5 verification](figure5/README.md) supplies the complete 702-point plotting table and the search, precision and vector-mark checks.

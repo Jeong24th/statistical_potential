@@ -1,0 +1,157 @@
+{
+  "N": 17,
+  "phi": 2.5,
+  "source": "n17_phi2.5.npz",
+  "coordinate_file_sha256": "a04f6ef5242171eebaac108060039a0d4e665c3a5d38475e701ef85b9d6698e7",
+  "n_seeds": 1000,
+  "winner_seed": 923,
+  "winner_success": true,
+  "archived_ratio": 1.0135038875042637,
+  "reconstructed_ratio": 1.0135038875042637,
+  "fixed": {
+    "binary64": {
+      "max_attractive": 450.40581563224316,
+      "max_repulsive": 444.4046255622759,
+      "ratio": 1.0135038875042635,
+      "dominance": "attractive",
+      "n_attractive": 64
+    },
+    "dps50": {
+      "max_attractive": 450.40581562985096,
+      "max_repulsive": 444.4046255595956,
+      "ratio": 1.013503887504993,
+      "dominance": "attractive",
+      "n_attractive": 64
+    },
+    "dps80": {
+      "max_attractive": 450.40581562985096,
+      "max_repulsive": 444.4046255595956,
+      "ratio": 1.013503887504993,
+      "dominance": "attractive",
+      "n_attractive": 64
+    },
+    "gradient_max80": 5.040956671352465e-07,
+    "energy80": "18.283579100172059765761039134240683881665196354270614353196455071",
+    "cond2_binary64": 416676.5544637266,
+    "inverse_residual80": 1.0294286739168314e-79,
+    "max_pair_difference_50_80_over_Fmax": 1.9145713055581824e-47,
+    "max_pair_difference_binary64_80_over_Fmax": 5.95082162396378e-12,
+    "pair_sign_mismatches_binary64_80": 0
+  },
+  "refinement_triggers": [
+    "ratio near 1"
+  ],
+  "refinement": {
+    "binary64": {
+      "max_attractive": 450.40532027351566,
+      "max_repulsive": 444.40443808925056,
+      "ratio": 1.013503200395717,
+      "dominance": "attractive",
+      "n_attractive": 64
+    },
+    "dps50": {
+      "max_attractive": 450.4053202722542,
+      "max_repulsive": 444.4044380877696,
+      "ratio": 1.0135032003962556,
+      "dominance": "attractive",
+      "n_attractive": 64
+    },
+    "dps80": {
+      "max_attractive": 450.4053202722542,
+      "max_repulsive": 444.4044380877696,
+      "ratio": 1.0135032003962556,
+      "dominance": "attractive",
+      "n_attractive": 64
+    },
+    "gradient_max80": 4.4342071546430975e-10,
+    "energy80": "18.283579100170313180397629575500562735584254439901561683546185398",
+    "cond2_binary64": 416676.38389770716,
+    "inverse_residual80": 9.791689985222703e-80,
+    "max_pair_difference_50_80_over_Fmax": 2.583684777090622e-47,
+    "max_pair_difference_binary64_80_over_Fmax": 3.2879824055715567e-12,
+    "pair_sign_mismatches_binary64_80": 0,
+    "positions": [
+      [
+        0.5589290059657168,
+        -0.8549364181411309
+      ],
+      [
+        -0.5589290044490975,
+        0.854936417811369
+      ],
+      [
+        2.58829225287781e-10,
+        -5.22373674343459e-10
+      ],
+      [
+        1.0883613726830303,
+        0.044899818635626365
+      ],
+      [
+        -1.5817354033098345,
+        1.2549382790148487
+      ],
+      [
+        -0.47771231956578547,
+        -0.9789470928503295
+      ],
+      [
+        0.7939934955349858,
+        2.0339575267115557
+      ],
+      [
+        0.4777123204891734,
+        0.9789470921946948
+      ],
+      [
+        -1.0883613714796112,
+        -0.04489981906213443
+      ],
+      [
+        0.515051035796274,
+        -1.952301052938273
+      ],
+      [
+        2.181641906478652,
+        -0.0885860351798624
+      ],
+      [
+        -0.5150510378648175,
+        1.9523010529207028
+      ],
+      [
+        -2.181641905565695,
+        0.08858603506167322
+      ],
+      [
+        -0.793993497870083,
+        -2.033957526973795
+      ],
+      [
+        1.5817354038868947,
+        -1.2549382809188525
+      ],
+      [
+        1.6379968364149111,
+        1.0708678714078619
+      ],
+      [
+        -1.6379968361053827,
+        -1.070867870508757
+      ]
+    ],
+    "attempts": [
+      {
+        "success": true,
+        "message": "CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL",
+        "iterations": 13,
+        "evaluations": 15,
+        "gradient_max50": 4.4342071546430975e-10
+      }
+    ],
+    "max_particle_displacement": 2.4917322882988286e-06,
+    "meets_stationarity_tolerance": true,
+    "energy_change80": -1.7465853634095587e-12
+  },
+  "elapsed_seconds": 3.015
+}

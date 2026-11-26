@@ -81,5 +81,9 @@
     "zero_temperature_mode_candidates": 4,
     "script": "review_checks.py",
     "scope": "Fixed-coordinate audit of nine original-search configurations; four independent zero-temperature multistart mode candidates; no global-minimum certificate."
-  }
+  },
+  "updated_source_lf_sha256": {
+    "phase_diagram.py": "cfd0dbce9b7bfae5bdf5b6667ce66a995d6d80eb3d9c5a7c2f7ba1805c35b2a7"
+  },
+  "updated_source_note": "The Figure 5 plotting entry point changed. The original search functions, parameters, selection rule and ratio cache are retained; source_sha256 and source_lf_sha256 identify the original files."
 }

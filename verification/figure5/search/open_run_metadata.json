@@ -1,0 +1,13 @@
+{
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "numpy": "2.4.4",
+  "scipy": "1.17.1",
+  "seeds_per_point": 1000,
+  "workers": 5,
+  "source_sha256": {
+    "phase_diagram.py": "6e911b9de4c6c35c9c00a9ca6bab3d438547e595ba391c1eddee0fd04ff33c33",
+    "phase_diagram_cache.npz": "46436881e734686dd66c27e2be011108b9192a3a2818291c77a8b93dbe9b361b",
+    "verification/low_temperature/review_checks.py": "9a88531187dba27404bcf3bd4b575b343710d3d528dd22f8bc5fcf095595dd9f"
+  }
+}

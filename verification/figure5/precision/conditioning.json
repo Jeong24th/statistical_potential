@@ -1,0 +1,31 @@
+{
+  "selection": "Largest binary64 condition estimate at the reconstructed winners of the 150 new cases.",
+  "fixed": {
+    "N": 54,
+    "phi": 3.0,
+    "digits": 80,
+    "coordinate_source": "../search/coordinates/n54_phi3.0.npz#x",
+    "lambda_min": "0.0000000000065525534713632641826265299617563224622361292846069670413597376532",
+    "lambda_max": "33.794921806575019094394160633549677500837821404893165323658260949",
+    "cond2": "5157519424186.2413359597434731707782003142011405522838837872536643",
+    "coordinate_file_sha256": "a8f411314e466d7dece50375cc387ac22919af6f8ac7a17715ba95b904d2149e"
+  },
+  "same_case_after_refinement": {
+    "N": 54,
+    "phi": 3.0,
+    "digits": 80,
+    "coordinate_source": "results/n54_phi3.0.json#refinement.positions",
+    "lambda_min": "0.000000000006553425967899602517493889795153306462048646374560085074587266079",
+    "lambda_max": "33.794321305942516754968845287001023095666957351953164678102180539",
+    "cond2": "5156741141423.7312070149066663962468850755156297798612073282869947"
+  },
+  "previous_Fig5_N55": {
+    "N": 55,
+    "phi": 3,
+    "digits": 80,
+    "source": "verification/low_temperature/data/reference_results.json#phase_phi_3",
+    "lambda_min": 9.596544694652688e-12,
+    "lambda_max": 34.31710109231989,
+    "cond2": 3575985126338.42
+  }
+}

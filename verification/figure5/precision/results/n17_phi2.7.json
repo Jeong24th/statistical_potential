@@ -1,0 +1,157 @@
+{
+  "N": 17,
+  "phi": 2.7,
+  "source": "n17_phi2.7.npz",
+  "coordinate_file_sha256": "4e7f6525801e4bf8766311f7c56ddbd6d283c489e63e96eede8f749bbae8f368",
+  "n_seeds": 1000,
+  "winner_seed": 29,
+  "winner_success": true,
+  "archived_ratio": 0.9697600886063018,
+  "reconstructed_ratio": 0.9697600886063018,
+  "fixed": {
+    "binary64": {
+      "max_attractive": 838.3429280825545,
+      "max_repulsive": 864.4848740757989,
+      "ratio": 0.969760088606302,
+      "dominance": "repulsive",
+      "n_attractive": 64
+    },
+    "dps50": {
+      "max_attractive": 838.3429280830807,
+      "max_repulsive": 864.4848740764473,
+      "ratio": 0.9697600886061832,
+      "dominance": "repulsive",
+      "n_attractive": 64
+    },
+    "dps80": {
+      "max_attractive": 838.3429280830807,
+      "max_repulsive": 864.4848740764473,
+      "ratio": 0.9697600886061832,
+      "dominance": "repulsive",
+      "n_attractive": 64
+    },
+    "gradient_max80": 6.417911886992566e-07,
+    "energy80": "16.283221433586542757585889093823215708312308236934562665274192567",
+    "cond2_binary64": 1166048.3989503242,
+    "inverse_residual80": 2.0172553919017314e-79,
+    "max_pair_difference_50_80_over_Fmax": 4.965199826694642e-47,
+    "max_pair_difference_binary64_80_over_Fmax": 1.5613785274429217e-12,
+    "pair_sign_mismatches_binary64_80": 0
+  },
+  "refinement_triggers": [
+    "ratio near 1"
+  ],
+  "refinement": {
+    "binary64": {
+      "max_attractive": 838.3414071959845,
+      "max_repulsive": 864.4850065943008,
+      "ratio": 0.9697581806521888,
+      "dominance": "repulsive",
+      "n_attractive": 64
+    },
+    "dps50": {
+      "max_attractive": 838.341407200835,
+      "max_repulsive": 864.4850066010182,
+      "ratio": 0.9697581806502641,
+      "dominance": "repulsive",
+      "n_attractive": 64
+    },
+    "dps80": {
+      "max_attractive": 838.341407200835,
+      "max_repulsive": 864.4850066010182,
+      "ratio": 0.9697581806502641,
+      "dominance": "repulsive",
+      "n_attractive": 64
+    },
+    "gradient_max80": 9.14571070355223e-10,
+    "energy80": "16.283221433583378658166260598216209326237763367650546304013099635",
+    "cond2_binary64": 1166048.4251325587,
+    "inverse_residual80": 2.0038656103429337e-79,
+    "max_pair_difference_50_80_over_Fmax": 4.2993048475612916e-47,
+    "max_pair_difference_binary64_80_over_Fmax": 8.002107888540096e-12,
+    "pair_sign_mismatches_binary64_80": 0,
+    "positions": [
+      [
+        0.13303875249928843,
+        1.0131721926627135
+      ],
+      [
+        -1.0007094858857635,
+        -0.4316373856392074
+      ],
+      [
+        -1.8735448236997842e-10,
+        3.145593062831812e-10
+      ],
+      [
+        -0.3823180737203811,
+        1.983484517844092
+      ],
+      [
+        -0.13303875284125918,
+        -1.013172193462183
+      ],
+      [
+        1.000709485219688,
+        0.4316373848704819
+      ],
+      [
+        -1.9411618796458476,
+        0.25489233742981027
+      ],
+      [
+        -0.8814278192901466,
+        -1.817543054757906
+      ],
+      [
+        0.8553512436583938,
+        -0.6753550845014293
+      ],
+      [
+        1.9283073811144578,
+        1.0261376845098038
+      ],
+      [
+        -0.8553512436580862,
+        0.6753550849830035
+      ],
+      [
+        -1.9283073817199694,
+        -1.0261376844770989
+      ],
+      [
+        0.382318073987534,
+        -1.983484517633002
+      ],
+      [
+        1.9411618801649542,
+        -0.25489233737820277
+      ],
+      [
+        0.8814278192867321,
+        1.8175430542908853
+      ],
+      [
+        -1.5980234523481909,
+        1.4891772095244034
+      ],
+      [
+        1.5980234519736567,
+        -1.489177209272611
+      ]
+    ],
+    "attempts": [
+      {
+        "success": true,
+        "message": "CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL",
+        "iterations": 9,
+        "evaluations": 11,
+        "gradient_max50": 9.14571070355223e-10
+      }
+    ],
+    "max_particle_displacement": 2.268045125060462e-06,
+    "meets_stationarity_tolerance": true,
+    "energy_change80": -3.1640994196284958e-12
+  },
+  "elapsed_seconds": 3.11
+}

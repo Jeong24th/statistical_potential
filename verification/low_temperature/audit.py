@@ -173,6 +173,9 @@ def verify_inputs():
         # Git checkouts may normalize LF/CRLF; compare normalized text if necessary.
         content=(CODE/name).read_bytes()
         if hashlib.sha256(content).hexdigest()!=expected:
-            if not name.endswith('.py') or hashlib.sha256(content.replace(b'\r\n',b'\n')).hexdigest()!=manifest['source_lf_sha256'][name]:
+            allowed = {manifest['source_lf_sha256'].get(name),
+                       manifest.get('updated_source_lf_sha256', {}).get(name)}
+            normalized = hashlib.sha256(content.replace(b'\r\n', b'\n')).hexdigest()
+            if not name.endswith('.py') or normalized not in allowed:
                 raise ValueError(f'Original source/cache checksum mismatch: {name}')
     return manifest
